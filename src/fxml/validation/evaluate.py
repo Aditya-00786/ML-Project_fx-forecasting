@@ -33,7 +33,8 @@ def score(predictions: pd.DataFrame, reference: dict[str, str]) -> pd.DataFrame:
     the task's reference model (negative statistic = better than the reference) and, for
     direction, a Pesaran-Timmermann test of the up/down calls.
 
-    ``predictions`` has columns task, pair, model, date, actual and forecast.
+    ``predictions`` has columns task, pair, model, date, actual and forecast. Days a model or
+    the reference did not forecast are left out of that model's scores.
     """
     rows = []
     for (task, pair), group in predictions.groupby(["task", "pair"]):
@@ -41,11 +42,14 @@ def score(predictions: pd.DataFrame, reference: dict[str, str]) -> pd.DataFrame:
         actual = group.drop_duplicates("date").set_index("date")["actual"].reindex(wide.index)
         ref = reference[task]
         for model in wide.columns:
-            row = {"task": task, "pair": pair, "model": model, "days": len(actual)}
-            row |= METRICS[task](actual.to_numpy(), wide[model].to_numpy())
-            dm, p = diebold_mariano(loss(task, actual, wide[model]), loss(task, actual, wide[ref]))
+            # score each model on the days both it and the reference forecast
+            ok = actual.notna() & wide[model].notna() & wide[ref].notna()
+            truth, forecast, base = actual[ok], wide.loc[ok, model], wide.loc[ok, ref]
+            row = {"task": task, "pair": pair, "model": model, "days": int(ok.sum())}
+            row |= METRICS[task](truth.to_numpy(), forecast.to_numpy())
+            dm, p = diebold_mariano(loss(task, truth, forecast), loss(task, truth, base))
             row |= {f"dm_vs_{ref}": dm, f"dm_p_vs_{ref}": p}
             if task == "direction":
-                row["pt_stat"], row["pt_p"] = pesaran_timmermann(actual > 0.5, wide[model] > 0.5)
+                row["pt_stat"], row["pt_p"] = pesaran_timmermann(truth > 0.5, forecast > 0.5)
             rows.append(row)
     return pd.DataFrame(rows)

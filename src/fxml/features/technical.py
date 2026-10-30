@@ -11,8 +11,19 @@ import pandas as pd
 
 
 def wilder(series: pd.Series, period: int) -> pd.Series:
-    """Wilder's smoothing, an exponential average with weight 1/period."""
-    return series.ewm(alpha=1 / period, adjust=False).mean()
+    """Wilder's smoothing, an exponential average with weight 1/period.
+
+    As Wilder defined it, the average starts from the simple mean of the first ``period``
+    values and is missing before that, so the first days of the data do not dominate it.
+    """
+    valid = np.flatnonzero(series.notna().to_numpy())
+    if len(valid) < period:
+        return pd.Series(np.nan, index=series.index)
+    seed = valid[period - 1]
+    values = series.astype(float).copy()
+    values.iloc[:seed] = np.nan
+    values.iloc[seed] = series.iloc[valid[:period]].mean()
+    return values.ewm(alpha=1 / period, adjust=False).mean()
 
 
 def rsi(close: pd.Series, period: int = 14) -> pd.Series:

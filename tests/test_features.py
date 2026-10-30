@@ -84,3 +84,19 @@ def test_rsi_extremes():
     rising = pd.Series(np.linspace(1.0, 2.0, 50))
     assert ta.rsi(rising).iloc[-1] == pytest.approx(100)
     assert ta.rsi(rising[::-1].reset_index(drop=True)).iloc[-1] == pytest.approx(0)
+
+
+def test_wilder_starts_from_a_simple_average():
+    smoothed = ta.wilder(pd.Series(np.arange(1.0, 21.0)), 5)
+    assert smoothed.iloc[:4].isna().all()
+    assert smoothed.iloc[4] == pytest.approx(3.0)  # mean of 1..5
+    assert smoothed.iloc[5] == pytest.approx(3.0 + (6.0 - 3.0) / 5)
+
+
+def test_adx_has_no_start_up_spike(synthetic_inputs):
+    """ADX is missing until both smoothings have a full window, then stays in a normal range."""
+    daily = synthetic_inputs[0].xs("EURUSD", level="symbol")
+    adx = ta.adx(daily.high, daily.low, daily.close)
+    first = adx.first_valid_index()
+    assert daily.index.get_loc(first) >= 2 * 14 - 2
+    assert adx.loc[first:].iloc[:20].max() < 80
