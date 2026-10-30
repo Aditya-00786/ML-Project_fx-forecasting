@@ -40,6 +40,7 @@ Then build the modelling table and run the baselines (about 10 minutes):
 ```bash
 uv run python scripts/build_features.py  # features and next-day targets in data/processed/features.parquet
 uv run python scripts/run_baselines.py   # walk-forward forecasts and reports/tables/baselines_*.csv
+uv run python scripts/run_regimes.py     # market regimes and currency factors in data/processed/market_state.parquet
 ```
 
 On a Mac, LightGBM (used from Phase 4) also needs the OpenMP runtime: `brew install libomp`.
