@@ -88,6 +88,11 @@ Each phase ends with a pull request. The next phase starts only when its "done w
 - **Statistical tests:** Diebold–Mariano (with small sample correction), Pesaran–Timmermann and Kupiec.
 - **Baselines:** random walk, historical mean, EWMA, GARCH(1,1), GJR-GARCH (Student-t), HAR-RV and ARIMA.
 - **Done when:** the look-ahead tests pass and a baseline results table exists for every pair and task.
+- **As built:**
+  - 46 features in five groups, in `src/fxml/features/build.py`. GARCH-variance and PCA features are fitted inside each fold, so they arrive with the models in Phases 3–4.
+  - Holiday sessions are removed from the modelling table.
+  - Training rows whose next-day label falls inside the test month are purged.
+  - Commands: `scripts/build_features.py`, then `scripts/run_baselines.py`. Results are in `notebooks/03_baselines.ipynb`.
 
 ### Phase 3 — Regimes and currency factors
 - **Currency factors:** PCA on the seven-pair return panel, with every pair expressed as USD per foreign currency so the "dollar" factor has a consistent sign.

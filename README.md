@@ -35,6 +35,15 @@ uv run python scripts/build_dataset.py   # daily bars, macro series and policy r
 uv run python scripts/check_data.py      # coverage and agreement with Federal Reserve H.10 rates
 ```
 
+Then build the modelling table and run the baselines (about 10 minutes):
+
+```bash
+uv run python scripts/build_features.py  # features and next-day targets in data/processed/features.parquet
+uv run python scripts/run_baselines.py   # walk-forward forecasts and reports/tables/baselines_*.csv
+```
+
+On a Mac, LightGBM (used from Phase 4) also needs the OpenMP runtime: `brew install libomp`.
+
 The stored data takes about 0.25 GB. The 1-minute bars are kept as 5-minute bars, and raw ZIP files are never written to disk. The notebooks `01_data_quality` and `02_stylized_facts` document what the data looks like.
 
 ## Layout
