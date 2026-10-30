@@ -64,3 +64,25 @@ def test_kupiec():
     too_many = np.zeros(1000, bool)
     too_many[::25] = True  # 4%
     assert kupiec(too_many, 0.01)[1] < 0.001
+
+
+def test_score_skips_days_a_model_did_not_forecast():
+    import pandas as pd
+
+    from fxml.validation.evaluate import score
+
+    rng = np.random.default_rng(0)
+    dates = pd.bdate_range("2020-01-01", periods=300)
+    realized = rng.lognormal(-9, 0.5, 300)
+    frames = []
+    noisy = {m: realized * rng.lognormal(0, 0.3, 300) for m in ("naive", "gappy")}
+    for model, forecast in noisy.items():
+        forecast = forecast.copy()
+        if model == "gappy":
+            forecast[10] = np.nan
+        frames.append(pd.DataFrame({"task": "volatility", "pair": "EURUSD", "model": model,
+                                    "date": dates, "actual": realized, "forecast": forecast}))
+    scores = score(pd.concat(frames), {"volatility": "naive"}).set_index("model")
+    assert scores.loc["gappy", "days"] == 299
+    assert scores.loc["naive", "days"] == 300
+    assert np.isfinite(scores.loc["gappy", ["qlike", "mz_r2", "dm_vs_naive"]].astype(float)).all()
