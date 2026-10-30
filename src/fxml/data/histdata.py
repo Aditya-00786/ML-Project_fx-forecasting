@@ -21,11 +21,16 @@ GET_URL = "https://www.histdata.com/get.php"
 USER_AGENT = "Mozilla/5.0 (fxml academic research project)"
 FORM_FIELDS = ("tk", "date", "datemonth", "platform", "timeframe", "fxpair")
 
-# HistData's FAQ says its timestamps are EST with no daylight saving, but the data follows New
-# York local time: matched against the Fed's H.10 noon rates, our noon returns correlate 0.999 in
-# winter and 0.996 in summer when read as New York time, but only 0.944 in summer when read as
-# fixed EST. ``scripts/check_data.py`` reports this match by season so a regression shows up.
-HISTDATA_TZ = "America/New_York"
+# HistData's clock, established from the Fed's H.10 noon rates and from Sunday market reopenings
+# (always 17:00 New York):
+# - Until 2018 it is New York local time with daylight saving, not fixed EST as the FAQ says.
+#   Read as fixed EST, summer noon returns match H.10 at only 0.944 instead of 0.996.
+# - From 2019 it is EET minus 7 hours, so it follows EU daylight-saving dates. In the weeks when
+#   the US and EU clocks change on different dates, it runs an hour behind New York and Sunday
+#   reopenings appear at 16:00.
+# Outside those weeks the two readings agree, so any switch date between Nov 2018 and Mar 2019
+# gives the same result. ``scripts/check_data.py`` tests the H.10 match in those weeks.
+CLOCK_SWITCH = pd.Timestamp("2019-01-01")
 
 
 @dataclass(frozen=True, order=True)
@@ -122,8 +127,8 @@ def parse_m1_csv(data: bytes | str) -> pd.DataFrame:
     """Parse generic ASCII M1 rows (``YYYYMMDD HHMMSS;open;high;low;close;volume``).
 
     Returns OHLC columns indexed by the UTC start time of each 1-minute bar. Clock times that do
-    not exist or repeat at daylight-saving changes fall on Sunday mornings, when the market is
-    closed; any such rows are dropped.
+    not exist or repeat at daylight-saving changes fall on weekends, when the market is closed;
+    any such rows are dropped.
     """
     text = data.decode() if isinstance(data, bytes) else data
     raw = pd.read_csv(
@@ -140,9 +145,28 @@ def parse_m1_csv(data: bytes | str) -> pd.DataFrame:
 
 
 def local_to_utc(local: pd.DatetimeIndex) -> pd.DatetimeIndex:
-    """Convert naive HistData clock times to UTC."""
-    aware = local.tz_localize(HISTDATA_TZ, ambiguous="NaT", nonexistent="NaT")
-    return aware.tz_convert("UTC").rename("ts")
+    """Convert naive HistData clock times to UTC (see ``CLOCK_SWITCH`` for the clock's history)."""
+    new_york = local.tz_localize("America/New_York", ambiguous="NaT", nonexistent="NaT")
+    eet = (local + pd.Timedelta(hours=7)).tz_localize(
+        "Europe/Athens", ambiguous="NaT", nonexistent="NaT"
+    )
+    utc = new_york.tz_convert("UTC").where(local < CLOCK_SWITCH, eet.tz_convert("UTC"))
+    return utc.rename("ts")
+
+
+def period_complete(period: Period, last_bar: pd.Timestamp, end: date) -> bool:
+    """Whether a downloaded file reaches the end of its period (or of the study window).
+
+    HistData publishes the current month in instalments, so a month file fetched mid-month stops
+    early and must be fetched again later. Four days of slack covers weekends and holidays.
+    """
+    if period.month == 0:
+        period_end = pd.Timestamp(year=period.year, month=12, day=31)
+    else:
+        month_start = pd.Timestamp(year=period.year, month=period.month, day=1)
+        period_end = month_start + pd.offsets.MonthEnd()
+    target = min(period_end, pd.Timestamp(end))
+    return last_bar.tz_localize(None) >= target - pd.Timedelta(days=4)
 
 
 def clean_m1(bars: pd.DataFrame) -> tuple[pd.DataFrame, int]:

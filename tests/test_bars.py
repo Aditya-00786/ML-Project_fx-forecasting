@@ -61,7 +61,8 @@ def test_daily_bars_split_days_drop_weekends_and_sum_squared_returns():
         ("2026-01-04 22:00", 1.000),  # Sunday 17:00 EST -> Monday 5 Jan
         ("2026-01-05 16:55", 1.010),  # Monday 11:55 EST -> noon price for Monday
         ("2026-01-05 21:55", 1.020),  # Monday 16:55 EST -> Monday close
-        ("2026-01-05 22:00", 1.030),  # Monday 17:00 EST -> Tuesday 6 Jan
+        ("2026-01-05 23:30", 1.030),  # Monday 18:30 EST -> Tuesday 6 Jan, after a 90-minute gap
+        ("2026-01-06 14:00", 1.035),  # Tuesday 09:00 EST: too early to stand in for noon
         ("2026-01-09 22:30", 1.040),  # Friday 17:30 EST -> Saturday, dropped
     ])
     daily = daily_bars(bars, NY, close_hour=17)
@@ -71,11 +72,19 @@ def test_daily_bars_split_days_drop_weekends_and_sum_squared_returns():
     assert monday.close == 1.020
     assert monday.noon == 1.010
     assert monday.n_bars == 3
+    # Monday follows a weekend, so its first return starts from the bar's own open
     expected_rv = (
         np.log(1.000 / 0.999) ** 2 + np.log(1.010 / 1.000) ** 2 + np.log(1.020 / 1.010) ** 2
     )
     assert monday.rv == pytest.approx(expected_rv)
-    assert np.isnan(daily.loc["2026-01-06"].noon)  # no bar before noon on Tuesday
+    tuesday = daily.loc["2026-01-06"]
+    # Tuesday's first return starts from Monday's close, so the gap's move is counted
+    assert tuesday.rv == pytest.approx(np.log(1.030 / 1.020) ** 2 + np.log(1.035 / 1.030) ** 2)
+    assert np.isnan(tuesday.noon)  # no bar between 11:30 and 12:00
+    # Monday's longest gap runs from the end of the Sunday 17:00 bar to 11:55 on Monday
+    assert monday.max_gap_minutes == 1130
+    # Tuesday starts at 18:30, an hour and a half into its session
+    assert daily.loc["2026-01-06"].max_gap_minutes >= 90
 
 
 def test_bad_tick_wick_is_removed_but_genuine_extreme_kept():
@@ -93,11 +102,14 @@ def test_bad_tick_wick_is_removed_but_genuine_extreme_kept():
 
 def test_daily_measures_returns_and_thin_flag():
     daily = pd.DataFrame(
-        {"open": [1.0, 1.1], "high": [1.2, 1.3], "low": [0.9, 1.0], "close": [1.1, 1.2],
-         "n_minutes": [1400, 300]},
-        index=pd.DatetimeIndex(["2026-01-05", "2026-01-06"], name="date"),
+        {"open": [1.0, 1.1, 1.2], "high": [1.2, 1.3, 1.3], "low": [0.9, 1.0, 1.1],
+         "close": [1.1, 1.2, 1.25], "n_minutes": [1400, 300, 1200],
+         "max_gap_minutes": [10, 600, 75]},
+        index=pd.DatetimeIndex(["2026-01-05", "2026-01-06", "2026-01-12"], name="date"),
     )
     out = add_daily_measures(daily)
     assert out["ret"].iloc[1] == pytest.approx(np.log(1.2 / 1.1))
     assert out["parkinson"].iloc[0] == pytest.approx(np.log(1.2 / 0.9) ** 2 / (4 * np.log(2)))
-    assert out["thin"].tolist() == [False, True]
+    assert out["thin"].tolist() == [False, True, False]
+    assert out["partial"].tolist() == [False, True, True]
+    assert out["span_days"].tolist()[1:] == [1, 4]  # Tuesday 6 to Monday 12 skips Wed-Fri

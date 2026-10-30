@@ -19,7 +19,7 @@ def daily_panel(cfg: Config, symbols: list[str] | None = None) -> pd.DataFrame:
     frames, clipped = [], {}
     for symbol in symbols:
         bars, clipped[symbol] = clip_bad_wicks(load_bars(cfg, symbol))
-        daily = daily_bars(bars, cfg.timezone, cfg.day_close_hour)
+        daily = daily_bars(bars, cfg.timezone, cfg.day_close_hour, cfg.bar_minutes)
         daily = daily.loc[str(cfg.start) : str(cfg.end)]
         frames.append(add_daily_measures(daily).assign(symbol=symbol))
     panel = pd.concat(frames).set_index("symbol", append=True).sort_index()

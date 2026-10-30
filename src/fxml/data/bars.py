@@ -52,12 +52,19 @@ def trading_dates(index: pd.DatetimeIndex, tz: str, close_hour: int) -> pd.Datet
     return (local + pd.Timedelta(hours=24 - close_hour)).normalize()
 
 
-def daily_bars(bars: pd.DataFrame, tz: str, close_hour: int) -> pd.DataFrame:
+def daily_bars(
+    bars: pd.DataFrame, tz: str, close_hour: int, bar_minutes: int = 5
+) -> pd.DataFrame:
     """Summarise intraday bars into one row per trading day (weekend sessions dropped).
 
-    Columns: open, high, low, close, noon (last price at or before 12:00 local time),
-    n_bars, n_minutes (1-minute bars covered) and rv (realized variance: the sum of squared
-    intraday log returns, where the first bar of each day uses its own open).
+    Columns: open, high, low, close, noon (price at 12:00 local time, from a bar starting
+    11:30-11:55, else missing), n_bars, n_minutes (1-minute bars covered), max_gap_minutes
+    (longest stretch of the session with no bar, including at its start and end) and rv
+    (realized variance: the sum of squared log returns between consecutive bars).
+
+    The first return of a day starts from the previous day's close when that day is the
+    previous calendar day, so variance in a gap at the start of a session is not lost. After a
+    weekend or a missing day it starts from the bar's own open instead.
     """
     local = bars.index.tz_convert(tz).tz_localize(None)
     day = (local + pd.Timedelta(hours=24 - close_hour)).normalize()
@@ -65,12 +72,22 @@ def daily_bars(bars: pd.DataFrame, tz: str, close_hour: int) -> pd.DataFrame:
     frame = frame[frame["day"].dt.day_of_week < 5]
 
     log_close = np.log(frame["close"])
-    previous = log_close.groupby(frame["day"]).shift(1)
-    first_return = np.log(frame["close"] / frame["open"])
-    intraday_return = (log_close - previous).fillna(first_return)
-    frame = frame.assign(r2=intraday_return**2)
+    return_from_previous_bar = log_close.diff()
+    first_of_day = frame["day"].ne(frame["day"].shift(1))
+    follows_previous_day = (frame["day"] - frame["day"].shift(1)) == pd.Timedelta(days=1)
+    own_open_return = np.log(frame["close"] / frame["open"])
+    use_own_open = first_of_day & ~follows_previous_day
+    bar_return = return_from_previous_bar.where(~use_own_open, own_open_return)
+    frame = frame.assign(r2=bar_return**2)
+
+    bar_length = pd.Timedelta(minutes=bar_minutes)
+    session_start = frame["day"] - pd.Timedelta(hours=24 - close_hour)
+    previous_bar_end = (frame["local"].shift(1) + bar_length).where(~first_of_day, session_start)
+    frame = frame.assign(gap=frame["local"] - previous_bar_end)
 
     grouped = frame.groupby("day")
+    session_end = grouped["day"].first() + pd.Timedelta(hours=close_hour)
+    end_gap = session_end - (grouped["local"].last() + bar_length)
     out = pd.DataFrame(
         {
             "open": grouped["open"].first(),
@@ -79,26 +96,37 @@ def daily_bars(bars: pd.DataFrame, tz: str, close_hour: int) -> pd.DataFrame:
             "close": grouped["close"].last(),
             "n_bars": grouped["close"].size(),
             "n_minutes": grouped["n"].sum(),
+            "max_gap_minutes": np.maximum(grouped["gap"].max(), end_gap).dt.total_seconds() / 60,
             "rv": grouped["r2"].sum(),
         }
     )
-    morning = frame[(frame["local"].dt.hour < 12) & (frame["local"].dt.normalize() == frame["day"])]
-    out["noon"] = morning.groupby("day")["close"].last()
+    late_morning = (
+        (frame["local"].dt.hour == 11)
+        & (frame["local"].dt.minute >= 30)
+        & (frame["local"].dt.normalize() == frame["day"])
+    )
+    out["noon"] = frame[late_morning].groupby("day")["close"].last()
     out.index.name = "date"
     return out
 
 
 def add_daily_measures(daily: pd.DataFrame, minutes_per_day: int = 1440) -> pd.DataFrame:
-    """Add close-to-close log returns, range-based variance estimators and a thin-session flag.
+    """Add close-to-close log returns, range-based variance estimators and session flags.
 
-    ``thin`` marks sessions covering under half the minutes of a full day, such as the
-    25 December and 1 January holidays.
+    ``span_days`` counts the weekdays a return covers: 1 normally, more when trading days are
+    missing in between. ``thin`` marks sessions covering under half a day, such as the
+    25 December and 1 January holidays. ``partial`` marks sessions with a stretch of over an
+    hour without any bar, such as the HistData gaps in 2023. Counting minutes would not work
+    here: before 2012 HistData simply has no bar for quiet minutes.
     """
     out = daily.copy()
     log_hl = np.log(out["high"] / out["low"])
     log_co = np.log(out["close"] / out["open"])
+    dates = out.index.to_numpy().astype("datetime64[D]")
     out["ret"] = np.log(out["close"]).diff()
+    out["span_days"] = np.r_[np.nan, np.busday_count(dates[:-1], dates[1:])]
     out["parkinson"] = log_hl**2 / (4 * np.log(2))
     out["garman_klass"] = 0.5 * log_hl**2 - (2 * np.log(2) - 1) * log_co**2
     out["thin"] = out["n_minutes"] < 0.5 * minutes_per_day
+    out["partial"] = out["thin"] | (out["max_gap_minutes"] > 60)
     return out

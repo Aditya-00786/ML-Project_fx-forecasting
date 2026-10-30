@@ -17,8 +17,10 @@ def expected_trading_days(start: pd.Timestamp, end: pd.Timestamp) -> pd.Datetime
     return days[~holiday]
 
 
-def coverage_report(panel: pd.DataFrame) -> pd.DataFrame:
-    """Per symbol: date range, share of expected trading days present and thin sessions."""
+def coverage_report(panel: pd.DataFrame, start, end) -> pd.DataFrame:
+    """Per symbol: how far its data falls short of the configured ``start`` and ``end``, the share
+    of expected trading days present in between, and how many sessions are thin or partial."""
+    start, end = pd.Timestamp(start), pd.Timestamp(end)
     rows = {}
     for symbol, frame in panel.groupby(level="symbol"):
         dates = frame.index.get_level_values("date")
@@ -27,11 +29,12 @@ def coverage_report(panel: pd.DataFrame) -> pd.DataFrame:
         rows[symbol] = {
             "first": dates.min().date(),
             "last": dates.max().date(),
-            "days": len(dates),
-            "expected": len(expected),
+            "start_gap_days": len(expected_trading_days(start, dates.min())) - 1,
+            "end_gap_days": len(expected_trading_days(dates.max(), end)) - 1,
             "coverage_pct": 100 * present.mean(),
             "missing": int((~present).sum()),
             "thin_days": int(frame["thin"].sum()),
+            "partial_days": int(frame["partial"].sum()),
             "median_minutes": float(frame["n_minutes"].median()),
         }
     return pd.DataFrame.from_dict(rows, orient="index")
@@ -41,8 +44,8 @@ def h10_check(panel: pd.DataFrame, macro: pd.DataFrame, pairs: tuple[str, ...]) 
     """Compare our 12:00 New York prices with the Federal Reserve's H.10 noon rates.
 
     Both are noon New York quotes, so their daily log returns should be almost identical. The
-    match is also reported separately for winter and summer: a timezone error shows up as a
-    much weaker match in one season.
+    match is reported for winter, summer and the weeks when US and EU daylight saving disagree:
+    a clock error shows up as a much weaker match in one of these.
     """
     rows = {}
     for pair in pairs:
@@ -50,20 +53,27 @@ def h10_check(panel: pd.DataFrame, macro: pd.DataFrame, pairs: tuple[str, ...]) 
         fed = macro[f"h10_{pair}"]
         both = pd.concat({"ours": ours, "fed": fed}, axis=1, sort=True).dropna()
         returns = np.log(both).diff().dropna()
-        summer = new_york_dst(returns.index)
+        us_summer = dst_flags(returns.index, "America/New_York")
+        clock_gap = us_summer != dst_flags(returns.index, "Europe/Athens")
         rows[pair] = {
             "days": len(both),
             "return_corr": returns["ours"].corr(returns["fed"]),
-            "return_corr_winter": returns[~summer]["ours"].corr(returns[~summer]["fed"]),
-            "return_corr_summer": returns[summer]["ours"].corr(returns[summer]["fed"]),
+            "return_corr_winter": _corr(returns[~us_summer]),
+            "return_corr_summer": _corr(returns[us_summer]),
+            "return_corr_clock_gap": _corr(returns[clock_gap]),
+            "clock_gap_days": int(clock_gap.sum()),
             "mean_abs_level_gap_pct": 100 * (both["ours"] / both["fed"] - 1).abs().mean(),
         }
     return pd.DataFrame.from_dict(rows, orient="index")
 
 
-def new_york_dst(dates: pd.DatetimeIndex) -> np.ndarray:
-    """True where noon on that date falls in New York daylight saving time."""
-    noon = (dates + pd.Timedelta(hours=12)).tz_localize("America/New_York")
+def _corr(returns: pd.DataFrame) -> float:
+    return returns["ours"].corr(returns["fed"])
+
+
+def dst_flags(dates: pd.DatetimeIndex, tz: str) -> np.ndarray:
+    """True where noon (New York) on that date falls in daylight saving time in ``tz``."""
+    noon = (dates + pd.Timedelta(hours=12)).tz_localize("America/New_York").tz_convert(tz)
     return np.array([bool(t.dst()) for t in noon])
 
 

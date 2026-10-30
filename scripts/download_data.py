@@ -2,7 +2,8 @@
 
 HistData 1-minute bars are parsed in memory and stored straight away as intraday bars of
 ``bars.minutes`` minutes, one Parquet file per symbol and period. FRED series and the BIS
-policy rate file are small and kept as downloaded. Re-running skips files already done.
+policy rate file are small and kept as downloaded. Re-running skips files already complete
+and fetches again any month that HistData had only partly published.
 
     uv run python scripts/download_data.py                    # everything
     uv run python scripts/download_data.py --sources fred bis
@@ -17,6 +18,7 @@ import sys
 import time
 from datetime import UTC, datetime
 
+import pandas as pd
 import requests
 from tqdm import tqdm
 
@@ -26,6 +28,13 @@ from fxml.data.bars import resample_bars
 from fxml.data.storage import bars_dir, read_manifest, write_manifest
 
 
+def done(entry: dict | None, period: histdata.Period, cfg: Config) -> bool:
+    """A file is done once downloaded and complete; a partial current month is fetched again."""
+    if entry is None:
+        return False
+    return histdata.period_complete(period, pd.Timestamp(entry["last"]), cfg.end)
+
+
 def download_histdata(cfg: Config, symbols: list[str], delay: float) -> list[str]:
     session = histdata.new_session()
     manifest = read_manifest(cfg)
@@ -33,7 +42,7 @@ def download_histdata(cfg: Config, symbols: list[str], delay: float) -> list[str
     for symbol in symbols:
         offered = histdata.available_periods(symbol, session)
         periods = histdata.select_periods(offered, cfg.start, cfg.end)
-        todo = [p for p in periods if f"{symbol}/{p.key}" not in manifest]
+        todo = [p for p in periods if not done(manifest.get(f"{symbol}/{p.key}"), p, cfg)]
         print(f"{symbol}: {len(periods)} files offered in range, {len(todo)} to download")
         for period in tqdm(todo, desc=symbol, unit="file"):
             key = f"{symbol}/{period.key}"

@@ -10,6 +10,7 @@ from fxml.data.histdata import (
     parse_form_fields,
     parse_m1_csv,
     parse_period_links,
+    period_complete,
     read_zip,
     select_periods,
 )
@@ -42,17 +43,41 @@ def test_form_fields_are_extracted():
     assert parse_form_fields(html)["datemonth"] == "202601"
 
 
-def test_timestamps_are_new_york_local_time_with_daylight_saving():
-    winter = parse_m1_csv(SAMPLE_CSV)
-    assert winter.index[0] == pd.Timestamp("2026-01-01 22:04", tz="UTC")  # EST = UTC-5
-    summer = parse_m1_csv("20260706 120000;1.1;1.2;1.0;1.15;0\n")
-    assert summer.index[0] == pd.Timestamp("2026-07-06 16:00", tz="UTC")  # EDT = UTC-4
-    assert list(winter.columns) == ["open", "high", "low", "close"]
+def utc_of(stamp: str) -> pd.Timestamp:
+    return parse_m1_csv(f"{stamp};1.1;1.2;1.0;1.15;0\n").index[0]
+
+
+def test_clock_is_new_york_time_until_2018():
+    assert utc_of("20150105 120000") == pd.Timestamp("2015-01-05 17:00", tz="UTC")  # EST
+    assert utc_of("20150706 120000") == pd.Timestamp("2015-07-06 16:00", tz="UTC")  # EDT
+    # 9 March 2015: US on daylight saving, EU not yet; the clock still follows New York
+    assert utc_of("20150309 120000") == pd.Timestamp("2015-03-09 16:00", tz="UTC")
+
+
+def test_clock_is_eet_minus_seven_hours_from_2019():
+    assert utc_of("20260105 120000") == pd.Timestamp("2026-01-05 17:00", tz="UTC")
+    assert utc_of("20260706 120000") == pd.Timestamp("2026-07-06 16:00", tz="UTC")
+    # 9 March 2026: US on daylight saving, EU not yet; the clock is an hour behind New York
+    assert utc_of("20260309 120000") == pd.Timestamp("2026-03-09 17:00", tz="UTC")
+    assert list(parse_m1_csv(SAMPLE_CSV).columns) == ["open", "high", "low", "close"]
 
 
 def test_clock_times_skipped_by_daylight_saving_are_dropped():
-    bars = parse_m1_csv("20260308 023000;1.1;1.2;1.0;1.15;0\n20260308 170000;1.1;1.2;1.0;1.15;0\n")
-    assert len(bars) == 1
+    text = (
+        "20150308 023000;1.1;1.2;1.0;1.15;0\n"  # does not exist in New York
+        "20260328 203000;1.1;1.2;1.0;1.15;0\n"  # 03:30 in Athens on 29 March 2026: does not exist
+        "20260329 170000;1.1;1.2;1.0;1.15;0\n"
+    )
+    assert len(parse_m1_csv(text)) == 1
+
+
+def test_partial_month_is_not_complete():
+    october = Period(2026, 10)
+    end = date(2026, 10, 30)
+    assert not period_complete(october, pd.Timestamp("2026-10-23 20:58", tz="UTC"), end)
+    assert period_complete(october, pd.Timestamp("2026-10-30 20:58", tz="UTC"), end)
+    assert period_complete(Period(2015), pd.Timestamp("2015-12-31 21:59", tz="UTC"), end)
+    assert not period_complete(Period(2015), pd.Timestamp("2015-06-30 21:59", tz="UTC"), end)
 
 
 def test_zip_is_read_in_memory():

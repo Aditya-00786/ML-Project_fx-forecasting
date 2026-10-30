@@ -17,14 +17,17 @@ def test_expected_days_skip_weekends_christmas_and_new_year():
 def panel_for(dates, noon):
     index = pd.MultiIndex.from_product([pd.DatetimeIndex(dates, name="date"), ["EURUSD"]],
                                        names=["date", "symbol"])
-    return pd.DataFrame({"noon": noon, "thin": False, "n_minutes": 1440}, index=index)
+    return pd.DataFrame({"noon": noon, "thin": False, "partial": False, "n_minutes": 1440},
+                        index=index)
 
 
-def test_coverage_counts_missing_days():
-    dates = pd.bdate_range("2026-01-05", "2026-01-16").delete(3)  # drop Thursday 8 Jan
-    report = coverage_report(panel_for(dates, 1.0))
+def test_coverage_counts_missing_days_and_short_ends():
+    dates = pd.bdate_range("2026-01-06", "2026-01-16").delete(2)  # drop Thursday 8 Jan
+    report = coverage_report(panel_for(dates, 1.0), "2026-01-05", "2026-01-23")
     assert report.loc["EURUSD", "missing"] == 1
-    assert report.loc["EURUSD", "coverage_pct"] == pytest.approx(90.0)
+    assert report.loc["EURUSD", "coverage_pct"] == pytest.approx(8 / 9 * 100)
+    assert report.loc["EURUSD", "start_gap_days"] == 1  # Monday 5 Jan is missing at the start
+    assert report.loc["EURUSD", "end_gap_days"] == 5  # 19-23 Jan are missing at the end
 
 
 def test_h10_check_detects_identical_series():

@@ -32,9 +32,15 @@ def write_manifest(cfg: Config, manifest: dict) -> None:
 
 
 def load_bars(cfg: Config, symbol: str) -> pd.DataFrame:
-    """All stored intraday bars for ``symbol``, sorted by time."""
+    """All stored intraday bars for ``symbol``, sorted by time.
+
+    Files are named ``YYYY.parquet`` (full year) or ``YYYY-MM.parquet`` (one month). Once a
+    full-year file exists, month files left over from that year are ignored.
+    """
     files = sorted(bars_dir(cfg, symbol).glob("*.parquet"))
     if not files:
         raise FileNotFoundError(f"no bars for {symbol}; run scripts/download_data.py first")
-    bars = pd.concat(pd.read_parquet(f) for f in files).sort_index()
+    full_years = {f.stem for f in files if "-" not in f.stem}
+    files = [f for f in files if "-" not in f.stem or f.stem.split("-")[0] not in full_years]
+    bars = pd.concat(pd.read_parquet(f) for f in files).sort_index(kind="stable")
     return bars[~bars.index.duplicated(keep="last")]
