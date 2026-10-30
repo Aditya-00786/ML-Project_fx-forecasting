@@ -35,7 +35,7 @@ uv run python scripts/build_dataset.py   # daily bars, macro series and policy r
 uv run python scripts/check_data.py      # coverage and agreement with Federal Reserve H.10 rates
 ```
 
-Then build the modelling table and run the baselines (about 10 minutes):
+Then build the modelling table, run the baselines (about 10 minutes) and find the regimes:
 
 ```bash
 uv run python scripts/build_features.py  # features and next-day targets in data/processed/features.parquet
