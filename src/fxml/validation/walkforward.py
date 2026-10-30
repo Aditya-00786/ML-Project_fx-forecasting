@@ -16,6 +16,14 @@ import numpy as np
 import pandas as pd
 
 
+def refit_periods(first, last, freq: str) -> list[tuple[pd.Timestamp, pd.Timestamp]]:
+    """Consecutive (start, stop) blocks covering ``first`` to ``last``. The first block starts
+    exactly at ``first`` and later ones at each ``freq`` boundary; the last is open ended."""
+    first = pd.Timestamp(first)
+    starts = pd.DatetimeIndex([first]).union(pd.date_range(first, last, freq=freq))
+    return list(zip(starts, [*starts[1:], pd.Timestamp.max], strict=True))
+
+
 @dataclass(frozen=True)
 class Fold:
     test_start: pd.Timestamp
@@ -45,8 +53,7 @@ def walk_forward(
     has_target = ~target.isna()
     positions = np.arange(len(dates))
 
-    starts = pd.date_range(pd.Timestamp(test_start), dates.max(), freq=freq)
-    for start, stop in zip(starts, [*starts[1:], pd.Timestamp.max], strict=True):
+    for start, stop in refit_periods(test_start, dates.max(), freq):
         test = positions[(dates >= start) & (dates < stop) & has_target]
         if len(test) == 0:
             continue

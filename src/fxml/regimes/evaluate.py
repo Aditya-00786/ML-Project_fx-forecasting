@@ -100,7 +100,7 @@ def regime_profile(
         days = labels == regime
         length = runs.loc[runs["regime"] == regime, "length"]
         known = regime in moves.index and regime in moves.columns
-        stay = moves.at[regime, regime] if known else 0.0
+        stay = moves.at[regime, regime] if known else np.nan  # never followed by another day
         rows.append({
             "regime": regime,
             "share_of_days": days.mean(),

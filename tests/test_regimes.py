@@ -132,3 +132,46 @@ def test_regime_profile_and_agreement():
     ari = agreement(labels)
     assert ari.loc["truth", "renamed"] == pytest.approx(1.0)
     assert adjusted_rand_score(truth, truth) == 1.0
+
+
+def test_an_empty_mixture_component_still_gets_a_label():
+    """A component that wins no training day is ordered by its centre, so prediction and
+    probabilities keep one entry per regime."""
+    state, _ = synthetic_state()
+    model = RegimeModel("gmm", 3).fit(state)
+    z = model.scaler_.transform(state)
+    raw = model.model_.predict(z)
+    raw[raw == raw[0]] = (raw[0] + 1) % 3  # pretend one component never won a day
+    model._set_order(state["vol_short"].to_numpy(), raw)
+    assert sorted(model.mapping_) == [-1, 0, 1, 2]
+    assert model.predict_proba(state).shape == (len(state), 3)
+    assert set(model.predict(state)) <= {0, 1, 2}
+
+
+def test_walk_forward_starts_exactly_at_the_first_refit():
+    state, _ = synthetic_state()
+    labels = walk_forward_labels(state, "kmeans", 3, "2010-03-15")
+    assert labels["in_sample"].eq(labels.index < "2010-03-15").all()
+    # the March to December block uses the model fitted on days before 15 March only
+    model = RegimeModel("kmeans", 3).fit(state[state.index < "2010-03-15"])
+    block = state.loc["2010-03-15":"2010-12-31"]
+    assert (labels.loc[block.index, "regime"].to_numpy() == model.predict(block)).all()
+
+
+def test_dbscan_edge_cases():
+    from fxml.regimes.models import knee_distance
+
+    flat = np.zeros((50, 5))
+    assert knee_distance(flat, 10) > 0
+    state, _ = synthetic_state()
+    model = RegimeModel("dbscan").fit(state)
+    model.neighbours_ = None  # as if every training day were noise
+    assert (model.predict(state) == -1).all()
+
+
+def test_stay_probability_is_unknown_for_a_regime_seen_only_on_the_last_day():
+    dates = pd.bdate_range("2020-01-01", periods=5)
+    labels = pd.Series([0, 0, 0, 0, 1], index=dates)
+    rv = pd.Series(1e-5, index=dates)
+    profile = regime_profile(labels, rv, pd.Series(False, index=dates)).set_index("regime")
+    assert np.isnan(profile.loc[1, "stay_probability"])

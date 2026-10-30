@@ -11,6 +11,8 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
+from fxml.validation.walkforward import refit_periods
+
 
 def usd_value_returns(table: pd.DataFrame, pairs: tuple[str, ...]) -> pd.DataFrame:
     """Daily log returns of each foreign currency against the dollar, one column per currency.
@@ -78,15 +80,13 @@ def walk_forward_factors(
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Factor returns where each day uses loadings fitted only on earlier days.
 
-    Refits at each period start from ``first_refit``; days before it use the first fit's own
-    (in-sample) loadings and are flagged in ``in_sample``. Also returns every fit's loadings in
-    long form (fit start, currency, one column per component).
+    Refits at ``first_refit`` and then at each ``freq`` boundary. Days before ``first_refit`` use
+    the first fit's own (in-sample) loadings and are flagged in ``in_sample``. Also returns every
+    fit's loadings in long form (fit start, currency, one column per component).
     """
     returns = returns.dropna()
-    starts = pd.date_range(pd.Timestamp(first_refit), returns.index.max(), freq=freq)
     frames, loadings = [], []
-    for i, start in enumerate(starts):
-        stop = starts[i + 1] if i + 1 < len(starts) else pd.Timestamp.max
+    for i, (start, stop) in enumerate(refit_periods(first_refit, returns.index.max(), freq)):
         factors = CurrencyFactors(n_components).fit(returns[returns.index < start])
         period = returns[(returns.index >= start) & (returns.index < stop)]
         frames.append(factors.transform(period).assign(in_sample=False))
