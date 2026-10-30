@@ -1,7 +1,9 @@
 # Python
 __pycache__/
 *.py[cod]
-.venv/
+/.venv
+# iCloud-synced folders: keep the venv and data in *.nosync folders behind symlinks (see README)
+*.nosync
 .pytest_cache/
 .ruff_cache/
 *.egg-info/
@@ -10,7 +12,7 @@ __pycache__/
 .ipynb_checkpoints/
 
 # Data is rebuilt with scripts/build_dataset.py and never committed
-data/
+/data
 
 # Large generated outputs (figures and summary tables are committed)
 reports/predictions/

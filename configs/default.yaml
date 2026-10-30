@@ -11,7 +11,7 @@ paths:
 
 # Pairs are named as HistData names them. FX quotes are base/quote, e.g. EURUSD = USD per EUR.
 pairs: [EURUSD, GBPUSD, USDJPY, USDCHF, AUDUSD, USDCAD, NZDUSD]
-context_instruments: [XAUUSD, WTIUSD, SPXUSD]
+context_instruments: [XAUUSD, SPXUSD]  # gold and S&P 500; crude oil comes from FRED (below)
 
 period:
   start: 2006-01-01
@@ -41,6 +41,7 @@ costs:
 fred_series:
   VIXCLS: vix
   DTWEXBGS: broad_dollar
+  DCOILBRENTEU: brent        # HistData's WTI files for 2024-2026 are empty, so oil comes from here
   DEXUSEU: h10_EURUSD
   DEXUSUK: h10_GBPUSD
   DEXJPUS: h10_USDJPY
