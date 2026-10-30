@@ -56,8 +56,8 @@ Each phase ends with a pull request. The next phase starts only when its "done w
 ### Phase 1 — Data pipeline
 - **Downloads** (Claude asks before downloading, with the exact file list and size):
   - HistData 1-minute bars for EUR/USD, GBP/USD, USD/JPY, USD/CHF, AUD/USD, USD/CAD and NZD/USD, 2006–2026.
-  - The same for gold, WTI crude and the S&P 500 as context.
-  - FRED: VIX, the broad dollar index and the seven H.10 daily rates.
+  - The same for gold and the S&P 500 as context.
+  - FRED: VIX, the broad dollar index, Brent crude and the seven H.10 daily rates. Crude oil comes from FRED because HistData's WTI files for 2024–2026 are empty.
   - BIS: daily policy rates for the eight central banks.
 - **Processing:**
   - Convert HistData timestamps (fixed EST) to New York time.
@@ -71,7 +71,10 @@ Each phase ends with a pull request. The next phase starts only when its "done w
   - Gap report.
   - Correlation of our daily returns with the FRED H.10 rates.
 - **Notebooks:** `01_data_quality.ipynb` and `02_stylized_facts.ipynb` (fat tails, volatility clustering, autocorrelation of returns compared with squared returns).
-- **Done when:** a daily panel exists for all 7 pairs from Jan 2006 to Oct 2026, with coverage above 99% of trading days and H.10 return correlation above 0.95.
+- **Done when:**
+  - a daily panel exists for all 7 pairs from Jan 2006 to Oct 2026;
+  - coverage is above 99% of trading days;
+  - our 12:00 New York returns correlate above 0.95 with the Federal Reserve H.10 noon rates (checked by `scripts/check_data.py`).
 
 ### Phase 2 — Features, evaluation framework and baselines
 - **Feature modules:** returns and momentum, technical indicators, volatility, macro and calendar.
