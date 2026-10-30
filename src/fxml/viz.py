@@ -73,9 +73,14 @@ def apply_style() -> None:
     )
 
 
-def shade_stress(ax: plt.Axes, label: bool = False) -> None:
-    """Shade the documented stress periods; optionally name them just above the axes."""
+def shade_stress(ax: plt.Axes, label: bool = False, since=None) -> None:
+    """Shade the documented stress periods; optionally name them just above the axes.
+
+    Periods ending before ``since`` are skipped, for charts that start later than 2006.
+    """
     for name, (start, end) in STRESS_PERIODS.items():
+        if since is not None and pd.Timestamp(end) < pd.Timestamp(since):
+            continue
         ax.axvspan(pd.Timestamp(start), pd.Timestamp(end), color=SHADE, zorder=0, lw=0)
         if label:
             ax.annotate(SHORT_NAMES[name], xy=(pd.Timestamp(start), 1.02),

@@ -59,8 +59,9 @@ def daily_bars(
 
     Columns: open, high, low, close, noon (price at 12:00 local time, from a bar starting
     11:30-11:55, else missing), n_bars, n_minutes (1-minute bars covered), max_gap_minutes
-    (longest stretch of the session with no bar, including at its start and end) and rv
-    (realized variance: the sum of squared log returns between consecutive bars).
+    (longest stretch of the session with no bar, including at its start and end), rv
+    (realized variance: the sum of squared log returns between consecutive bars) and its
+    split into rv_up and rv_down (realized semivariances from positive and negative returns).
 
     The first return of a day starts from the previous day's close when that day is the
     previous calendar day, so variance in a gap at the start of a session is not lost. After a
@@ -78,7 +79,11 @@ def daily_bars(
     own_open_return = np.log(frame["close"] / frame["open"])
     use_own_open = first_of_day & ~follows_previous_day
     bar_return = return_from_previous_bar.where(~use_own_open, own_open_return)
-    frame = frame.assign(r2=bar_return**2)
+    frame = frame.assign(
+        r2=bar_return**2,
+        r2_up=(bar_return**2).where(bar_return > 0, 0.0),
+        r2_down=(bar_return**2).where(bar_return < 0, 0.0),
+    )
 
     bar_length = pd.Timedelta(minutes=bar_minutes)
     session_start = frame["day"] - pd.Timedelta(hours=24 - close_hour)
@@ -98,6 +103,8 @@ def daily_bars(
             "n_minutes": grouped["n"].sum(),
             "max_gap_minutes": np.maximum(grouped["gap"].max(), end_gap).dt.total_seconds() / 60,
             "rv": grouped["r2"].sum(),
+            "rv_up": grouped["r2_up"].sum(),
+            "rv_down": grouped["r2_down"].sum(),
         }
     )
     late_morning = (

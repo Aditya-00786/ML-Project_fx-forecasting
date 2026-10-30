@@ -77,6 +77,8 @@ def test_daily_bars_split_days_drop_weekends_and_sum_squared_returns():
         np.log(1.000 / 0.999) ** 2 + np.log(1.010 / 1.000) ** 2 + np.log(1.020 / 1.010) ** 2
     )
     assert monday.rv == pytest.approx(expected_rv)
+    assert monday.rv_up + monday.rv_down == pytest.approx(monday.rv)
+    assert monday.rv_down == 0  # every Monday bar moved up
     tuesday = daily.loc["2026-01-06"]
     # Tuesday's first return starts from Monday's close, so the gap's move is counted
     assert tuesday.rv == pytest.approx(np.log(1.030 / 1.020) ** 2 + np.log(1.035 / 1.030) ** 2)
