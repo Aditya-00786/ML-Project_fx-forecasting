@@ -49,13 +49,14 @@ def apply_style() -> None:
             "text.color": INK,
             "axes.labelcolor": INK_SECONDARY,
             "axes.titlesize": 10,
-            "axes.titleweight": "semibold",
+            "axes.titleweight": "bold",
             "axes.titlecolor": INK,
             "axes.titlelocation": "left",
             "axes.edgecolor": BASELINE,
             "axes.linewidth": 0.8,
             "axes.spines.top": False,
             "axes.spines.right": False,
+            "axes.axisbelow": True,
             "axes.grid": True,
             "axes.grid.axis": "y",
             "grid.color": GRID,
@@ -76,14 +77,18 @@ def apply_style() -> None:
 def shade_stress(ax: plt.Axes, label: bool = False, since=None) -> None:
     """Shade the documented stress periods; optionally name them just above the axes.
 
-    Periods ending before ``since`` are skipped, for charts that start later than 2006.
+    Periods ending before ``since`` are skipped, for charts that start later than 2006, and a
+    period already under way at ``since`` is labelled from there.
     """
     for name, (start, end) in STRESS_PERIODS.items():
         if since is not None and pd.Timestamp(end) < pd.Timestamp(since):
             continue
         ax.axvspan(pd.Timestamp(start), pd.Timestamp(end), color=SHADE, zorder=0, lw=0)
         if label:
-            ax.annotate(SHORT_NAMES[name], xy=(pd.Timestamp(start), 1.02),
+            at = pd.Timestamp(start)
+            if since is not None:
+                at = max(at, pd.Timestamp(since))
+            ax.annotate(SHORT_NAMES[name], xy=(at, 1.02),
                         xycoords=("data", "axes fraction"), rotation=45, va="bottom",
                         ha="left", fontsize=7, color=INK_MUTED, annotation_clip=False)
 

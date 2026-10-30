@@ -51,3 +51,14 @@ def test_unsorted_dates_are_rejected():
     dates = pd.DatetimeIndex(["2011-01-04", "2011-01-03"])
     with pytest.raises(ValueError):
         list(walk_forward(dates, dates, "2011-01-01"))
+
+
+def test_refit_periods_start_at_the_first_date():
+    from fxml.validation.walkforward import refit_periods
+
+    periods = refit_periods("2012-03-15", "2014-06-30", "YS")
+    assert [str(s.date()) for s, _ in periods] == ["2012-03-15", "2013-01-01", "2014-01-01"]
+    assert periods[0][1] == pd.Timestamp("2013-01-01")
+    assert periods[-1][1] == pd.Timestamp.max
+    assert [s for s, _ in refit_periods("2012-01-01", "2012-03-31", "MS")] == list(
+        pd.date_range("2012-01-01", "2012-03-01", freq="MS"))

@@ -101,6 +101,13 @@ Each phase ends with a pull request. The next phase starts only when its "done w
   - The number of regimes is chosen by silhouette, Davies–Bouldin and BIC.
   - Labels are kept stable across refits by ordering regimes by average volatility.
 - **Done when:** a regime timeline figure for 2006–2026 is produced, shaded with the known crisis episodes, together with persistence statistics.
+- **As built:**
+  - The market state, models and selection are in `src/fxml/regimes/`; the factors are in `src/fxml/factors.py`.
+  - One number of regimes is shared by every method so they can be compared. Each method and criterion votes on the 2006–2011 window, and only solutions whose smallest regime holds at least 10% of days count. The vote chose 2 (calm and turbulent). The count is fragile because the state has no sharp clusters: before the ADX warm-up fix the same vote chose 4.
+  - Walk-forward labels, Gaussian mixture probabilities and factor returns come from models refitted every January from 2012. Full sample fits are used only for the timeline.
+  - DBSCAN marks shock days well in hindsight but calls up to 74% of a year's days noise out of sample, so it is descriptive only.
+  - For Phase 4, long momentum features are missing for most of 2006, and gold and S&P 500 features only start in March 2009 and November 2010.
+  - Command: `scripts/run_regimes.py`. Results are in `notebooks/04_regimes_factors.ipynb`.
 
 ### Phase 4 — Classical machine learning
 - **Volatility:** ridge, lasso, kNN, random forest and LightGBM.
