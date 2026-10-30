@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Data is rebuilt with scripts/build_dataset.py and never committed
+data/
+
+# Large generated outputs (figures and summary tables are committed)
+reports/predictions/
+reports/cache/
+
+# LaTeX build files
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+
+# OS and editors
+.DS_Store
+.vscode/
+.idea/

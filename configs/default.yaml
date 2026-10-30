@@ -1,0 +1,53 @@
+# Default configuration for every pipeline step.
+# Paths are relative to the repository root.
+
+seed: 42
+
+paths:
+  raw: data/raw              # downloads, deleted after conversion to save disk
+  interim: data/interim      # 5-minute bars per pair (Parquet)
+  processed: data/processed  # daily panel, features and targets (Parquet)
+  reports: reports           # predictions, tables and figures
+
+# Pairs are named as HistData names them. FX quotes are base/quote, e.g. EURUSD = USD per EUR.
+pairs: [EURUSD, GBPUSD, USDJPY, USDCHF, AUDUSD, USDCAD, NZDUSD]
+context_instruments: [XAUUSD, WTIUSD, SPXUSD]
+
+period:
+  start: 2006-01-01
+  end: 2026-10-30
+
+trading_day:
+  timezone: America/New_York
+  close_hour: 17             # each trading day runs 17:00 to 17:00 New York time
+
+bars:
+  minutes: 5                 # intraday bar size used for realized variance
+
+walk_forward:
+  test_start: 2012-01-01     # everything before this is the first training window
+  refit_frequency: MS        # pandas offset alias: refit at every month start
+  neural_refit_frequency: QS # neural networks refit at every quarter start
+  validation_fraction: 0.2   # last part of each training window used for tuning
+  embargo_days: 5            # trading days dropped between training and validation
+
+costs:
+  # Assumed average bid-ask spreads in pips for major pairs; stress runs multiply them.
+  spread_pips: {EURUSD: 0.8, GBPUSD: 1.2, USDJPY: 0.9, USDCHF: 1.4, AUDUSD: 1.0, USDCAD: 1.4, NZDUSD: 1.8}
+  pip_size: {EURUSD: 0.0001, GBPUSD: 0.0001, USDJPY: 0.01, USDCHF: 0.0001, AUDUSD: 0.0001, USDCAD: 0.0001, NZDUSD: 0.0001}
+  stress_multiplier: 2.0
+
+# FRED series id -> column name. H.10 rates are oriented the same way as the pairs above.
+fred_series:
+  VIXCLS: vix
+  DTWEXBGS: broad_dollar
+  DEXUSEU: h10_EURUSD
+  DEXUSUK: h10_GBPUSD
+  DEXJPUS: h10_USDJPY
+  DEXSZUS: h10_USDCHF
+  DEXUSAL: h10_AUDUSD
+  DEXCAUS: h10_USDCAD
+  DEXUSNZ: h10_NZDUSD
+
+# BIS reference area -> currency for daily central bank policy rates.
+policy_rates: {US: USD, XM: EUR, GB: GBP, JP: JPY, CH: CHF, AU: AUD, CA: CAD, NZ: NZD}
