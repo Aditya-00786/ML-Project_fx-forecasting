@@ -43,6 +43,13 @@ uv run python scripts/run_baselines.py   # walk-forward forecasts and reports/ta
 uv run python scripts/run_regimes.py     # market regimes and currency factors in data/processed/market_state.parquet
 ```
 
+Then the classical machine learning models (about 3 hours of CPU time, so run them on many cores; jobs resume where they stopped):
+
+```bash
+uv run python scripts/run_ml.py --workers 8   # every model, pair and task; reports/tables/ml_*.csv
+uv run python scripts/run_learning_curves.py  # Naive Bayes against logistic regression; reports/tables/ml_learning_curves.csv
+```
+
 On a Mac, LightGBM (used from Phase 4) also needs the OpenMP runtime: `brew install libomp`.
 
 The stored data takes about 0.25 GB. The 1-minute bars are kept as 5-minute bars, and raw ZIP files are never written to disk. The notebooks `01_data_quality` and `02_stylized_facts` document what the data looks like.

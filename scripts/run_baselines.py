@@ -17,7 +17,7 @@ import pandas as pd
 
 from fxml.config import load_config
 from fxml.models.baselines import BASELINES
-from fxml.validation.evaluate import score
+from fxml.validation.evaluate import score, summary_tables
 from fxml.validation.walkforward import walk_forward
 
 TARGET = {"volatility": "y_rv", "returns": "y_ret", "direction": "y_dir"}
@@ -46,30 +46,6 @@ def run_pair(pair: str) -> pd.DataFrame:
     return pd.concat(frames, ignore_index=True)
 
 
-def summary_tables(scores: pd.DataFrame) -> dict[str, pd.DataFrame]:
-    """Per task: one row per (pair, model), plus an "average" row per model.
-
-    Averaging p-values across pairs is meaningless, so the average row instead counts the pairs
-    where the model is significantly better than the reference (p < 0.05), or for direction the
-    pairs where its calls beat chance.
-    """
-    out = {}
-    for task, group in scores.groupby("task"):
-        group = group.drop(columns="task").dropna(axis=1, how="all")
-        dm, p = f"dm_vs_{REFERENCE[task]}", f"dm_p_vs_{REFERENCE[task]}"
-        tests = [dm, p, "pt_stat", "pt_p"]
-        metrics = [c for c in group.select_dtypes("number").columns if c not in tests]
-        average = group.groupby("model")[metrics].mean()
-        if task == "direction":
-            better = group["pt_p"] < 0.05
-        else:
-            better = (group[dm] < 0) & (group[p] < 0.05)
-        average["pairs_significantly_better"] = better.groupby(group["model"]).sum()
-        average = average.reset_index().assign(pair="average")
-        out[task] = pd.concat([group, average], ignore_index=True)
-    return out
-
-
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--score-only", action="store_true",
@@ -88,7 +64,7 @@ def main() -> None:
     tables = cfg.paths.reports / "tables"
     tables.mkdir(parents=True, exist_ok=True)
     pd.set_option("display.width", 200)
-    for task, table in summary_tables(score(predictions, REFERENCE)).items():
+    for task, table in summary_tables(score(predictions, REFERENCE), REFERENCE).items():
         table.to_csv(tables / f"baselines_{task}.csv", index=False)
         average = table[table["pair"] == "average"].set_index("model")
         print(f"\n{task}: average over pairs")

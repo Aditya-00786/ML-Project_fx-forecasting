@@ -117,6 +117,13 @@ Each phase ends with a pull request. The next phase starts only when its "done w
 - **Naive Bayes vs logistic regression:** learning curves as the training window grows (RQ5).
 - **Hyperparameters:** tuned once a year on the validation slice and reused for the monthly refits, which keeps compute modest.
 - **Done when:** the comparison tables against the baselines are complete, with Diebold–Mariano and Pesaran–Timmermann results.
+- **As built:**
+  - Models are in `src/fxml/models/ml.py` and the per-pair inputs in `src/fxml/models/inputs.py`. Features are the 46 Phase 2 features plus a walk-forward GARCH(1,1) variance forecast and the three walk-forward currency factor returns.
+  - Volatility models predict log realized variance; a scale factor fitted on the validation slice each year turns that into a variance.
+  - Regime-aware variants of ridge, logistic regression and LightGBM use the Gaussian mixture probability of the turbulent regime as a feature (`_regime`) or one expert per regime weighted by those probabilities (`_experts`).
+  - Results: LightGBM beats HAR-RV by 6% (significant on 5 of 7 pairs). Direction and returns stay at chance. Regime information does not help, and experts per regime are worse.
+  - RQ5 uses two targets: direction (no signal) and a high volatility day (strong signal). On the second, Naive Bayes ranks better up to about a year of data and logistic regression wins beyond two years.
+  - Commands: `scripts/run_ml.py` (about 3 hours of CPU time, run as parallel jobs), then `scripts/run_learning_curves.py`. Results are in `notebooks/05_classical_ml.ipynb`.
 
 ### Phase 5 — Neural networks
 - An MLP, plus an LSTM over a window of recent days (PyTorch).
