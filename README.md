@@ -48,6 +48,7 @@ Then the classical machine learning models (about 3 hours of CPU time, so run th
 ```bash
 uv run python scripts/run_ml.py --workers 8   # every model, pair and task; reports/tables/ml_*.csv
 uv run python scripts/run_learning_curves.py  # Naive Bayes against logistic regression; reports/tables/ml_learning_curves.csv
+uv run python scripts/run_neural.py --workers 8   # MLP and LSTM, three seeds each; joins the same ml_*.csv tables
 ```
 
 On a Mac, LightGBM (used from Phase 4) also needs the OpenMP runtime: `brew install libomp`.

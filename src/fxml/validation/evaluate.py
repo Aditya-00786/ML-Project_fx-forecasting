@@ -28,6 +28,14 @@ def loss(task: str, actual: np.ndarray, forecast: np.ndarray) -> np.ndarray:
     return (np.asarray(actual) - np.asarray(forecast)) ** 2
 
 
+def aligned(group: pd.DataFrame) -> tuple[pd.DataFrame, pd.Series]:
+    """One task and pair's forecasts as a (date x model) table, and the actual values on
+    those dates."""
+    wide = group.pivot(index="date", columns="model", values="forecast")
+    actual = group.drop_duplicates("date").set_index("date")["actual"].reindex(wide.index)
+    return wide, actual
+
+
 def score(predictions: pd.DataFrame, reference: dict[str, str]) -> pd.DataFrame:
     """One row per (task, pair, model): accuracy metrics plus a Diebold-Mariano test against
     the task's reference model (negative statistic = better than the reference) and, for
@@ -38,8 +46,7 @@ def score(predictions: pd.DataFrame, reference: dict[str, str]) -> pd.DataFrame:
     """
     rows = []
     for (task, pair), group in predictions.groupby(["task", "pair"]):
-        wide = group.pivot(index="date", columns="model", values="forecast")
-        actual = group.drop_duplicates("date").set_index("date")["actual"].reindex(wide.index)
+        wide, actual = aligned(group)
         ref = reference[task]
         for model in wide.columns:
             # score each model on the days both it and the reference forecast

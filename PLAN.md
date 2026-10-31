@@ -129,6 +129,12 @@ Each phase ends with a pull request. The next phase starts only when its "done w
 - An MLP, plus an LSTM over a window of recent days (PyTorch).
 - Refitted quarterly, with early stopping on the validation slice and several seeds.
 - **Done when:** the neural models appear in the same comparison tables as the rest.
+- **As built:**
+  - `src/fxml/models/neural.py`: an MLP (64 and 32 units) on each day's 50 inputs and an LSTM (32 units) over the last 20 trading days, for all three tasks. PyTorch runs on CPU; on Linux it installs from PyTorch's CPU-only index.
+  - At each quarterly refit the network is trained with early stopping on the validation slice, then retrained on the whole training window for the chosen number of epochs. Three seeds per network; their forecasts are averaged.
+  - Scoring for every model now lives in `src/fxml/models/comparison.py`, so baselines, classical models and neural networks share `reports/tables/ml_*.csv`.
+  - Results: the MLP beats HAR-RV by 3.5% (significant on 3 of 7 pairs) but not LightGBM; the LSTM is no better than HAR-RV. Direction and returns stay at chance.
+  - Command: `scripts/run_neural.py` (about 4 hours of CPU time, run as parallel jobs). Results are in `notebooks/06_neural_networks.ipynb`.
 
 ### Phase 6 — Backtest, risk and interpretation
 - **Strategies:**
