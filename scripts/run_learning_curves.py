@@ -21,6 +21,7 @@ import pandas as pd  # noqa: E402
 
 from fxml.config import load_config  # noqa: E402
 from fxml.models.learning_curves import learning_curve_forecasts, summarise_curves  # noqa: E402
+from fxml.validation.evaluate import aligned  # noqa: E402
 from fxml.validation.stats_tests import diebold_mariano  # noqa: E402
 from fxml.validation.walkforward import walk_forward  # noqa: E402
 
@@ -39,8 +40,7 @@ def significance(forecasts: pd.DataFrame) -> pd.DataFrame:
     lower Brier score than the other."""
     rows = []
     for (target, size, pair), group in forecasts.groupby(["target", "size", "pair"]):
-        wide = group.pivot(index="date", columns="model", values="forecast")
-        actual = group.drop_duplicates("date").set_index("date")["actual"].reindex(wide.index)
+        wide, actual = aligned(group)
         stat, p = diebold_mariano((actual - wide["naive_bayes"]) ** 2,
                                   (actual - wide["logistic"]) ** 2)
         rows.append({"target": target, "size": size, "pair": pair,

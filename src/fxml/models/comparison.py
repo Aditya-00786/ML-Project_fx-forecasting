@@ -5,16 +5,24 @@ Model forecasts are cached per job by ``scripts/run_ml.py`` (reports/predictions
 ``scripts/run_neural.py`` (reports/predictions/neural/, one file per seed). ``write_comparison``
 gathers whatever is cached, averages the neural networks over their seeds, scores everything
 against the baselines and writes reports/tables/ml_*.csv.
+
+Each cache directory keeps a signature per model (its settings, the code of the module that
+fits it, the model inputs and the walk-forward settings). When a signature changes, that model's
+cached jobs are deleted so they run again instead of mixing old and new results.
 """
 
 from __future__ import annotations
 
+import dataclasses
+import hashlib
+import inspect
+import json
 from pathlib import Path
 
 import pandas as pd
 
 from fxml.models.inputs import pair_frame
-from fxml.validation.evaluate import loss, score, summary_tables
+from fxml.validation.evaluate import aligned, loss, score, summary_tables
 from fxml.validation.stats_tests import diebold_mariano
 
 REFERENCE = {"volatility": "har", "returns": "zero", "direction": "frequency"}
@@ -39,6 +47,40 @@ def cache_dir(cfg, family: str) -> Path:
     return cfg.paths.reports / "predictions" / family
 
 
+def _digest(*parts) -> str:
+    return hashlib.sha1("|".join(map(str, parts)).encode()).hexdigest()[:16]
+
+
+def signatures(specs, inputs: pd.DataFrame, cfg, *modules) -> dict[str, str]:
+    """A signature for each spec's cached jobs, keyed by their file prefix "task__name"."""
+    shared = _digest(pd.util.hash_pandas_object(inputs, index=True).sum(),
+                     cfg.walk_forward, cfg.seed,
+                     *(inspect.getsource(module) for module in modules))
+    out = {}
+    for spec in specs:
+        settings = {f.name: getattr(spec, f.name) for f in dataclasses.fields(spec)
+                    if not callable(getattr(spec, f.name))}
+        out[f"{spec.task}__{spec.name}"] = _digest(sorted(settings.items()), shared)
+    return out
+
+
+def sync_cache(directory: Path, current: dict[str, str]) -> list[str]:
+    """Delete cached jobs whose model signature changed and record the new signatures.
+
+    Jobs cached before signatures were recorded are kept and assumed current. Returns the
+    prefixes whose jobs were deleted."""
+    manifest = directory / "signatures.json"
+    known = json.loads(manifest.read_text()) if manifest.exists() else {}
+    cleared = []
+    for prefix, signature in current.items():
+        if prefix in known and known[prefix] != signature:
+            for path in directory.glob(f"{prefix}__*"):
+                path.unlink()
+            cleared.append(prefix)
+    manifest.write_text(json.dumps(known | current, indent=1, sort_keys=True))
+    return cleared
+
+
 def write_job(path: Path, forecasts: pd.DataFrame, log: pd.DataFrame) -> None:
     """Cache one job. The forecasts file appears only once complete, so an interrupted run
     never leaves a half-written file that looks finished."""
@@ -52,7 +94,9 @@ def read_cache(directory: Path) -> tuple[pd.DataFrame | None, pd.DataFrame | Non
     if not directory.exists():
         return None, None
     files = sorted(p for p in directory.glob("*.parquet") if not p.name.endswith(".log.parquet"))
-    logs = sorted(directory.glob("*.log.parquet"))
+    # a log without its forecasts belongs to an interrupted job
+    logs = sorted(p for p in directory.glob("*.log.parquet")
+                  if p.with_name(p.name.removesuffix(".log.parquet") + ".parquet").exists())
     forecasts = pd.concat(pd.read_parquet(p) for p in files) if files else None
     return forecasts, (pd.concat(pd.read_parquet(p) for p in logs) if logs else None)
 
@@ -71,8 +115,7 @@ def regime_vs_global(predictions: pd.DataFrame) -> pd.DataFrame:
     """
     rows = []
     for (task, pair), group in predictions.groupby(["task", "pair"]):
-        wide = group.pivot(index="date", columns="model", values="forecast")
-        actual = group.drop_duplicates("date").set_index("date")["actual"].reindex(wide.index)
+        wide, actual = aligned(group)
         for model in wide.columns:
             for suffix in ("_regime", "_experts"):
                 base = model.removesuffix(suffix)
@@ -98,7 +141,8 @@ def seed_spread(neural: pd.DataFrame, baselines: pd.DataFrame, reference: dict) 
     """Each seed's headline metric averaged over pairs, next to the seed average's."""
     single = neural.assign(model=neural["model"] + "_seed" + neural["seed"].astype(str))
     combined = seed_average(neural)
-    scored = score(pd.concat([baselines, single.drop(columns="seed"), combined],
+    references = baselines[baselines["model"].isin(reference.values())]
+    scored = score(pd.concat([references, single.drop(columns="seed"), combined],
                              ignore_index=True), reference)
     rows = []
     for task, metric in HEADLINE.items():

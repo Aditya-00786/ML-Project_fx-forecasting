@@ -27,11 +27,14 @@ from concurrent.futures import ProcessPoolExecutor, as_completed  # noqa: E402
 import pandas as pd  # noqa: E402
 
 from fxml.config import load_config  # noqa: E402
+from fxml.models import ml as ml_module  # noqa: E402
 from fxml.models.comparison import (  # noqa: E402
     ACTUAL,
     build_inputs,
     cache_dir,
     inputs_path,
+    signatures,
+    sync_cache,
     write_comparison,
     write_job,
 )
@@ -84,10 +87,13 @@ def main() -> None:
     if args.fresh and cache.exists():
         shutil.rmtree(cache)
     cache.mkdir(parents=True, exist_ok=True)
-    build_inputs(cfg).to_parquet(inputs_path(cfg), compression="zstd")
+    inputs = build_inputs(cfg)
+    inputs.to_parquet(inputs_path(cfg), compression="zstd")
 
     specs = [s for s in SPECS
              if args.only is None or f"{s.task}/{s.name}" in args.only or s.name in args.only]
+    for prefix in sync_cache(cache, signatures(specs, inputs, cfg, ml_module)):
+        print(f"{prefix}: settings, code or inputs changed, so its cached jobs run again")
     rank = {name: i for i, name in enumerate(SLOW_FIRST)}
     specs.sort(key=lambda s: rank.get(s.name.removesuffix("_regime").removesuffix("_experts"), 99))
     jobs = [(pair, s.task, s.name) for s in specs for pair in cfg.pairs

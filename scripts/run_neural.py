@@ -6,7 +6,7 @@ run continues where it stopped. Networks are refitted at every refit period of t
 included, is scored with the baselines into reports/tables/ml_*.csv, the neural networks as the
 average of their seeds.
 
-Needs data/processed/model_inputs.parquet (built by run_ml.py) and the baselines' forecasts.
+Rebuilds data/processed/model_inputs.parquet like run_ml.py, and needs the baselines' forecasts.
 
     uv run python scripts/run_neural.py [--workers N] [--seeds 3] [--only TASK/MODEL ...] [--fresh]
 """
@@ -26,11 +26,15 @@ from concurrent.futures import ProcessPoolExecutor, as_completed  # noqa: E402
 import pandas as pd  # noqa: E402
 
 from fxml.config import load_config  # noqa: E402
+from fxml.models import ml as ml_module  # noqa: E402
+from fxml.models import neural as neural_module  # noqa: E402
 from fxml.models.comparison import (  # noqa: E402
     ACTUAL,
     build_inputs,
     cache_dir,
     inputs_path,
+    signatures,
+    sync_cache,
     write_comparison,
     write_job,
 )
@@ -82,11 +86,14 @@ def main() -> None:
     if args.fresh and cache.exists():
         shutil.rmtree(cache)
     cache.mkdir(parents=True, exist_ok=True)
-    if not inputs_path(cfg).exists():
-        build_inputs(cfg).to_parquet(inputs_path(cfg), compression="zstd")
+    inputs = build_inputs(cfg)  # rebuilt every run so the networks see the current inputs
+    inputs.to_parquet(inputs_path(cfg), compression="zstd")
 
     specs = [s for s in NEURAL_SPECS
              if args.only is None or f"{s.task}/{s.name}" in args.only or s.name in args.only]
+    current = signatures(specs, inputs, cfg, neural_module, ml_module)
+    for prefix in sync_cache(cache, current):
+        print(f"{prefix}: settings, code or inputs changed, so its cached jobs run again")
     specs.sort(key=lambda s: s.name != "lstm")  # the slow LSTMs first
     jobs = [(pair, s.task, s.name, seed) for s in specs for pair in cfg.pairs
             for seed in range(args.seeds)

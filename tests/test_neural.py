@@ -55,9 +55,26 @@ def test_every_network_forecasts_every_test_day(spec, frame, folds):
 def test_refits_once_a_quarter(frame, folds):
     spec = quick(neural.get_neural_spec("returns", "mlp"))
     _, log = neural.run_neural_spec(spec, frame, folds[:6], seed=0)
-    assert log["period"].tolist() == ["2012Q1", "2012Q2"]
+    assert log["period"].tolist() == ["2012-01-01", "2012-04-01"]
     _, monthly = neural.run_neural_spec(spec, frame, folds[:3], seed=0, refit="MS")
     assert len(monthly) == 3
+    _, yearly = neural.run_neural_spec(spec, frame, folds[:6], seed=0, refit="YS")
+    assert yearly["period"].tolist() == ["2012-01-01"]
+    _, fortnightly = neural.run_neural_spec(spec, frame, folds[:2], seed=0, refit="2W")
+    assert len(fortnightly) == 2  # any pandas frequency works; each monthly fold refits once
+
+
+def test_training_survives_a_validation_loss_that_is_never_finite(frame, folds):
+    spec = quick(neural.get_neural_spec("volatility", "mlp"))
+    data = neural.prepare(frame, "volatility", folds[0].fit, 1)
+    broken = neural.Prepared(data.x, data.y.copy(), data.centre, data.spread)
+    broken.y[folds[0].valid] = np.inf  # every validation loss is infinite
+    model, epochs = neural.train(spec, broken, folds[0].fit, seed=0, valid=folds[0].valid)
+    assert epochs == 2  # patience ran out after two epochs without a finite improvement
+    unlabelled = neural.Prepared(data.x, data.y.copy(), data.centre, data.spread)
+    unlabelled.y[folds[0].valid] = np.nan
+    _, epochs = neural.train(spec, unlabelled, folds[0].fit, seed=0, valid=folds[0].valid)
+    assert epochs == spec.max_epochs  # no labelled validation rows: train the full budget
 
 
 @pytest.mark.parametrize("task, name", [("volatility", "lstm"), ("direction", "mlp")])
@@ -91,3 +108,29 @@ def test_same_seed_same_forecasts_and_seeds_average(frame, folds):
     ])
     averaged = seed_average(rows).set_index("date")["forecast"]
     np.testing.assert_allclose(averaged.to_numpy(), ((one + other) / 2).to_numpy())
+
+
+def test_cache_drops_jobs_whose_signature_changed(tmp_path, frame):
+    from types import SimpleNamespace
+
+    from fxml.models.comparison import read_cache, signatures, sync_cache, write_job
+
+    cfg = SimpleNamespace(walk_forward="wf", seed=1)
+    mlp, lstm = (neural.get_neural_spec("volatility", n) for n in ("mlp", "lstm"))
+    first = signatures([mlp, lstm], frame, cfg, neural)
+    jobs, log = pd.DataFrame({"forecast": [1.0]}), pd.DataFrame({"epochs": [3]})
+    for prefix in first:
+        write_job(tmp_path / f"{prefix}__EURUSD__seed0.parquet", jobs, log)
+    assert sync_cache(tmp_path, first) == []
+    changed = signatures([replace(mlp, hidden=128), lstm], frame, cfg, neural)
+    assert sync_cache(tmp_path, changed) == ["volatility__mlp"]
+    remaining = sorted(p.name for p in tmp_path.glob("*.parquet"))
+    assert remaining == ["volatility__lstm__EURUSD__seed0.log.parquet",
+                         "volatility__lstm__EURUSD__seed0.parquet"]
+    other_inputs = signatures([lstm], frame.assign(ret=frame["ret"] * 2), cfg, neural)
+    assert other_inputs != {k: v for k, v in changed.items() if "lstm" in k}
+    # a log whose forecasts never appeared (an interrupted job) is ignored
+    (tmp_path / "volatility__lstm__GBPUSD__seed0.log.parquet").write_bytes(
+        (tmp_path / "volatility__lstm__EURUSD__seed0.log.parquet").read_bytes())
+    forecasts, logs = read_cache(tmp_path)
+    assert len(forecasts) == 1 and len(logs) == 1

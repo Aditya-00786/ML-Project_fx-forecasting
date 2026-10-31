@@ -31,9 +31,8 @@ from torch import nn
 
 from fxml.models.inputs import BASE_FEATURES
 from fxml.models.ml import TARGETS, to_forecast, validation_loss
-from fxml.validation.walkforward import Fold
+from fxml.validation.walkforward import Fold, refit_periods
 
-PERIODS = {"MS": "M", "QS": "Q", "YS": "Y"}  # refit frequency -> pandas period
 CLIP = 10.0  # standardised inputs are clipped to +-10 to tame rare extreme days
 
 
@@ -135,7 +134,10 @@ def train(
     valid: np.ndarray | None = None, epochs: int | None = None,
 ) -> tuple[nn.Module, int]:
     """Train on ``rows``. With ``valid``, stop early and restore the best epoch's weights;
-    otherwise train for ``epochs``. Returns the network and the number of epochs used."""
+    otherwise train for ``epochs``. Returns the network and the number of epochs used.
+
+    If no epoch gives a finite validation loss (or the slice has no labelled rows), the weights
+    after the last epoch are kept and that epoch count is returned."""
     torch.manual_seed(seed)
     order = np.random.default_rng(seed)
     rows = rows[~np.isnan(data.y[rows])]
@@ -146,8 +148,11 @@ def train(
     loss_fn = _loss(spec.task)
     if valid is not None:
         valid = valid[~np.isnan(data.y[valid])]
-        x_valid, y_valid = torch.from_numpy(data.x[valid]), torch.from_numpy(data.y[valid])
-    best, best_state, best_epoch, waited = np.inf, None, 1, 0
+        if len(valid) == 0:
+            valid = None
+        else:
+            x_valid, y_valid = torch.from_numpy(data.x[valid]), torch.from_numpy(data.y[valid])
+    best, best_state, best_epoch, waited, epoch = np.inf, None, 1, 0, 0
     for epoch in range(1, (epochs or spec.max_epochs) + 1):
         model.train()
         shuffled = order.permutation(len(rows))
@@ -169,31 +174,35 @@ def train(
             waited += 1
             if waited >= spec.patience:
                 break
-    if valid is not None:
+    if best_state is not None:
         model.load_state_dict(best_state)
         return model, best_epoch
-    return model, epochs or spec.max_epochs
+    return model, epoch
 
 
 def predict(spec: NeuralSpec, model: nn.Module, data: Prepared, rows: np.ndarray) -> np.ndarray:
     """Raw predictions: log variance, probability of an up day, or return."""
     model.eval()
     with torch.no_grad():
-        out = model(torch.from_numpy(data.x[rows])).numpy().astype(float)
-    if spec.task == "direction":
-        return 1 / (1 + np.exp(-out))
-    return out * data.spread + data.centre
+        out = model(torch.from_numpy(data.x[rows]))
+        if spec.task == "direction":
+            return torch.sigmoid(out).numpy().astype(float)
+    return out.numpy().astype(float) * data.spread + data.centre
 
 
 def run_neural_spec(
     spec: NeuralSpec, frame: pd.DataFrame, folds: Sequence[Fold], seed: int = 42,
     refit: str = "QS",
 ) -> tuple[pd.Series, pd.DataFrame]:
-    """Forecasts for every test row of ``folds`` with one seed, and a log of each refit."""
+    """Forecasts for every test row of ``folds`` with one seed, and a log of each refit.
+
+    The network is refitted at the first fold and then at each ``refit`` boundary (any pandas
+    frequency, quarterly by default)."""
     torch.set_num_threads(1)  # parallelism comes from running jobs side by side
+    starts = [s for s, _ in refit_periods(folds[0].test_start, folds[-1].test_start, refit)]
     forecasts, log, period, model, data, scale = [], [], None, None, None, 1.0
     for fold in folds:
-        key = fold.test_start.to_period(PERIODS[refit])
+        key = max(s for s in starts if s <= fold.test_start)
         if key != period:
             period = key
             first = prepare(frame, spec.task, fold.fit, spec.window)
@@ -204,7 +213,7 @@ def run_neural_spec(
             loss, scale = validation_loss(spec.task, raw, valid_rows[keep])
             data = prepare(frame, spec.task, fold.train, spec.window)
             model, _ = train(spec, data, fold.train, seed, epochs=epochs)
-            log.append({"period": str(key), "epochs": epochs, "validation_loss": loss,
+            log.append({"period": f"{key:%Y-%m-%d}", "epochs": epochs, "validation_loss": loss,
                         "scale": scale})
         raw = predict(spec, model, data, fold.test)
         forecasts.append(pd.Series(to_forecast(spec.task, raw, scale),
