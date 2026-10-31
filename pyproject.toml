@@ -17,6 +17,7 @@ dependencies = [
     "pyyaml>=6.0",
     "requests>=2.32",
     "tqdm>=4.66",
+    "torch>=2.5",
 ]
 
 [dependency-groups]
@@ -27,6 +28,16 @@ dev = [
     "nbformat>=5.11.1",
     "nbclient>=0.11.0",
 ]
+
+# The networks are small, so CPU is enough everywhere. On Linux (CI and remote runs) this skips
+# the multi-gigabyte CUDA wheels; macOS uses the regular PyPI build.
+[tool.uv.sources]
+torch = [{ index = "pytorch-cpu", marker = "sys_platform == 'linux'" }]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
 
 [build-system]
 requires = ["hatchling"]

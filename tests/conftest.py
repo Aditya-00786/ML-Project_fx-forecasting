@@ -71,3 +71,36 @@ def synthetic_table(synthetic_inputs):
 
     panel, macro, rates = synthetic_inputs
     return build_table(panel, macro, rates, PAIRS)
+
+
+# Modelling frame for the learning models (Phases 4 and 5): one pair with regimes and folds.
+FIRST_REFIT = "2011-01-01"
+TEST_START = "2012-01-01"
+CUT = pd.Timestamp("2012-02-15")
+
+
+@pytest.fixture(scope="session")
+def state(synthetic_table):
+    """A market state like run_regimes.py writes, with a few days missing."""
+    rng = np.random.default_rng(3)
+    dates = synthetic_table.index.get_level_values("date").unique()
+    turbulent = pd.Series(rng.normal(0, 1, len(dates)), index=dates).rolling(20, 1).mean()
+    p1 = 1 / (1 + np.exp(-4 * turbulent))
+    frame = pd.DataFrame({"gmm_p0": 1 - p1, "gmm_p1": p1}, index=dates)
+    for column in ("pc1", "pc2", "pc3"):
+        frame[column] = rng.normal(0, 1, len(dates))
+    return frame.drop(dates[[300, 301, 500]])
+
+
+@pytest.fixture(scope="session")
+def frame(synthetic_table, state):
+    from fxml.models.inputs import pair_frame
+
+    return pair_frame(synthetic_table, "EURUSD", state, FIRST_REFIT)
+
+
+@pytest.fixture(scope="session")
+def folds(frame):
+    from fxml.validation.walkforward import walk_forward
+
+    return list(walk_forward(frame.index, frame["target_date"], TEST_START, "MS", 0.2, 5))
