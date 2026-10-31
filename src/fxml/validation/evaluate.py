@@ -53,3 +53,29 @@ def score(predictions: pd.DataFrame, reference: dict[str, str]) -> pd.DataFrame:
                 row["pt_stat"], row["pt_p"] = pesaran_timmermann(truth > 0.5, forecast > 0.5)
             rows.append(row)
     return pd.DataFrame(rows)
+
+
+def summary_tables(
+    scores: pd.DataFrame, reference: dict[str, str]
+) -> dict[str, pd.DataFrame]:
+    """Per task: one row per (pair, model), plus an "average" row per model.
+
+    Averaging p-values across pairs is meaningless, so the average row instead counts the pairs
+    where the model is significantly better than the reference (p < 0.05), or for direction the
+    pairs where its calls beat chance.
+    """
+    out = {}
+    for task, group in scores.groupby("task"):
+        group = group.drop(columns="task").dropna(axis=1, how="all")
+        dm, p = f"dm_vs_{reference[task]}", f"dm_p_vs_{reference[task]}"
+        tests = [dm, p, "pt_stat", "pt_p"]
+        metrics = [c for c in group.select_dtypes("number").columns if c not in tests]
+        average = group.groupby("model")[metrics].mean()
+        if task == "direction":
+            better = group["pt_p"] < 0.05
+        else:
+            better = (group[dm] < 0) & (group[p] < 0.05)
+        average["pairs_significantly_better"] = better.groupby(group["model"]).sum()
+        average = average.reset_index().assign(pair="average")
+        out[task] = pd.concat([group, average], ignore_index=True)
+    return out
