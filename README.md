@@ -30,7 +30,7 @@ mkdir data.nosync && ln -s data.nosync data
 Data is never committed. Every dataset comes from free public sources (HistData, FRED, BIS) and is rebuilt into `data/` with three commands:
 
 ```bash
-uv run python scripts/download_data.py   # about 0.6 GB over ~25 minutes; resumable, skips files already done
+uv run python scripts/download_data.py   # about 0.7 GB over ~25 minutes; resumable, skips files already done
 uv run python scripts/build_dataset.py   # daily bars, macro series and policy rates in data/processed
 uv run python scripts/check_data.py      # coverage and agreement with Federal Reserve H.10 rates
 ```
@@ -64,6 +64,17 @@ Extensions beyond the core plan (hidden Markov regimes come from `run_regimes.py
 uv run python scripts/run_horizons.py  # 5 and 22 day volatility and direction; reports/tables/horizons_*.csv
 ```
 
+Stretch goals: two extra pairs, run apart from the core seven so no core result changes, and the results dashboard:
+
+```bash
+uv run python scripts/build_extra_pairs.py            # EUR/GBP (HistData) and USD/INR (FRED noon rates); data/processed/extra_*.parquet
+uv run python scripts/run_extra_pairs.py --workers 8  # their forecasts, backtest and Value at Risk; reports/tables/extra_pairs_*.csv
+uv run python scripts/build_dashboard.py              # reports/dashboard.html, a self-contained page, and reports/dashboard/data.json
+uv run --group dashboard streamlit run dashboard/app.py  # the same three views as a local Streamlit app
+```
+
+Open `reports/dashboard.html` in any browser, offline. It has three views: **Verdicts** (every model against its benchmark, with the five research questions), **Explorer** (every result, any pair, model or strategy) and **Present** (slides for the final presentation, moved with the arrow keys).
+
 On a Mac, LightGBM (used from Phase 4) also needs the OpenMP runtime: `brew install libomp`.
 
 The stored data takes about 0.25 GB. The 1-minute bars are kept as 5-minute bars, and raw ZIP files are never written to disk. The notebooks `01_data_quality` and `02_stylized_facts` document what the data looks like.
@@ -76,6 +87,7 @@ The stored data takes about 0.25 GB. The 1-minute bars are kept as 5-minute bars
 | `src/fxml/` | the project package |
 | `scripts/` | command line entry points |
 | `notebooks/` | exploration and results notebooks |
+| `dashboard/` | the results dashboard as a Streamlit app |
 | `tests/` | automated checks, including look-ahead tests |
-| `reports/` | generated figures and tables |
+| `reports/` | generated figures and tables, and the dashboard page |
 | `docs/` | proposal and final report sources |

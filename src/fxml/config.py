@@ -46,6 +46,8 @@ class Config:
     paths: Paths
     pairs: tuple[str, ...]
     context_instruments: tuple[str, ...]
+    extra_pairs: tuple[str, ...]
+    daily_only: dict[str, str]  # pair -> FRED series of its daily noon rates
     start: date
     end: date
     timezone: str
@@ -68,6 +70,8 @@ def load_config(path: str | Path | None = None) -> Config:
         paths=paths,
         pairs=tuple(raw["pairs"]),
         context_instruments=tuple(raw["context_instruments"]),
+        extra_pairs=tuple(raw.get("extra_pairs", ())),
+        daily_only=dict(raw.get("daily_only") or {}),
         start=raw["period"]["start"],
         end=raw["period"]["end"],
         timezone=raw["trading_day"]["timezone"],
@@ -91,6 +95,10 @@ def _validate(cfg: Config) -> None:
         raise ValueError("walk_forward.embargo_days must not be negative")
     if 1440 % cfg.bar_minutes:
         raise ValueError("bars.minutes must divide a 24-hour day")
-    for pair in cfg.pairs:
+    for pair in (*cfg.pairs, *cfg.extra_pairs):
         if pair not in cfg.costs.spread_pips or pair not in cfg.costs.pip_size:
             raise ValueError(f"missing spread or pip size for {pair}")
+    if set(cfg.extra_pairs) & set(cfg.pairs):
+        raise ValueError("extra_pairs must not repeat a core pair")
+    if not set(cfg.daily_only) <= set(cfg.extra_pairs):
+        raise ValueError("daily_only pairs must be listed in extra_pairs")

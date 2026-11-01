@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FX forecasting results</title>
+<meta name="description" content="Results of $title: every forecast against its benchmark, with the test behind it.">
+<style>$style</style>
+</head>
+<body>
+$sprite
+<header class="bulletin">
+  <div class="bulletin-row">
+    <h1>$title</h1>
+    <p class="bulletin-course">$course · results built from <span class="path">reports/tables</span>, forecasts to $data_to</p>
+  </div>
+  <dl class="bulletin-meta">
+    <div><dt>Test period</dt><dd>$test_start to $test_end</dd></div>
+    <div><dt>Validation</dt><dd>walk-forward, refitted $refit</dd></div>
+    <div><dt>References</dt><dd>HAR-RV · up-day frequency · zero return</dd></div>
+    <div><dt>Significance</dt><dd>Diebold–Mariano at $alpha</dd></div>
+    <div><dt>Pairs</dt><dd>$pair_note</dd></div>
+  </dl>
+  <nav class="views" role="tablist" aria-label="Views">
+    <button role="tab" id="tab-verdicts" data-view="verdicts" aria-controls="view-verdicts"
+      aria-selected="true">Verdicts<kbd>1</kbd></button>
+    <button role="tab" id="tab-explorer" data-view="explorer" aria-controls="view-explorer"
+      aria-selected="false" tabindex="-1">Explorer<kbd>2</kbd></button>
+    <button role="tab" id="tab-present" data-view="present" aria-controls="view-present"
+      aria-selected="false" tabindex="-1">Present<kbd>3</kbd></button>
+    <button type="button" class="theme" data-theme="auto">Theme: system</button>
+  </nav>
+</header>
+<main>
+  <section id="view-verdicts" role="tabpanel" aria-labelledby="tab-verdicts">
+    <div class="verdicts">
+      <div class="verdicts-board">
+        <h2>Every model against its benchmark, pair by pair</h2>
+        <p class="lede">Each triangle is one model on one pair over the $test_start to $test_end
+        test period, judged by a Diebold–Mariano test of its daily loss against the task's
+        reference. Columns show a representative model from each family; the Explorer has them
+        all.</p>
+        <div class="sc-wrap" data-evidence="ev-verdicts">$master</div>
+        $legend
+        <div class="evidence empty" id="ev-verdicts" aria-live="polite">$prompt</div>
+      </div>
+      <aside class="rq-list" aria-labelledby="rq-h">
+        <h2 id="rq-h">Five research questions</h2>
+        $questions
+      </aside>
+    </div>
+  </section>
+
+  <section id="view-explorer" role="tabpanel" aria-labelledby="tab-explorer" hidden>
+    <div class="explorer">
+      <nav class="index" aria-label="Explorer sections">$index</nav>
+      <div>
+        <section class="panel" id="ex-scorecards" aria-labelledby="ex-scorecards-h">
+          <h2 id="ex-scorecards-h">Scorecards</h2>
+          <p class="lede">Every model the project ran, against the task's reference. Arrow keys
+          move through the grid; Enter opens a cell.</p>
+          <div class="controls">$task_seg $group_seg</div>
+          $task_cards
+          $legend
+          <div class="evidence empty" id="ev-explorer" aria-live="polite">$prompt</div>
+        </section>
+
+        <section class="panel" id="ex-horizons" aria-labelledby="ex-horizons-h">
+          <h2 id="ex-horizons-h">Horizons</h2>
+          <p class="lede">The same models forecasting the average variance and the summed return
+          over the next 5 and 22 trading days. The tests allow for the overlap of consecutive
+          forecasts.</p>
+          <div class="controls">$horizon_seg</div>
+          $horizon_cards
+          $legend
+          <div class="evidence empty" id="ev-horizons" aria-live="polite">Select a triangle to
+          see that horizon's test.</div>
+        </section>
+
+        <section class="panel" id="ex-regimes" aria-labelledby="ex-regimes-h">
+          <h2 id="ex-regimes-h">Regimes</h2>
+          <p class="lede">Weekly probability of the turbulent regime, each week from a model
+          fitted only on earlier years. Shaded: the in-sample years before $first_test_year and
+          the documented stress episodes.</p>
+          <div id="regime-chart"></div>
+          <h3>Regime profiles, walk-forward labels</h3>
+          <div id="regime-table"></div>
+        </section>
+
+        <section class="panel" id="ex-backtest" aria-labelledby="ex-backtest-h">
+          <h2 id="ex-backtest-h">Backtest</h2>
+          <p class="lede">An equal-risk portfolio of the seven pairs, net of half-spread costs,
+          with carry earned on open positions. Pick a strategy to trace it; the others stay in
+          grey.</p>
+          <div class="controls">$sizing_seg</div>
+          <div id="bt-chart"></div>
+          <div id="bt-table"></div>
+          <h3 id="bt-breakdown-title">Breakdown</h3>
+          <div id="bt-breakdown"></div>
+          <h3>How well each forecast holds a 10% volatility target</h3>
+          <div id="bt-targeting"></div>
+        </section>
+
+        <section class="panel" id="ex-var" aria-labelledby="ex-var-h">
+          <h2 id="ex-var-h">Value at Risk</h2>
+          <p class="lede">99% one-day Value at Risk from each variance forecast, under a normal
+          distribution or filtered historical simulation. A forecast passes when its exceedances
+          match the 1% target (Kupiec) and do not cluster (Christoffersen).</p>
+          <div id="var-table"></div>
+        </section>
+
+        <section class="panel" id="ex-learning" aria-labelledby="ex-learning-h">
+          <h2 id="ex-learning-h">Learning curves</h2>
+          <p class="lede">A generative classifier (Gaussian Naive Bayes) against a discriminative
+          one (logistic regression) as the training window grows, pooled over pairs. "full" is
+          the expanding window used everywhere else.</p>
+          <div class="controls">$lc_target_seg $lc_metric_seg</div>
+          <div id="lc-chart"></div>
+        </section>
+
+        <section class="panel" id="ex-calibration" aria-labelledby="ex-calibration-h">
+          <h2 id="ex-calibration-h">Calibration</h2>
+          <p class="lede">Slope of a logistic regression of the outcome on each direction model's
+          log-odds, averaged over pairs, with a 95% interval. 1 means the probabilities are as
+          confident as they should be; near 0 means their movements carry almost no
+          information.</p>
+          <div id="cal-chart"></div>
+        </section>
+
+        <section class="panel" id="ex-features" aria-labelledby="ex-features-h">
+          <h2 id="ex-features-h">Features</h2>
+          <p class="lede">Mean absolute SHAP value of LightGBM's inputs, averaged over pairs and
+          yearly models.</p>
+          <div class="controls">$shap_seg</div>
+          <div id="shap-chart"></div>
+        </section>
+        $extra_section
+        <section class="panel" id="ex-data" aria-labelledby="ex-data-h">
+          <h2 id="ex-data-h">Data</h2>
+          <p class="lede">Coverage of each pair's 1-minute bars and how closely its 12:00 New York
+          prices follow the Federal Reserve's H.10 noon rates, including the weeks when US and
+          European clocks change on different dates.</p>
+          <div id="data-table"></div>
+        </section>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-present" role="tabpanel" aria-labelledby="tab-present" class="present" hidden>
+    <div class="slide" aria-live="polite"></div>
+    <div class="present-bar">
+      <button type="button" class="quiet prev">Previous</button>
+      <span class="count">1 / 1</span>
+      <div class="progress" aria-hidden="true"><i></i></div>
+      <span>← → to move · Esc to leave</span>
+      <button type="button" class="quiet next">Next</button>
+      <button type="button" class="quiet leave">Leave</button>
+    </div>
+  </section>
+</main>
+$templates
+<div class="tip" role="tooltip" hidden></div>
+<script type="application/json" id="dashboard-data">$payload</script>
+<script>$script</script>
+</body>
+</html>

@@ -73,7 +73,7 @@ def download_histdata(cfg: Config, symbols: list[str], delay: float) -> list[str
 
 def download_fred(cfg: Config) -> None:
     session = requests.Session()  # FRED stalls on browser-like user agents; use the default one
-    for series_id in cfg.fred_series:
+    for series_id in [*cfg.fred_series, *cfg.daily_only.values()]:
         path = fred.download_series(series_id, cfg.paths.raw / "fred", session)
         print(f"FRED {series_id}: saved {path.stat().st_size / 1e3:.0f} kB")
 
@@ -101,7 +101,8 @@ def main() -> int:
         download_bis(cfg)
     failures = []
     if "histdata" in args.sources:
-        symbols = args.symbols or [*cfg.pairs, *cfg.context_instruments]
+        intraday_extra = [p for p in cfg.extra_pairs if p not in cfg.daily_only]
+        symbols = args.symbols or [*cfg.pairs, *intraday_extra, *cfg.context_instruments]
         failures = download_histdata(cfg, symbols, args.delay)
     if failures:
         print(f"\n{len(failures)} files failed; re-run the same command to retry them:")

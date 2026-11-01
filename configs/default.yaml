@@ -13,6 +13,13 @@ paths:
 pairs: [EURUSD, GBPUSD, USDJPY, USDCHF, AUDUSD, USDCAD, NZDUSD]
 context_instruments: [XAUUSD, SPXUSD]  # gold and S&P 500; crude oil comes from FRED (below)
 
+# Pairs studied beyond the core seven (a stretch goal). They run through their own scripts, so
+# the market state, regimes, factors and every core result still come from the seven pairs.
+# EUR/GBP is a cross with no dollar leg; USD/INR is a managed emerging-market currency.
+extra_pairs: [EURGBP, USDINR]
+# Pairs without free intraday data -> the FRED series of their daily noon rates.
+daily_only: {USDINR: DEXINUS}
+
 period:
   start: 2006-01-01
   end: 2026-10-30
@@ -33,8 +40,10 @@ walk_forward:
 
 costs:
   # Assumed average bid-ask spreads in pips for major pairs; stress runs multiply them.
-  spread_pips: {EURUSD: 0.8, GBPUSD: 1.2, USDJPY: 0.9, USDCHF: 1.4, AUDUSD: 1.0, USDCAD: 1.4, NZDUSD: 1.8}
-  pip_size: {EURUSD: 0.0001, GBPUSD: 0.0001, USDJPY: 0.01, USDCHF: 0.0001, AUDUSD: 0.0001, USDCAD: 0.0001, NZDUSD: 0.0001}
+  spread_pips: {EURUSD: 0.8, GBPUSD: 1.2, USDJPY: 0.9, USDCHF: 1.4, AUDUSD: 1.0, USDCAD: 1.4, NZDUSD: 1.8,
+                EURGBP: 1.2, USDINR: 1.0}
+  pip_size: {EURUSD: 0.0001, GBPUSD: 0.0001, USDJPY: 0.01, USDCHF: 0.0001, AUDUSD: 0.0001, USDCAD: 0.0001, NZDUSD: 0.0001,
+             EURGBP: 0.0001, USDINR: 0.01}  # one USD/INR pip is one paisa
   stress_multiplier: 2.0
 
 # FRED series id -> column name. H.10 rates are oriented the same way as the pairs above.
@@ -51,4 +60,4 @@ fred_series:
   DEXUSNZ: h10_NZDUSD
 
 # BIS reference area -> currency for daily central bank policy rates.
-policy_rates: {US: USD, XM: EUR, GB: GBP, JP: JPY, CH: CHF, AU: AUD, CA: CAD, NZ: NZD}
+policy_rates: {US: USD, XM: EUR, GB: GBP, JP: JPY, CH: CHF, AU: AUD, CA: CAD, NZ: NZD, IN: INR}
