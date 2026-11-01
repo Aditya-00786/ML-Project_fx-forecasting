@@ -1,5 +1,3 @@
-import importlib.util
-
 import numpy as np
 import pandas as pd
 import pytest
@@ -10,12 +8,7 @@ from fxml.backtest import risk
 from fxml.backtest import strategies as st
 from fxml.validation.stats_tests import christoffersen
 
-try:
-    import lightgbm  # noqa: F401
-
-    HAS_LIGHTGBM = importlib.util.find_spec("lightgbm") is not None
-except OSError:  # installed but unloadable (no OpenMP runtime on some Macs)
-    HAS_LIGHTGBM = False
+from .conftest import needs_lightgbm
 
 
 def toy_inputs(n=600, seed=0):
@@ -122,6 +115,8 @@ def test_performance_summary():
     assert out["max_drawdown"] == pytest.approx(-0.03)  # from the 0.01 peak down to -0.02
     assert out["hit_rate"] == pytest.approx(0.6)
     assert out["turnover"] == pytest.approx(0.2 * 252)
+    # downside deviation: root mean square of the losses over all 5 days, sqrt(0.001 / 5 * 252)
+    assert out["sortino"] == pytest.approx(-0.252 / np.sqrt(0.0504))
 
 
 def test_labels_for_breakdowns():
@@ -219,7 +214,7 @@ def test_christoffersen_detects_clustered_exceedances():
     assert np.isnan(christoffersen(np.zeros(100, bool))[0])
 
 
-@pytest.mark.skipif(not HAS_LIGHTGBM, reason="LightGBM cannot load here")
+@needs_lightgbm
 def test_shap_values_add_up_to_the_forecast(frame, folds):
     from fxml.interpret import contributions, yearly_shap
     from fxml.models import ml

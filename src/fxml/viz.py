@@ -7,8 +7,6 @@ many lines on one axis.
 
 from __future__ import annotations
 
-from pathlib import Path
-
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -93,10 +91,9 @@ def shade_stress(ax: plt.Axes, label: bool = False, since=None) -> None:
                         ha="left", fontsize=7, color=INK_MUTED, annotation_clip=False)
 
 
-def save(fig: plt.Figure, name: str) -> Path:
-    """Save a figure as PNG under reports/figures and return its path."""
+def save(fig: plt.Figure, name: str) -> None:
+    """Save a figure as PNG under reports/figures. Returns nothing, so a notebook cell ending
+    with it shows no machine-specific path."""
     out = load_config().paths.reports / "figures"
     out.mkdir(parents=True, exist_ok=True)
-    path = out / f"{name}.png"
-    fig.savefig(path, bbox_inches="tight")
-    return path
+    fig.savefig(out / f"{name}.png", bbox_inches="tight")

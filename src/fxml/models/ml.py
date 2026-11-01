@@ -18,7 +18,9 @@ Regime-aware variants come in two forms:
 - ``regime="feature"``: the global model plus the regime probabilities as features;
 - ``regime="experts"``: one model per regime, trained on that regime's days. Forecasts are
   averaged with the day's regime probabilities as weights. A regime with too few training days
-  falls back to a model trained on all days.
+  falls back to a model trained on all days;
+- ``regime="hmm"``: the global model plus the filtered hidden Markov model probabilities as
+  features.
 """
 
 from __future__ import annotations
@@ -43,7 +45,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC, LinearSVC
 from sklearn.tree import DecisionTreeClassifier
 
-from fxml.models.inputs import BASE_FEATURES, regime_columns, regime_features
+from fxml.models.inputs import BASE_FEATURES, hmm_features, regime_columns, regime_features
 from fxml.validation.metrics import qlike_losses
 from fxml.validation.walkforward import Fold
 
@@ -61,7 +63,7 @@ class Spec:
     task: str
     make: Callable[[dict, int], object]  # (hyperparameters, seed) -> unfitted estimator
     grid: tuple[dict, ...] = ({},)
-    regime: str | None = None  # None, "feature" or "experts"
+    regime: str | None = None  # None, "feature", "experts" or "hmm"
     refit_months: int = 1
 
 
@@ -119,14 +121,12 @@ def _lgb_returns(p, s):
 
 
 def _with_regimes(spec: Spec) -> list[Spec]:
-    """The global spec plus its two regime-aware variants."""
-    return [
-        spec,
-        Spec(f"{spec.name}_regime", spec.task, spec.make, spec.grid, "feature",
-             spec.refit_months),
-        Spec(f"{spec.name}_experts", spec.task, spec.make, spec.grid, "experts",
-             spec.refit_months),
-    ]
+    """The global spec plus its regime-aware variants (mixture probabilities as features, one
+    expert per regime, hidden Markov model probabilities as features)."""
+    return [spec, *(Spec(f"{spec.name}_{suffix}", spec.task, spec.make, spec.grid, regime,
+                         spec.refit_months)
+                    for suffix, regime in [("regime", "feature"), ("experts", "experts"),
+                                           ("hmm", "hmm")])]
 
 
 SPECS: list[Spec] = [
@@ -178,7 +178,8 @@ def get_spec(task: str, name: str) -> Spec:
 
 
 def feature_columns(spec: Spec, frame: pd.DataFrame) -> list[str]:
-    return BASE_FEATURES + (regime_features(frame) if spec.regime == "feature" else [])
+    extra = {"feature": regime_features, "hmm": hmm_features}.get(spec.regime)
+    return BASE_FEATURES + (extra(frame) if extra else [])
 
 
 def _matrix(rows: pd.DataFrame, columns: list[str]) -> np.ndarray:

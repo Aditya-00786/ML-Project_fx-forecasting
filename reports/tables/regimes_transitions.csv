@@ -95,3 +95,11 @@ dbscan,full_sample,4,1,0.0
 dbscan,full_sample,4,2,0.08333333333333333
 dbscan,full_sample,4,3,0.0
 dbscan,full_sample,4,4,0.9166666666666666
+hmm,walk_forward,0,0,0.9783585136790527
+hmm,walk_forward,0,1,0.021641486320947326
+hmm,walk_forward,1,0,0.03757225433526012
+hmm,walk_forward,1,1,0.9624277456647399
+hmm,full_sample,0,0,0.9911162611046737
+hmm,full_sample,0,1,0.008883738895326381
+hmm,full_sample,1,0,0.008133086876155268
+hmm,full_sample,1,1,0.9918669131238448

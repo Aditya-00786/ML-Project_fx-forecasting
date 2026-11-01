@@ -77,7 +77,9 @@ def test_training_survives_a_validation_loss_that_is_never_finite(frame, folds):
     assert epochs == spec.max_epochs  # no labelled validation rows: train the full budget
 
 
-@pytest.mark.parametrize("task, name", [("volatility", "lstm"), ("direction", "mlp")])
+@pytest.mark.parametrize("task, name", [
+    ("volatility", "lstm"), ("direction", "mlp"), ("returns", "transformer"),
+])
 def test_networks_never_use_the_future(task, name, frame, folds):
     """Scrambling every day after CUT leaves forecasts up to CUT unchanged."""
     spec = quick(neural.get_neural_spec(task, name))

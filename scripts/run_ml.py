@@ -32,6 +32,7 @@ from fxml.models.comparison import (  # noqa: E402
     ACTUAL,
     build_inputs,
     cache_dir,
+    global_model,
     inputs_path,
     signatures,
     sync_cache,
@@ -95,7 +96,7 @@ def main() -> None:
     for prefix in sync_cache(cache, signatures(specs, inputs, cfg, ml_module)):
         print(f"{prefix}: settings, code or inputs changed, so its cached jobs run again")
     rank = {name: i for i, name in enumerate(SLOW_FIRST)}
-    specs.sort(key=lambda s: rank.get(s.name.removesuffix("_regime").removesuffix("_experts"), 99))
+    specs.sort(key=lambda s: rank.get(global_model(s.name), 99))
     jobs = [(pair, s.task, s.name) for s in specs for pair in cfg.pairs
             if not (cache / f"{s.task}__{s.name}__{pair}.parquet").exists()]
     print(f"{len(jobs)} jobs to run ({len(specs) * len(cfg.pairs) - len(jobs)} cached) "

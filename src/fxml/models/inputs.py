@@ -26,6 +26,15 @@ def regime_features(frame: pd.DataFrame) -> list[str]:
     return regime_columns(frame)[1:]
 
 
+def hmm_columns(frame: pd.DataFrame) -> list[str]:
+    """Filtered hidden Markov model regime probabilities (p0 is the calmest regime)."""
+    return sorted(c for c in frame.columns if c.startswith("hmm_p"))
+
+
+def hmm_features(frame: pd.DataFrame) -> list[str]:
+    return hmm_columns(frame)[1:]
+
+
 def pair_frame(
     table: pd.DataFrame, pair: str, state: pd.DataFrame, first_refit
 ) -> pd.DataFrame:
@@ -40,7 +49,7 @@ def pair_frame(
     df["garch_logvar"] = walk_forward_garch(df["ret"], first_refit)
     df[FACTOR_COLUMNS] = state[FACTOR_COLUMNS].reindex(df.index)
     probs = regime_columns(state)
-    for column in probs:
+    for column in [*probs, *hmm_columns(state)]:
         df[column] = on_calendar(state[column], df.index)
     known = df[probs].notna().all(axis=1)
     df["regime"] = df[probs].to_numpy().argmax(axis=1)

@@ -175,3 +175,36 @@ def test_stay_probability_is_unknown_for_a_regime_seen_only_on_the_last_day():
     rv = pd.Series(1e-5, index=dates)
     profile = regime_profile(labels, rv, pd.Series(False, index=dates)).set_index("regime")
     assert np.isnan(profile.loc[1, "stay_probability"])
+
+
+def test_hmm_finds_persistent_regimes_and_orders_them():
+    from fxml.regimes.hmm import HMMRegimes
+
+    state, truth = synthetic_state()
+    model = HMMRegimes(3, restarts=2).fit(state)
+    probs = model.filter(state)
+    assert probs.shape == (len(state), 3)
+    assert probs.sum(axis=1) == pytest.approx(1.0)
+    expected = truth.map({raw: new for new, raw in enumerate(CALM_TO_TURBULENT)})
+    assert (probs.argmax(axis=1) == expected.to_numpy()).mean() > 0.97
+    moves = model.transition_matrix()
+    assert (np.diag(moves.to_numpy()) > 0.9).all()  # the 97% persistence is learned
+    assert model.bic(state) < HMMRegimes(2, restarts=2).fit(state).bic(state)
+
+
+def test_hmm_filter_and_walk_forward_never_use_the_future():
+    from fxml.regimes.hmm import HMMRegimes, walk_forward_hmm
+
+    state, _ = synthetic_state()
+    model = HMMRegimes(3, restarts=1).fit(state.iloc[:600])
+    full = model.filter(state)
+    np.testing.assert_allclose(model.filter(state.iloc[:900]), full[:900])  # filtered, not smoothed
+    labels = walk_forward_hmm(state, 3, "2010-01-01", seed=1)
+    assert labels.index.equals(state.index)
+    assert labels["in_sample"].eq(labels.index < "2010-01-01").all()
+    assert {"hmm_p0", "hmm_p1", "hmm_p2"} <= set(labels.columns)
+    cut = pd.Timestamp("2011-12-31")
+    altered = state.copy()
+    altered.loc[altered.index > cut] *= -1
+    pd.testing.assert_frame_equal(walk_forward_hmm(altered, 3, "2010-01-01", seed=1).loc[:cut],
+                                  labels.loc[:cut])

@@ -155,6 +155,17 @@ Each phase ends with a pull request. The next phase starts only when its "done w
   - Results: no direction signal makes money after costs; carry earns a Sharpe of 0.24 (not significant). Better volatility forecasts do not improve risk targeting but do give more accurate normal Value at Risk.
   - Commands: `scripts/run_backtest.py` and `scripts/run_shap.py`. Results are in `notebooks/07_backtest_risk.ipynb`.
 
+### Extensions (after Phase 6)
+- **Calibration and Sortino:** every classifier's probabilities get an expected calibration error and a calibration slope with its standard error, and the backtest reports Sortino ratios, as the proposal promised.
+- **Hidden Markov model regimes:** Baum–Welch EM in `src/fxml/regimes/hmm.py`, with filtered (forward-only) probabilities, written by `scripts/run_regimes.py` and used as model features (`*_hmm`).
+- **Transformer:** a small attention model over the last 20 days in `src/fxml/models/neural.py`.
+- **Longer horizons:** 5 and 22 day volatility and direction in `src/fxml/models/horizons.py` and `scripts/run_horizons.py`, with purging and an embargo of at least the horizon, and Diebold–Mariano tests that allow for overlapping forecasts.
+- **Results** (`notebooks/08_extensions.ipynb`):
+  - none overturns a conclusion: the direction probabilities have calibration slopes near 0;
+  - HMM regimes are more persistent but add nothing to the volatility forecasts;
+  - the Transformer is no better than HAR-RV;
+  - at 5 and 22 days HAR-RV beats every learning model.
+
 ### Phase 7 — Report and presentation
 - Final report in the same LaTeX style as the proposal, built from the saved tables and figures.
 - Slides for the presentation.

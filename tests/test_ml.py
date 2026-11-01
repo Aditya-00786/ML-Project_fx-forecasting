@@ -1,5 +1,3 @@
-import importlib.util
-
 import numpy as np
 import pandas as pd
 import pytest
@@ -13,13 +11,8 @@ from fxml.models.learning_curves import (
     summarise_curves,
 )
 
-from .conftest import CUT, FIRST_REFIT
+from .conftest import CUT, FIRST_REFIT, HAS_LIGHTGBM
 
-HAS_LIGHTGBM = importlib.util.find_spec("lightgbm") is not None
-try:  # the package can be installed but unloadable (no OpenMP runtime on some Macs)
-    import lightgbm  # noqa: F401
-except OSError:
-    HAS_LIGHTGBM = False
 
 def test_garch_feature_is_causal_and_finite(frame):
     ret = frame["ret"]

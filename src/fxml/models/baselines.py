@@ -44,7 +44,10 @@ def vol_ewma(df: pd.DataFrame, folds: Sequence[Fold], decay: float = 0.94) -> pd
     return variance.iloc[forecast_positions(folds)]
 
 
-def _garch(df: pd.DataFrame, folds: Sequence[Fold], asymmetric: bool) -> pd.Series:
+def _garch(
+    df: pd.DataFrame, folds: Sequence[Fold], asymmetric: bool, horizon: int = 1
+) -> pd.Series:
+    """Daily variance forecast averaged over the next ``horizon`` days."""
     returns = 100 * df["ret"]  # percent returns keep the optimiser well scaled
     spec = {"mean": "Constant", "vol": "GARCH", "p": 1, "o": int(asymmetric), "q": 1, "dist": "t"}
     params, forecasts = None, []
@@ -56,14 +59,15 @@ def _garch(df: pd.DataFrame, folds: Sequence[Fold], asymmetric: bool) -> pd.Seri
         through = returns.iloc[: fold.test[-1] + 1].dropna()
         fixed = arch_model(through, **spec).fix(params)
         start = df.index[fold.test[0]]
-        variance = fixed.forecast(horizon=1, start=start, reindex=False).variance["h.1"]
+        steps = fixed.forecast(horizon=horizon, start=start, reindex=False).variance
+        variance = steps.mean(axis=1)  # h.1 to h.<horizon>
         forecasts.append(variance.reindex(df.index[fold.test]) / 1e4)
     return pd.concat(forecasts)
 
 
-def vol_garch(df: pd.DataFrame, folds: Sequence[Fold]) -> pd.Series:
+def vol_garch(df: pd.DataFrame, folds: Sequence[Fold], horizon: int = 1) -> pd.Series:
     """GARCH(1,1) with Student-t errors, estimated by maximum likelihood."""
-    return _garch(df, folds, asymmetric=False)
+    return _garch(df, folds, asymmetric=False, horizon=horizon)
 
 
 def vol_gjr_garch(df: pd.DataFrame, folds: Sequence[Fold]) -> pd.Series:

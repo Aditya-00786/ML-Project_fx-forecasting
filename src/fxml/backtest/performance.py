@@ -38,6 +38,7 @@ def summary(daily: pd.DataFrame, column: str = "net") -> dict[str, float]:
     """Annualised performance of one strategy's daily returns."""
     returns = daily[column]
     vol = returns.std() * np.sqrt(DAYS_PER_YEAR)
+    downside = np.sqrt(np.mean(np.minimum(returns, 0.0) ** 2) * DAYS_PER_YEAR)
     t, p = newey_west_t(returns.to_numpy())
     invested = daily["position"] != 0
     return {
@@ -45,6 +46,8 @@ def summary(daily: pd.DataFrame, column: str = "net") -> dict[str, float]:
         "ann_return": float(returns.mean() * DAYS_PER_YEAR),
         "ann_vol": float(vol),
         "sharpe": float(returns.mean() * DAYS_PER_YEAR / vol) if vol > 0 else np.nan,
+        # like Sharpe, but only losing days count as risk
+        "sortino": float(returns.mean() * DAYS_PER_YEAR / downside) if downside > 0 else np.nan,
         "max_drawdown": max_drawdown(returns),
         "hit_rate": float((returns[invested] > 0).mean()) if invested.any() else np.nan,
         "share_invested": float(invested.mean()),

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import numpy as np
+import pandas as pd
 from sklearn.metrics import balanced_accuracy_score, brier_score_loss, roc_auc_score
 
 
@@ -50,15 +51,76 @@ def return_metrics(actual: np.ndarray, forecast: np.ndarray) -> dict[str, float]
     }
 
 
+def calibration_bins(actual: np.ndarray, prob: np.ndarray, bins: int = 10) -> pd.DataFrame:
+    """Reliability table: forecasts split into equal-count bins, with the average forecast and
+    the share of days the event happened in each. A calibrated model has the two equal.
+
+    Equal-count bins suit forecasts bunched near 50%, as direction forecasts are. Forecasts that
+    take only a few values (at most ``bins``) get one bin per value instead."""
+    actual, prob = np.asarray(actual, dtype=float), np.asarray(prob, dtype=float)
+    values = np.unique(prob)
+    if len(values) <= bins:
+        which = np.searchsorted(values, prob)
+    else:
+        edges = np.unique(np.quantile(prob, np.linspace(0, 1, bins + 1)))
+        which = np.clip(np.searchsorted(edges, prob, side="right") - 1, 0, len(edges) - 2)
+    table = pd.DataFrame({"bin": which, "forecast": prob, "actual": actual})
+    return (table.groupby("bin").agg(mean_forecast=("forecast", "mean"),
+                                     frequency=("actual", "mean"), days=("actual", "size"))
+            .reset_index(drop=True))
+
+
+def expected_calibration_error(actual: np.ndarray, prob: np.ndarray, bins: int = 10) -> float:
+    """Day-weighted average gap between forecast and frequency over the reliability bins."""
+    table = calibration_bins(actual, prob, bins)
+    gap = (table["mean_forecast"] - table["frequency"]).abs()
+    return float((gap * table["days"]).sum() / table["days"].sum())
+
+
+def calibration_slope(
+    actual: np.ndarray, prob: np.ndarray, steps: int = 50
+) -> tuple[float, float]:
+    """Slope of a logistic regression of the outcome on the forecast's log-odds, and its
+    standard error.
+
+    1 means the forecasts are as confident as they should be, below 1 overconfident (the
+    outcomes vary less than the forecasts claim) and above 1 underconfident. Forecasts that
+    barely move leave the slope poorly identified, which shows as a large standard error. Both
+    are missing when the forecasts are constant or the fit does not converge."""
+    y = np.asarray(actual, dtype=float)
+    p = np.clip(np.asarray(prob, dtype=float), 1e-6, 1 - 1e-6)
+    x = np.log(p / (1 - p))
+    if np.std(x) < 1e-6:
+        return np.nan, np.nan
+    design = np.column_stack([np.ones_like(x), x])
+    beta = np.zeros(2)
+    for _ in range(steps):  # Newton-Raphson for the two coefficients
+        fitted = 1 / (1 + np.exp(-design @ beta))
+        weight = fitted * (1 - fitted)
+        hessian = design.T @ (design * weight[:, None])
+        if np.linalg.cond(hessian) > 1e12:
+            return np.nan, np.nan
+        step = np.linalg.solve(hessian, design.T @ (y - fitted))
+        beta += step
+        if np.abs(step).max() < 1e-10:
+            return float(beta[1]), float(np.sqrt(np.linalg.inv(hessian)[1, 1]))
+    return np.nan, np.nan  # did not converge
+
+
 def direction_metrics(up: np.ndarray, prob_up: np.ndarray) -> dict[str, float]:
-    """Accuracy of up/down calls, using a 0.5 threshold on the predicted probability."""
+    """Accuracy of up/down calls, using a 0.5 threshold on the predicted probability, and how
+    well calibrated the probabilities are."""
     up, prob_up = np.asarray(up).astype(int), np.asarray(prob_up, dtype=float)
     called = (prob_up > 0.5).astype(int)
     both_classes = len(np.unique(up)) == 2
+    slope, slope_se = calibration_slope(up, prob_up)
     return {
         "accuracy": float(np.mean(called == up)),
         "balanced_accuracy": float(balanced_accuracy_score(up, called)),
         "roc_auc": float(roc_auc_score(up, prob_up)) if both_classes else np.nan,
         "brier": float(brier_score_loss(up, np.clip(prob_up, 0, 1))),
         "share_called_up": float(called.mean()),
+        "ece": expected_calibration_error(up, prob_up),
+        "calibration_slope": slope,
+        "calibration_slope_se": slope_se,
     }
