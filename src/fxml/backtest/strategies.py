@@ -11,7 +11,9 @@ A strategy is a signal (+1 long the pair, -1 short, 0 flat) times a size:
 - ``unit``: one unit of notional;
 - ``vt_<model>``: volatility targeting, sized so the position's forecast volatility is
   ``TARGET_VOL`` a year, using that model's variance forecast, with leverage capped at
-  ``MAX_LEVERAGE``.
+  ``MAX_LEVERAGE``. A day without a forecast keeps the previous day's size.
+
+The last position is closed at the final close, so every strategy pays its exit cost.
 """
 
 from __future__ import annotations
@@ -83,7 +85,7 @@ def sizes(data: pd.DataFrame) -> pd.DataFrame:
     out = {"unit": pd.Series(1.0, index=data.index)}
     for name, model in SIZING_MODELS.items():
         forecast_vol = np.sqrt(data[f"var_{model}"] * 252)
-        out[f"vt_{name}"] = (TARGET_VOL / forecast_vol).clip(upper=MAX_LEVERAGE)
+        out[f"vt_{name}"] = (TARGET_VOL / forecast_vol).clip(upper=MAX_LEVERAGE).ffill()
     return pd.DataFrame(out)
 
 
@@ -93,6 +95,8 @@ def strategy_returns(
     """Daily position, gross return, trading cost and net return of one strategy."""
     position = (signal * size).fillna(0.0)
     turnover = (position - position.shift(1, fill_value=0.0)).abs()
+    if len(position):
+        turnover.iloc[-1] += abs(position.iloc[-1])  # close out at the end
     gross = position * (data["ret"] + data["carry"])
     cost = turnover * data["half_spread"] * cost_multiplier
     return pd.DataFrame({"position": position, "turnover": turnover, "gross": gross,
@@ -108,9 +112,8 @@ def run_pair(data: pd.DataFrame, cost_multipliers=(1.0, 2.0)) -> pd.DataFrame:
             if signal_name == "flat" and size_name != "unit":
                 continue
             result = strategy_returns(data, signal, size)
-            for multiplier in cost_multipliers[1:]:
-                stressed = strategy_returns(data, signal, size, multiplier)
-                result[f"net_{multiplier:g}x"] = stressed["net"]
+            for multiplier in cost_multipliers[1:]:  # costs scale with the spread
+                result[f"net_{multiplier:g}x"] = result["gross"] - multiplier * result["cost"]
             frames.append(result.assign(signal=signal_name, sizing=size_name)
                           .rename_axis("date").reset_index())
     return pd.concat(frames, ignore_index=True)

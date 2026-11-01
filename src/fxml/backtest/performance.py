@@ -15,12 +15,14 @@ def newey_west_t(returns: np.ndarray, lags: int = HAC_LAGS) -> tuple[float, floa
     x = np.asarray(returns, dtype=float)
     x = x[np.isfinite(x)]
     n = len(x)
+    if n < 2:
+        return np.nan, np.nan
     centred = x - x.mean()
     variance = centred @ centred / n
     for lag in range(1, min(lags, n - 1) + 1):
         weight = 1 - lag / (lags + 1)
         variance += 2 * weight * (centred[lag:] @ centred[:-lag]) / n
-    if n < 2 or variance <= 0:
+    if variance <= 0:
         return np.nan, np.nan
     t = x.mean() / np.sqrt(variance / n)
     return float(t), float(2 * stats.t.sf(abs(t), df=n - 1))
@@ -54,15 +56,16 @@ def summary(daily: pd.DataFrame, column: str = "net") -> dict[str, float]:
 
 
 def portfolio(results: pd.DataFrame) -> pd.DataFrame:
-    """Equal-weight average over pairs, day by day, for each strategy. With volatility
-    targeting every pair carries the same forecast risk, so this is an equal-risk portfolio."""
-    columns = ["position", "turnover", "gross", "cost", "net",
+    """Each pair at a fixed 1/N weight, day by day, for each strategy. With volatility
+    targeting every pair carries the same forecast risk, so this is an equal-risk portfolio.
+    A pair that does not trade on a day contributes nothing that day; the others keep their
+    weight."""
+    weight = 1 / results["pair"].nunique()
+    columns = ["turnover", "gross", "cost", "net",
                *[c for c in results.columns if c.startswith("net_")]]
-    grouped = results.groupby(["signal", "sizing", "date"])
-    out = grouped[columns].mean()
-    out["position"] = results.assign(position=results["position"].abs()).groupby(
-        ["signal", "sizing", "date"])["position"].mean()  # gross exposure
-    return out.reset_index()
+    exposure = results.assign(position=results["position"].abs())
+    out = exposure.groupby(["signal", "sizing", "date"])[["position", *columns]].sum() * weight
+    return out.reset_index()  # position is the gross exposure
 
 
 def strategy_table(results: pd.DataFrame, by: list[str]) -> pd.DataFrame:
@@ -85,6 +88,22 @@ def breakdown(results: pd.DataFrame, buckets: pd.Series, name: str) -> pd.DataFr
     labelled = results.assign(**{name: buckets.reindex(results["date"]).to_numpy()})
     labelled = labelled.dropna(subset=[name])
     return strategy_table(labelled, [name])
+
+
+def regime_names(regimes: pd.Series) -> pd.Series:
+    """Readable names for numbered regimes: 0 is calm, the highest turbulent, any others by
+    number."""
+    top = regimes.max()
+    return regimes.map(lambda r: None if pd.isna(r) else "calm" if r == 0
+                       else "turbulent" if r == top else f"regime {int(r)}")
+
+
+def subperiods(dates: pd.DatetimeIndex, spans: dict[str, tuple[int, int]]) -> pd.Series:
+    """Name of the span of years each date falls in (missing outside every span)."""
+    out = pd.Series(None, index=dates, dtype=object)
+    for name, (first, last) in spans.items():
+        out[(dates.year >= first) & (dates.year <= last)] = name
+    return out
 
 
 def risk_targeting(results: pd.DataFrame, target: float) -> pd.DataFrame:

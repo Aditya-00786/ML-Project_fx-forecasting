@@ -21,22 +21,21 @@ from __future__ import annotations
 
 import pandas as pd
 
-from fxml.backtest.performance import breakdown, portfolio, risk_targeting, strategy_table
+from fxml.backtest.performance import (
+    breakdown,
+    portfolio,
+    regime_names,
+    risk_targeting,
+    strategy_table,
+    subperiods,
+)
 from fxml.backtest.risk import backtest_var, exceedances, value_at_risk
 from fxml.backtest.strategies import TARGET_VOL, pair_data, run_pair
 from fxml.config import load_config
 from fxml.events import stress_label
 from fxml.features.build import trading_days
 
-SUBPERIODS = {"2012–2016": ("2012", "2016"), "2017–2021": ("2017", "2021"),
-              "2022–2026": ("2022", "2026")}
-
-
-def subperiod(dates: pd.DatetimeIndex) -> pd.Series:
-    out = pd.Series(index=dates, dtype=object)
-    for name, (start, end) in SUBPERIODS.items():
-        out[(dates.year >= int(start)) & (dates.year <= int(end))] = name
-    return out
+SUBPERIODS = {"2012–2016": (2012, 2016), "2017–2021": (2017, 2021), "2022–2026": (2022, 2026)}
 
 
 def main() -> None:
@@ -74,14 +73,10 @@ def main() -> None:
     strategies.to_csv(tables / "backtest_strategies.csv", index=False)
 
     dates = pd.DatetimeIndex(sorted(equal_risk["date"].unique()))
-    regimes = state["regime_gmm"].reindex(dates)  # walk-forward labels, known at each close
-    top = regimes.max()
-    regime_names = regimes.map(lambda r: None if pd.isna(r) else "calm" if r == 0
-                               else "turbulent" if r == top else f"regime {int(r)}")
-    dimensions = {
-        "regime": regime_names,
+    dimensions = {  # walk-forward regime labels, known at each close
+        "regime": regime_names(state["regime_gmm"].reindex(dates)),
         "stress": stress_label(dates),
-        "subperiod": subperiod(dates),
+        "subperiod": subperiods(dates, SUBPERIODS),
     }
     parts = [breakdown(equal_risk, buckets, "bucket").assign(dimension=name)
              for name, buckets in dimensions.items()]

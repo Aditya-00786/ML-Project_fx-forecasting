@@ -41,10 +41,11 @@ def yearly_shap(
     """Mean absolute and mean SHAP value of every feature, per test year.
 
     ``params_by_year`` maps a year to the tuned hyperparameters (JSON, as logged by run_ml.py).
+    Years without tuned hyperparameters are skipped.
     """
     columns = ml.feature_columns(spec, frame)
     rows = []
-    for year in sorted({f.test_start.year for f in folds}):
+    for year in sorted({f.test_start.year for f in folds} & set(params_by_year)):
         in_year = [f for f in folds if f.test_start.year == year]
         params = json.loads(params_by_year[year])
         model = ml.fit(spec, params, frame.iloc[in_year[0].train], seed)[None]
@@ -54,6 +55,8 @@ def yearly_shap(
             "year": year, "feature": columns,
             "mean_abs_shap": np.abs(shap).mean(axis=0), "mean_shap": shap.mean(axis=0),
         }))
+    if not rows:
+        return pd.DataFrame(columns=["year", "feature", "mean_abs_shap", "mean_shap", "group"])
     out = pd.concat(rows, ignore_index=True)
     out["group"] = out["feature"].map(GROUP_OF).fillna("other")
     return out

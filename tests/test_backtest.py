@@ -81,6 +81,9 @@ def test_volatility_targeting(data):
     pd.testing.assert_series_equal(size["vt_har"], expected, check_names=False)
     assert (size["unit"] == 1).all()
     assert size.max().max() <= st.MAX_LEVERAGE
+    gap = data.copy()
+    gap.loc[gap.index[10], "var_baseline_har"] = np.nan  # no forecast that day
+    assert st.sizes(gap)["vt_har"].iloc[10] == size["vt_har"].iloc[9]  # keeps yesterday's size
 
 
 def test_strategy_returns_charge_half_spread_per_unit_traded():
@@ -94,6 +97,9 @@ def test_strategy_returns_charge_half_spread_per_unit_traded():
     assert out["cost"].tolist() == pytest.approx([0.0002, 0.0004, 0.0, 0.0002])
     doubled = st.strategy_returns(data, signal, pd.Series(2.0, index=dates), 2.0)
     assert doubled["cost"].sum() == pytest.approx(2 * out["cost"].sum())
+    # a position still open on the last day is closed out, paying its exit cost
+    held = st.strategy_returns(data, pd.Series(1.0, index=dates), pd.Series(1.0, index=dates))
+    assert held["turnover"].tolist() == [1.0, 0.0, 0.0, 1.0]
 
 
 def test_run_pair_covers_every_strategy_once(data):
@@ -118,6 +124,26 @@ def test_performance_summary():
     assert out["turnover"] == pytest.approx(0.2 * 252)
 
 
+def test_labels_for_breakdowns():
+    labels = perf.regime_names(pd.Series([0.0, 1.0, np.nan, 2.0]))
+    assert labels[[0, 1, 3]].tolist() == ["calm", "regime 1", "turbulent"]
+    assert pd.isna(labels[2])
+    dates = pd.to_datetime(["2011-12-30", "2012-01-02", "2017-06-01", "2026-10-01"])
+    spans = {"2012–2016": (2012, 2016), "2017–2026": (2017, 2026)}
+    names = perf.subperiods(dates, spans)
+    assert pd.isna(names.iloc[0])
+    assert names.iloc[1:].tolist() == ["2012–2016", "2017–2026", "2017–2026"]
+
+
+def test_newey_west_handles_too_few_returns():
+    import warnings
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        assert np.isnan(perf.newey_west_t(np.array([]))[0])
+        assert np.isnan(perf.newey_west_t(np.array([0.01]))[0])
+
+
 def test_newey_west_matches_the_plain_t_test_without_autocorrelation():
     x = np.random.default_rng(1).normal(0.05, 1, 20_000)
     t, _ = perf.newey_west_t(x)
@@ -134,6 +160,10 @@ def test_portfolio_averages_pairs():
                                   "net": net, "net_2x": net}))
     out = perf.portfolio(pd.concat(rows))
     assert out["net"].tolist() == pytest.approx([0.005] * 3)
+    # a pair missing for a day leaves the other's weight unchanged
+    missing = pd.concat(rows).iloc[1:]  # pair A has no first day
+    first = perf.portfolio(missing).iloc[0]
+    assert first["net"] == pytest.approx(-0.01 / 2) and first["position"] == pytest.approx(0.5)
 
 
 def test_risk_targeting_rewards_accurate_volatility_forecasts():
@@ -203,5 +233,6 @@ def test_shap_values_add_up_to_the_forecast(frame, folds):
     assert contributions(model, x).shape == (len(x), x.shape[1])
     table = yearly_shap(spec, frame, folds[:2], {2012: '{"num_leaves": 7, "n_estimators": 50}'})
     assert set(table["year"]) == {2012}
+    assert yearly_shap(spec, frame, folds[:2], {2013: "{}"}).empty  # no tuned year: skipped
     assert (table["mean_abs_shap"] >= 0).all()
     assert table.loc[table["feature"] == "garch_logvar", "group"].item() == "volatility"
