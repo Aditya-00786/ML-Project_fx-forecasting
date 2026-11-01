@@ -57,12 +57,21 @@ def tokens(theme: str = "light") -> dict[str, str]:
     return values
 
 
-def component_css(theme: str = "light") -> str:
-    """Only the scorecard, legend and research-question styles with one theme's tokens, for
-    embedding in a host page (the Streamlit app) without touching its own layout."""
+def component_css(theme: str = "auto") -> str:
+    """Only the scorecard, legend and research-question styles, for embedding in a host page
+    (the Streamlit app) without touching its own layout.
+
+    With ``theme="auto"`` every colour is a ``light-dark()`` pair, so the browser picks the
+    host's current scheme itself and follows a theme switch at once, with no rerun; "light"
+    or "dark" pins one theme."""
     css = stylesheet()
     start, end = css.index(f"{_SECTION} verdicts view */"), css.index(f"{_SECTION} evidence */")
-    root = ":root {" + "".join(f"--{k}: {v};" for k, v in tokens(theme).items()) + "}"
+    if theme == "auto":
+        light, dark = tokens("light"), tokens("dark")
+        pairs = {k: v if v == dark[k] else f"light-dark({v}, {dark[k]})" for k, v in light.items()}
+    else:
+        pairs = tokens(theme)
+    root = ":root {" + "".join(f"--{k}: {v};" for k, v in pairs.items()) + "}"
     return root + ".sr-only{position:absolute;width:1px;height:1px;overflow:hidden;" \
         "clip:rect(0 0 0 0);white-space:nowrap}" + css[start:end]
 

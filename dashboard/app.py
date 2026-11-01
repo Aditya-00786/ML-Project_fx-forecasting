@@ -22,7 +22,6 @@ from fxml.dashboard.render import (
     legend,
     question_html,
     scorecard_table,
-    tokens,
 )
 
 DATA = Path(__file__).resolve().parents[1] / "reports" / "dashboard" / "data.json"
@@ -46,11 +45,14 @@ if not DATA.exists():
     st.stop()
 D = load(str(DATA), DATA.stat().st_mtime)
 META, TASKS, PL = D["meta"], D["meta"]["tasks"], D["meta"]["pair_labels"]
-THEME = st.context.theme.type or "light"
-C = tokens(THEME)
-st.html(f"<style>{component_css(THEME)} .rq-verdict{{margin:0}} "
+# Colours never depend on which theme the script thinks is active: Streamlit reports a theme
+# switch only on the next rerun, so the styles below resolve light or dark in the browser and
+# the charts use colours that read on both grounds (axes and grids follow Streamlit's theme).
+CHART = {"neutral": "#7d7c76", "course": "#7b68ee", "ochre": "#b07d10", "better": "#4a8fe0",
+         "band": "rgba(128, 128, 128, 0.13)", "others": "rgba(128, 128, 128, 0.45)"}
+st.html(f"<style>{component_css('auto')} .rq-verdict{{margin:0}} "
         f".slide-title{{font-size:2.4rem;font-weight:650;line-height:1.1;letter-spacing:-0.02em;"
-        f"margin:0 0 .4rem}} .slide-take{{font-size:1.25rem;color:{C['ink-2']};max-width:60ch}}"
+        "margin:0 0 .4rem} .slide-take{font-size:1.25rem;color:var(--ink-2);max-width:60ch}"
         "</style>")
 LABELS = {c["id"]: c["label"] for card in D["scorecards"].values() for c in card["columns"]}
 for card in D["horizons"].values():
@@ -65,21 +67,19 @@ def label(model: str) -> str:
 
 
 def styled(chart: alt.Chart, height: int = 260) -> alt.Chart:
-    """One look for every chart: the dashboard's tokens, thin marks and quiet axes."""
+    """One look for every chart: thin marks and quiet axes, whose colours follow Streamlit's
+    theme so they switch with it."""
     return (chart.properties(height=height, background="transparent")
             .configure_view(stroke=None)
-            .configure_axis(gridColor=C["rule"], domainColor=C["n4"], tickColor=C["n4"],
-                            labelColor=C["ink-3"], titleColor=C["ink-3"], labelFontSize=11,
-                            titleFontSize=11, titleFontWeight="normal")
-            .configure_legend(labelColor=C["ink-2"], titleColor=C["ink-3"], orient="top")
-            .configure_text(color=C["ink-2"]))
+            .configure_axis(labelFontSize=12, titleFontSize=12, titleFontWeight="normal")
+            .configure_legend(orient="top"))
 
 
 def stress_layer(start: str | None = None) -> alt.Chart:
     rows = pd.DataFrame(META["stress"])
     if start:
         rows = rows[rows["end"] >= start].assign(start=lambda r: r["start"].clip(lower=start))
-    return alt.Chart(rows).mark_rect(color=C["stress"]).encode(
+    return alt.Chart(rows).mark_rect(color=CHART["band"]).encode(
         x="start:T", x2="end:T", tooltip=[alt.Tooltip("name:N", title="Stress episode")])
 
 
@@ -166,13 +166,14 @@ def evidence(kind: str, key: str, pairs: list[str], task: str | None = None) -> 
     with right:
         if info["trace"]:
             frame = pd.DataFrame({"month": months(info["months"]), "advantage": info["trace"]})
-            line = alt.Chart(frame).mark_line(color=C["course"], strokeWidth=2.5).encode(
+            line = alt.Chart(frame).mark_line(color=CHART["course"], strokeWidth=2.5).encode(
                 x=alt.X("month:T", title=None),
                 y=alt.Y("advantage:Q", title=f"Running {LOSS[task]} advantage"),
                 tooltip=[alt.Tooltip("month:T", format="%Y-%m"),
                          alt.Tooltip("advantage:Q", format=".3f")])
-            zero = alt.Chart(pd.DataFrame({"y": [0]})).mark_rule(color=C["ink"]).encode(y="y:Q")
-            area = alt.Chart(frame).mark_area(color=C["course"], opacity=0.08).encode(
+            zero = alt.Chart(pd.DataFrame({"y": [0]})).mark_rule(
+                color=CHART["neutral"]).encode(y="y:Q")
+            area = alt.Chart(frame).mark_area(color=CHART["course"], opacity=0.1).encode(
                 x="month:T", y="advantage:Q")
             st.altair_chart(styled(stress_layer(info["months"][0]) + area + zero + line, 220),
                             width="stretch")
@@ -190,7 +191,8 @@ def regime_chart(height: int) -> alt.Chart:
         x=alt.X("week:T", title=None),
         y=alt.Y("p:Q", title="Probability of the turbulent regime", axis=alt.Axis(format="%")),
         color=alt.Color("model:N", title=None, scale=alt.Scale(
-            domain=["Gaussian mixture", "Hidden Markov"], range=[C["ink"], C["series-b"]])),
+            domain=["Gaussian mixture", "Hidden Markov"],
+            range=[CHART["neutral"], CHART["ochre"]])),
         tooltip=["model:N", alt.Tooltip("week:T"), alt.Tooltip("p:Q", format=".0%")])
     return styled(stress_layer() + lines, height)
 
@@ -202,12 +204,12 @@ def equity_chart(key: str, sizing: str, height: int) -> alt.Chart:
     curves["month"] = months(b["months"])
     frame = curves.melt("month", var_name="strategy", value_name="cumulative")
     others = alt.Chart(frame[frame["strategy"] != key]).mark_line(
-        color=C["n4"], strokeWidth=1).encode(x=alt.X("month:T", title=None),
+        color=CHART["others"], strokeWidth=1).encode(x=alt.X("month:T", title=None),
                                              y=alt.Y("cumulative:Q", title="Cumulative net return",
                                                      axis=alt.Axis(format="%")),
                                              detail="strategy:N")
     mine = alt.Chart(frame[frame["strategy"] == key]).mark_line(
-        color=C["course"], strokeWidth=2.5).encode(
+        color=CHART["course"], strokeWidth=2.5).encode(
         x="month:T", y="cumulative:Q",
         tooltip=[alt.Tooltip("month:T", format="%Y-%m"),
                  alt.Tooltip("cumulative:Q", format=".1%")])
@@ -225,7 +227,8 @@ def learning_chart(target: str, metric: str, height: int) -> alt.Chart:
         x=alt.X("window:O", sort=order, title="Training days", axis=alt.Axis(labelAngle=0)),
         y=alt.Y(f"{metric}:Q", title=None, scale=alt.Scale(zero=False)),
         color=alt.Color("model:N", title=None, scale=alt.Scale(
-            domain=["Logistic regression", "Naive Bayes"], range=[C["ink"], C["series-b"]])),
+            domain=["Logistic regression", "Naive Bayes"],
+            range=[CHART["neutral"], CHART["ochre"]])),
         tooltip=["model:N", "window:O", alt.Tooltip(f"{metric}:Q", format=".3f")])
     return styled(chart, height)
 
@@ -300,22 +303,22 @@ def explorer() -> None:
         cal = cal.assign(lo=cal["calibration_slope"] - 1.96 * cal["calibration_slope_se"],
                          hi=cal["calibration_slope"] + 1.96 * cal["calibration_slope_se"])
         y = alt.Y("label:N", title=None, sort=alt.EncodingSortField("calibration_slope"))
-        bars = alt.Chart(cal).mark_rule(color=C["ink-2"]).encode(
+        bars = alt.Chart(cal).mark_rule(color=CHART["neutral"]).encode(
             y=y, x=alt.X("lo:Q", title="Calibration slope (1 = well calibrated)"), x2="hi:Q")
-        dots = alt.Chart(cal).mark_point(filled=True, color=C["ink"], size=50).encode(
+        dots = alt.Chart(cal).mark_point(filled=True, color=CHART["neutral"], size=50).encode(
             y=y, x="calibration_slope:Q",
             tooltip=["label:N", alt.Tooltip("calibration_slope:Q", format=".2f"),
                      alt.Tooltip("calibration_slope_se:Q", format=".2f", title="standard error"),
                      alt.Tooltip("ece:Q", format=".3f", title="calibration error")])
         ideal = alt.Chart(pd.DataFrame({"x": [1]})).mark_rule(
-            color=C["better"], strokeDash=[4, 3]).encode(x="x:Q")
+            color=CHART["better"], strokeDash=[4, 3]).encode(x="x:Q")
         st.altair_chart(styled(bars + dots + ideal, 22 * len(cal) + 40),
                         width="stretch")
     with tabs[7]:
         task = st.segmented_control("Task", ["volatility", "direction"], default="volatility",
                                     format_func=lambda t: TASKS[t]["label"], key="shap-task")
         shap = pd.DataFrame(D["shap"][task or "volatility"])
-        chart = alt.Chart(shap).mark_bar(color=C["n6"], height=14).encode(
+        chart = alt.Chart(shap).mark_bar(color=CHART["neutral"], height=14).encode(
             y=alt.Y("feature:N", sort="-x", title=None),
             x=alt.X("mean_abs_shap:Q", title="Mean absolute SHAP value"),
             tooltip=["feature:N", "group:N", alt.Tooltip("mean_abs_shap:Q", format=".4f")])

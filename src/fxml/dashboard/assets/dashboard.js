@@ -44,7 +44,12 @@
     set(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* private mode */ } },
   };
   function applyTheme(t) {
+    // Swap every colour at once: colour transitions are paused for the switch and one restyle
+    // is forced, so no element keeps the old theme until something else repaints it.
+    root.classList.add("theme-switching");
     if (t === "auto") root.removeAttribute("data-theme"); else root.dataset.theme = t;
+    void getComputedStyle(document.body).color;
+    requestAnimationFrame(() => requestAnimationFrame(() => root.classList.remove("theme-switching")));
     themeButton.textContent = THEME_NAMES[t];
     themeButton.dataset.theme = t;
     store.set("fx-theme", t);

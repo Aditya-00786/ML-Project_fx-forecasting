@@ -346,6 +346,8 @@ table.dt { border-collapse: collapse; font-size: 0.8125rem; width: 100%; }
   .rq-body { padding-left: 0; }
 }
 
+.theme-switching *, .theme-switching *::before, .theme-switching *::after { transition: none !important; }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
