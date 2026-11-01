@@ -107,7 +107,7 @@ def test_page_renders_from_the_saved_data():
 
 @needs_data
 @pytest.mark.skipif(importlib.util.find_spec("streamlit") is None, reason="streamlit not installed")
-def test_streamlit_app_runs_every_page():
+def test_streamlit_app_runs_the_verdicts_page():
     from streamlit.testing.v1 import AppTest
 
     app = AppTest.from_file(str(REPO_ROOT / "dashboard" / "app.py"), default_timeout=120).run()

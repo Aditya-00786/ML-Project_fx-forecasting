@@ -33,7 +33,7 @@ from concurrent.futures import ProcessPoolExecutor, as_completed  # noqa: E402
 import pandas as pd  # noqa: E402
 
 from fxml.backtest.performance import strategy_table  # noqa: E402
-from fxml.backtest.risk import backtest_var, exceedances, value_at_risk  # noqa: E402
+from fxml.backtest.risk import var_rows as risk_rows  # noqa: E402
 from fxml.backtest.strategies import pair_data, run_pair  # noqa: E402
 from fxml.config import load_config  # noqa: E402
 from fxml.features.build import trading_days  # noqa: E402
@@ -117,22 +117,15 @@ def backtest(cfg, predictions: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame
     """Every strategy per pair, and Value at Risk exceedances per variance forecast."""
     inputs = pd.read_parquet(cfg.paths.processed / "extra_inputs.parquet")
     bars = pd.read_parquet(cfg.paths.processed / "extra_daily_bars.parquet")
-    results, var_rows = [], []
+    results, var = [], []
     for pair in cfg.extra_pairs:
         frame = inputs.xs(pair, level="pair")
         close = trading_days(bars.xs(pair, level="symbol"))["close"]
         data = pair_data(frame, close, predictions[predictions["pair"] == pair],
                          cfg.costs.spread_in_price(pair))
         results.append(run_pair(data, (1.0, cfg.costs.stress_multiplier)).assign(pair=pair))
-        for column in [c for c in data.columns if c.startswith("var_")]:
-            hits = exceedances(value_at_risk(data[column], data["ret"]), data["ret"])
-            common = hits.notna().all(axis=1)
-            for name in hits.columns:
-                method, side = name.rsplit("_", 1)
-                var_rows.append({"model": column.removeprefix("var_"), "pair": pair,
-                                 "method": method, "side": side}
-                                | backtest_var(hits.loc[common, name]))
-    return strategy_table(pd.concat(results, ignore_index=True), ["pair"]), pd.DataFrame(var_rows)
+        var += risk_rows(data, pair)
+    return strategy_table(pd.concat(results, ignore_index=True), ["pair"]), pd.DataFrame(var)
 
 
 def main() -> None:

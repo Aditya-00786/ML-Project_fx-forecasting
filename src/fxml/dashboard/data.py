@@ -321,9 +321,9 @@ def research_questions(tables: Path, ml: dict[str, pd.DataFrame], pairs: list[st
          "short": f"{model_label(best)} {gain:.1%} below HAR-RV; {n_best} of {n} pairs",
          "answer": f"{model_label(best)}'s QLIKE is {gain:.1%} below HAR-RV's on average, "
                    f"significantly lower on {n_best} of {n} pairs. GARCH is {garch:.0%} worse "
-                   f"than HAR-RV. At 5 and 22 days LightGBM is {hz_gap[5]:.0%} and "
-                   f"{hz_gap[22]:.0%} " + ("worse" if min(hz_gap.values()) > 0 else "different")
-                   + " than HAR-RV.",
+                   "than HAR-RV. At 5 and 22 days LightGBM is "
+                   + " and ".join(f"{abs(hz_gap[h]):.0%} {'worse' if hz_gap[h] > 0 else 'better'}"
+                                  for h in (5, 22)) + " than HAR-RV.",
          "evidence": [{"label": "QLIKE vs HAR-RV", "test": "Diebold–Mariano, 5%",
                        "source": "reports/tables/ml_volatility.csv"},
                       {"label": "5 and 22 days", "test": "Diebold–Mariano with overlap",
@@ -368,10 +368,11 @@ def research_questions(tables: Path, ml: dict[str, pd.DataFrame], pairs: list[st
                     else "No direction signal's profit is significant after costs")
                    + f": their Sharpe ratios run from "
                    f"{signal_sharpes.min():.2f} to {signal_sharpes.max():.2f}. Carry earns "
-                   f"{carry['sharpe']:.2f} (p = {carry['p_value']:.2f}). Better volatility "
-                   f"forecasts do help risk: normal Value at Risk from LightGBM passes Kupiec's "
-                   f"test on {kupiec.get('lightgbm', np.nan):.0%} of pair-sides, against "
-                   f"{kupiec.get('baseline_ewma', np.nan):.0%} for EWMA.",
+                   f"{carry['sharpe']:.2f} (p = {carry['p_value']:.2f})."
+                   + (f" Normal Value at Risk from LightGBM passes Kupiec's test on "
+                      f"{kupiec['lightgbm']:.0%} of pair-sides, against "
+                      f"{kupiec['baseline_ewma']:.0%} for EWMA."
+                      if {"lightgbm", "baseline_ewma"} <= set(kupiec.index) else ""),
          "evidence": [{"label": "Equal-risk portfolio", "test": "Newey–West t-test",
                        "source": "reports/tables/backtest_strategies.csv"},
                       {"label": "99% Value at Risk", "test": "Kupiec and Christoffersen",
@@ -517,7 +518,8 @@ def extra_summary(tables: Path, extra: list[str], daily_only: dict,
         best = learners["qlike"].idxmin()
         gain = 1 - rows.loc[best, "qlike"] / rows.loc["baseline_har", "qlike"]
         p = rows.loc[best, "dm_p_vs_baseline_har"]
-        verdict = "significantly" if p < ALPHA and gain > 0 else "not significantly"
+        verdict = (("significantly better" if gain > 0 else "significantly worse")
+                   if p < ALPHA else "not a significant difference")
         sentences.append(f"{pl[pair]} volatility: the best learning model ({model_label(best)}) is "
                          f"{abs(gain):.1%} {'below' if gain > 0 else 'above'} HAR-RV, "
                          f"{verdict} (p = {p:.2f}).")

@@ -29,7 +29,7 @@ from fxml.backtest.performance import (
     strategy_table,
     subperiods,
 )
-from fxml.backtest.risk import backtest_var, exceedances, value_at_risk
+from fxml.backtest.risk import var_rows as risk_rows
 from fxml.backtest.strategies import TARGET_VOL, pair_data, run_pair
 from fxml.config import load_config
 from fxml.events import stress_label
@@ -53,14 +53,7 @@ def main() -> None:
         data = pair_data(frame, close, predictions[predictions["pair"] == pair],
                          cfg.costs.spread_in_price(pair))
         results.append(run_pair(data, (1.0, cfg.costs.stress_multiplier)).assign(pair=pair))
-        for column in [c for c in data.columns if c.startswith("var_")]:
-            hits = exceedances(value_at_risk(data[column], data["ret"]), data["ret"])
-            common = hits.notna().all(axis=1)  # both methods on the same days
-            for name in hits.columns:
-                method, side = name.rsplit("_", 1)
-                var_rows.append({"model": column.removeprefix("var_"), "pair": pair,
-                                 "method": method, "side": side}
-                                | backtest_var(hits.loc[common, name]))
+        var_rows += risk_rows(data, pair)
         print(f"{pair}: {len(data):,} days", flush=True)
 
     per_pair = pd.concat(results, ignore_index=True)

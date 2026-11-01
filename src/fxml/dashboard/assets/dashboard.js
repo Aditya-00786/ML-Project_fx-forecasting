@@ -450,7 +450,7 @@
   });
   document.addEventListener("click", (ev) => {
     const td = ev.target.closest && ev.target.closest("td.sc-cell");
-    if (td) select(td);
+    if (td && !td.closest(".slide")) select(td);  // slide scorecards are for looking at
   });
   document.addEventListener("keydown", (ev) => {
     const td = document.activeElement && document.activeElement.closest && document.activeElement.closest("td.sc-cell");
@@ -699,15 +699,15 @@
         stage: () => { const ul = document.createElement("ul"); ul.className = "slide-verdicts"; ul.innerHTML = D.questions.map((x) => `<li><b>${x.id}</b><span>${esc(x.question)}</span></li>`).join(""); return ul; } },
       { title: q.RQ1.headline, takeaway: q.RQ1.answer.split(". ").slice(0, 1).join(". ") + ".", stage: fromTemplate("tpl-present-volatility") },
       { title: `${label("lightgbm")} ${avgTrace.filter((v) => v != null).at(-1) > 0 ? "pulls ahead of HAR-RV month after month" : "falls behind HAR-RV"}`, takeaway: "Running QLIKE advantage over HAR-RV: each grey line is one pair, the highlighted line their average.",
-        stage: (d, fit) => chart(d, { x: months, height: fit(), zero: true, shade: { periods: D.meta.stress, labels: true },
+        chart: true, stage: (d, fit) => chart(d, { x: months, height: fit(), zero: true, shade: { periods: D.meta.stress, labels: true },
           series: [...lgbTraces.map((t) => ({ values: t.values, cls: "dim" })), { values: avgTrace, cls: "course", label: "Average of 7 pairs" }], labelRoom: 170,
           yLabel: "Cumulative QLIKE advantage over HAR-RV" }) },
       { title: q.RQ2.headline, takeaway: q.RQ2.answer, stage: fromTemplate("tpl-present-direction") },
-      { title: q.RQ3.headline, takeaway: q.RQ3.answer, stage: (d, fit) => regimeChart(d, fit()) },
+      { title: q.RQ3.headline, takeaway: q.RQ3.answer, chart: true, stage: (d, fit) => regimeChart(d, fit()) },
       { title: q.RQ4.headline, takeaway: q.RQ4.answer.split(". ").slice(0, 2).join(". ") + ".",
-        stage: (d, fit) => { const keep = sizingFilter; sizingFilter = "unit"; equityChart(d, "carry|unit", fit()); sizingFilter = keep; } },
+        chart: true, stage: (d, fit) => { const keep = sizingFilter; sizingFilter = "unit"; equityChart(d, "carry|unit", fit()); sizingFilter = keep; } },
       { title: q.RQ1.horizon_headline, takeaway: q.RQ1.answer.split(". ").slice(-1)[0], stage: fromTemplate("tpl-present-horizons") },
-      { title: q.RQ5.headline, takeaway: q.RQ5.answer, stage: (d, fit) => learningChart(d, fit(), "high_volatility", "roc_auc") },
+      { title: q.RQ5.headline, takeaway: q.RQ5.answer, chart: true, stage: (d, fit) => learningChart(d, fit(), "high_volatility", "roc_auc") },
       ...(D.extra ? [{ title: "Beyond the seven majors", takeaway: D.extra.summary.headline, stage: fromTemplate("tpl-present-extra") }] : []),
       { title: "Five answers", takeaway: "", stage: () => { const ul = document.createElement("ul"); ul.className = "slide-verdicts"; ul.innerHTML = D.questions.map((x) => `<li><b>${x.id}</b><div><strong>${esc(x.verdict)}.</strong> <span>${esc(x.answer)}</span></div></li>`).join(""); return ul; } },
     ];
@@ -719,7 +719,7 @@
       stage.innerHTML = `<h2>${esc(s.title).replace(/HAR-RV/g, "HAR&#8209;RV")}</h2><p class="takeaway">${esc(s.takeaway)}</p><div class="stage"></div>`;
       const box = $(".stage", stage);
       const fit = () => Math.max(260, box.clientHeight - 12);
-      if (s.stage.length) {  // a chart: draw it once the slide has its size
+      if (s.chart) {  // drawn once the slide has its size
         const d = document.createElement("div");
         box.appendChild(d);
         requestAnimationFrame(() => s.stage(d, fit));
@@ -730,6 +730,7 @@
     function go(d) { index = Math.max(0, Math.min(SLIDES.length - 1, index + d)); render(); }
     document.addEventListener("keydown", (ev) => {
       if (!isOpen) return;
+      if ((ev.key === " " || ev.key === "Enter") && ev.target.closest && ev.target.closest("button")) return;
       if (["ArrowRight", "PageDown", " "].includes(ev.key)) { ev.preventDefault(); go(1); }
       else if (["ArrowLeft", "PageUp"].includes(ev.key)) { ev.preventDefault(); go(-1); }
       else if (ev.key === "Home") { index = 0; render(); }
