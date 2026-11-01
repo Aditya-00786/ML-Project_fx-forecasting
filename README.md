@@ -51,6 +51,13 @@ uv run python scripts/run_learning_curves.py  # Naive Bayes against logistic reg
 uv run python scripts/run_neural.py --workers 8   # MLP and LSTM, three seeds each; joins the same ml_*.csv tables
 ```
 
+Finally the backtest, Value at Risk and model explanations (a few minutes):
+
+```bash
+uv run python scripts/run_backtest.py  # strategies, costs, breakdowns and Value at Risk; reports/tables/backtest_*.csv and risk_var.csv
+uv run python scripts/run_shap.py      # SHAP values of the LightGBM models; reports/tables/shap_lightgbm.csv
+```
+
 On a Mac, LightGBM (used from Phase 4) also needs the OpenMP runtime: `brew install libomp`.
 
 The stored data takes about 0.25 GB. The 1-minute bars are kept as 5-minute bars, and raw ZIP files are never written to disk. The notebooks `01_data_quality` and `02_stylized_facts` document what the data looks like.

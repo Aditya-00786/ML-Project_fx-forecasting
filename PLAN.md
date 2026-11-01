@@ -147,6 +147,13 @@ Each phase ends with a pull request. The next phase starts only when its "done w
 - **Breakdowns:** by regime, stress period, pair and subperiod.
 - **Interpretation:** SHAP for the tree models.
 - **Done when:** the backtest tables and figures exist and answer RQ4.
+- **As built:**
+  - `src/fxml/backtest/`: strategies (`strategies.py`), performance and breakdowns (`performance.py`) and Value at Risk (`risk.py`); SHAP in `src/fxml/interpret.py`.
+  - A position set at day t's close earns the next day's return plus the interest differential for the days held; each trade pays half the spread. Costs are also run at twice the spread.
+  - Signals: flat, always long, carry, 12-month momentum and the direction forecasts of logistic regression, random forest, LightGBM and the MLP (each also in a "confident days only" version). Sizing: one unit, or volatility targeting at 10% a year with the naive, EWMA, HAR-RV or LightGBM forecast.
+  - Value at Risk at 99% from every volatility model, with normal quantiles and filtered historical simulation, checked with the Kupiec and Christoffersen tests.
+  - Results: no direction signal makes money after costs; carry earns a Sharpe of 0.25 (not significant). Better volatility forecasts do not improve risk targeting but do give more accurate normal Value at Risk.
+  - Commands: `scripts/run_backtest.py` and `scripts/run_shap.py`. Results are in `notebooks/07_backtest_risk.ipynb`.
 
 ### Phase 7 — Report and presentation
 - Final report in the same LaTeX style as the proposal, built from the saved tables and figures.
