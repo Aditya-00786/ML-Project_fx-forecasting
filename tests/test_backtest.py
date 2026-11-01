@@ -122,6 +122,8 @@ def test_performance_summary():
     assert out["max_drawdown"] == pytest.approx(-0.03)  # from the 0.01 peak down to -0.02
     assert out["hit_rate"] == pytest.approx(0.6)
     assert out["turnover"] == pytest.approx(0.2 * 252)
+    downside = np.sqrt(np.mean(np.minimum(daily["net"], 0) ** 2) * 252)
+    assert out["sortino"] == pytest.approx(out["ann_return"] / downside)
 
 
 def test_labels_for_breakdowns():

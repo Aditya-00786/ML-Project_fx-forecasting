@@ -314,6 +314,111 @@ direction,lightgbm_experts,USDJPY,2023,"{""n_estimators"": 150, ""num_leaves"": 
 direction,lightgbm_experts,USDJPY,2024,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.703579883005548
 direction,lightgbm_experts,USDJPY,2025,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7086750634807916
 direction,lightgbm_experts,USDJPY,2026,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7056085239057894
+direction,lightgbm_hmm,AUDUSD,2012,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.6978510243552349
+direction,lightgbm_hmm,AUDUSD,2013,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7198909565803684
+direction,lightgbm_hmm,AUDUSD,2014,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7096060629128323
+direction,lightgbm_hmm,AUDUSD,2015,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.6994155963690488
+direction,lightgbm_hmm,AUDUSD,2016,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7003892717200084
+direction,lightgbm_hmm,AUDUSD,2017,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.6970265789248761
+direction,lightgbm_hmm,AUDUSD,2018,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.6948795519987442
+direction,lightgbm_hmm,AUDUSD,2019,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.6944086851366384
+direction,lightgbm_hmm,AUDUSD,2020,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7039576183997754
+direction,lightgbm_hmm,AUDUSD,2021,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7087603599411565
+direction,lightgbm_hmm,AUDUSD,2022,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7071079578364952
+direction,lightgbm_hmm,AUDUSD,2023,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7019697921837604
+direction,lightgbm_hmm,AUDUSD,2024,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7009907685364563
+direction,lightgbm_hmm,AUDUSD,2025,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.6991971481320552
+direction,lightgbm_hmm,AUDUSD,2026,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.6957120748230452
+direction,lightgbm_hmm,EURUSD,2012,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.6978808793193706
+direction,lightgbm_hmm,EURUSD,2013,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7120461648808104
+direction,lightgbm_hmm,EURUSD,2014,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7071047792745556
+direction,lightgbm_hmm,EURUSD,2015,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7061337907499896
+direction,lightgbm_hmm,EURUSD,2016,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7100759107250478
+direction,lightgbm_hmm,EURUSD,2017,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7082068174362153
+direction,lightgbm_hmm,EURUSD,2018,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7022635051377806
+direction,lightgbm_hmm,EURUSD,2019,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.696704672950177
+direction,lightgbm_hmm,EURUSD,2020,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7027265836543151
+direction,lightgbm_hmm,EURUSD,2021,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7044775746825808
+direction,lightgbm_hmm,EURUSD,2022,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.701174095234484
+direction,lightgbm_hmm,EURUSD,2023,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7028264818962722
+direction,lightgbm_hmm,EURUSD,2024,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.6951891222148409
+direction,lightgbm_hmm,EURUSD,2025,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.692285548744281
+direction,lightgbm_hmm,EURUSD,2026,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.6952180492369728
+direction,lightgbm_hmm,GBPUSD,2012,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.710573961345359
+direction,lightgbm_hmm,GBPUSD,2013,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7030671536528551
+direction,lightgbm_hmm,GBPUSD,2014,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7086316776870204
+direction,lightgbm_hmm,GBPUSD,2015,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7048915766097407
+direction,lightgbm_hmm,GBPUSD,2016,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7095538925053236
+direction,lightgbm_hmm,GBPUSD,2017,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7056735333411027
+direction,lightgbm_hmm,GBPUSD,2018,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7063126263828018
+direction,lightgbm_hmm,GBPUSD,2019,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.6956756964926927
+direction,lightgbm_hmm,GBPUSD,2020,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7033580069509002
+direction,lightgbm_hmm,GBPUSD,2021,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7089533907754187
+direction,lightgbm_hmm,GBPUSD,2022,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.702404033903596
+direction,lightgbm_hmm,GBPUSD,2023,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.6996947410854627
+direction,lightgbm_hmm,GBPUSD,2024,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.6931695376943617
+direction,lightgbm_hmm,GBPUSD,2025,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.6910453839107593
+direction,lightgbm_hmm,GBPUSD,2026,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.6932094806058814
+direction,lightgbm_hmm,NZDUSD,2012,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7089111606609987
+direction,lightgbm_hmm,NZDUSD,2013,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7349423827850639
+direction,lightgbm_hmm,NZDUSD,2014,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7101136013824911
+direction,lightgbm_hmm,NZDUSD,2015,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7084924347822117
+direction,lightgbm_hmm,NZDUSD,2016,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7113273237232826
+direction,lightgbm_hmm,NZDUSD,2017,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.700999541401714
+direction,lightgbm_hmm,NZDUSD,2018,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.6923102848082408
+direction,lightgbm_hmm,NZDUSD,2019,"{""n_estimators"": 150, ""num_leaves"": 15}",1.0,0.695898869197593
+direction,lightgbm_hmm,NZDUSD,2020,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.6988861187343064
+direction,lightgbm_hmm,NZDUSD,2021,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.6980192763298734
+direction,lightgbm_hmm,NZDUSD,2022,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.6968822441126021
+direction,lightgbm_hmm,NZDUSD,2023,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.6966247052622715
+direction,lightgbm_hmm,NZDUSD,2024,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.6946148345314678
+direction,lightgbm_hmm,NZDUSD,2025,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.6962487847351713
+direction,lightgbm_hmm,NZDUSD,2026,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.6947638457084084
+direction,lightgbm_hmm,USDCAD,2012,"{""n_estimators"": 150, ""num_leaves"": 15}",1.0,0.6919257271705367
+direction,lightgbm_hmm,USDCAD,2013,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7084981025844274
+direction,lightgbm_hmm,USDCAD,2014,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.708507386213196
+direction,lightgbm_hmm,USDCAD,2015,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7017599759430483
+direction,lightgbm_hmm,USDCAD,2016,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7124229570073768
+direction,lightgbm_hmm,USDCAD,2017,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7079907786286581
+direction,lightgbm_hmm,USDCAD,2018,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7015945642002855
+direction,lightgbm_hmm,USDCAD,2019,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.6970954814767849
+direction,lightgbm_hmm,USDCAD,2020,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.6956724236030479
+direction,lightgbm_hmm,USDCAD,2021,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.6949148502207486
+direction,lightgbm_hmm,USDCAD,2022,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.6973688312422648
+direction,lightgbm_hmm,USDCAD,2023,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.6987448557454355
+direction,lightgbm_hmm,USDCAD,2024,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7027247309360716
+direction,lightgbm_hmm,USDCAD,2025,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.6964639604709578
+direction,lightgbm_hmm,USDCAD,2026,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.6997575923584547
+direction,lightgbm_hmm,USDCHF,2012,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7064896803673788
+direction,lightgbm_hmm,USDCHF,2013,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7123352567079007
+direction,lightgbm_hmm,USDCHF,2014,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7164951556751826
+direction,lightgbm_hmm,USDCHF,2015,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.6953046235977522
+direction,lightgbm_hmm,USDCHF,2016,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7095798208343677
+direction,lightgbm_hmm,USDCHF,2017,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7115422672037245
+direction,lightgbm_hmm,USDCHF,2018,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.701865619187493
+direction,lightgbm_hmm,USDCHF,2019,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.6920695899780931
+direction,lightgbm_hmm,USDCHF,2020,"{""n_estimators"": 150, ""num_leaves"": 15}",1.0,0.6970483620586387
+direction,lightgbm_hmm,USDCHF,2021,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.6988151221551717
+direction,lightgbm_hmm,USDCHF,2022,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7006111915376821
+direction,lightgbm_hmm,USDCHF,2023,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.6974379127274046
+direction,lightgbm_hmm,USDCHF,2024,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.6981273719307387
+direction,lightgbm_hmm,USDCHF,2025,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.6909203281492953
+direction,lightgbm_hmm,USDCHF,2026,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.6920334795786811
+direction,lightgbm_hmm,USDJPY,2012,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.700717299011397
+direction,lightgbm_hmm,USDJPY,2013,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7157834913761852
+direction,lightgbm_hmm,USDJPY,2014,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7175299560649612
+direction,lightgbm_hmm,USDJPY,2015,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7066512475656997
+direction,lightgbm_hmm,USDJPY,2016,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.6971556694094588
+direction,lightgbm_hmm,USDJPY,2017,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.6977414878988628
+direction,lightgbm_hmm,USDJPY,2018,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.6940167116223125
+direction,lightgbm_hmm,USDJPY,2019,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.6986903564942745
+direction,lightgbm_hmm,USDJPY,2020,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7057455634758844
+direction,lightgbm_hmm,USDJPY,2021,"{""n_estimators"": 150, ""num_leaves"": 15}",1.0,0.7034074900706925
+direction,lightgbm_hmm,USDJPY,2022,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7020472485469184
+direction,lightgbm_hmm,USDJPY,2023,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7061343715941139
+direction,lightgbm_hmm,USDJPY,2024,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7065678245154435
+direction,lightgbm_hmm,USDJPY,2025,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7036041404264076
+direction,lightgbm_hmm,USDJPY,2026,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7053221595869104
 direction,lightgbm_regime,AUDUSD,2012,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.6992035372243377
 direction,lightgbm_regime,AUDUSD,2013,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7210220791495386
 direction,lightgbm_regime,AUDUSD,2014,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.7101952730501954
@@ -734,6 +839,111 @@ direction,logistic_l2_experts,USDJPY,2023,"{""C"": 0.001}",1.0,0.697146122345900
 direction,logistic_l2_experts,USDJPY,2024,"{""C"": 0.001}",1.0,0.6983431580890042
 direction,logistic_l2_experts,USDJPY,2025,"{""C"": 0.001}",1.0,0.6986850091987075
 direction,logistic_l2_experts,USDJPY,2026,"{""C"": 0.001}",1.0,0.6975636397980332
+direction,logistic_l2_hmm,AUDUSD,2012,"{""C"": 0.001}",1.0,0.6919994028224892
+direction,logistic_l2_hmm,AUDUSD,2013,"{""C"": 0.001}",1.0,0.6969662020838955
+direction,logistic_l2_hmm,AUDUSD,2014,"{""C"": 0.01}",1.0,0.6938134824071786
+direction,logistic_l2_hmm,AUDUSD,2015,"{""C"": 0.01}",1.0,0.6961439108931893
+direction,logistic_l2_hmm,AUDUSD,2016,"{""C"": 0.001}",1.0,0.698442247694389
+direction,logistic_l2_hmm,AUDUSD,2017,"{""C"": 0.01}",1.0,0.6938212032809448
+direction,logistic_l2_hmm,AUDUSD,2018,"{""C"": 0.01}",1.0,0.6901189057230084
+direction,logistic_l2_hmm,AUDUSD,2019,"{""C"": 0.001}",1.0,0.6910390014009054
+direction,logistic_l2_hmm,AUDUSD,2020,"{""C"": 0.001}",1.0,0.6961820615254122
+direction,logistic_l2_hmm,AUDUSD,2021,"{""C"": 0.001}",1.0,0.6951369716454929
+direction,logistic_l2_hmm,AUDUSD,2022,"{""C"": 0.001}",1.0,0.6956845885419173
+direction,logistic_l2_hmm,AUDUSD,2023,"{""C"": 0.001}",1.0,0.69616852551242
+direction,logistic_l2_hmm,AUDUSD,2024,"{""C"": 0.001}",1.0,0.69547367615035
+direction,logistic_l2_hmm,AUDUSD,2025,"{""C"": 0.001}",1.0,0.6961888479660658
+direction,logistic_l2_hmm,AUDUSD,2026,"{""C"": 0.001}",1.0,0.6951244404988997
+direction,logistic_l2_hmm,EURUSD,2012,"{""C"": 0.01}",1.0,0.6869845786296567
+direction,logistic_l2_hmm,EURUSD,2013,"{""C"": 0.001}",1.0,0.6960198053841419
+direction,logistic_l2_hmm,EURUSD,2014,"{""C"": 0.001}",1.0,0.6925944249836288
+direction,logistic_l2_hmm,EURUSD,2015,"{""C"": 0.001}",1.0,0.6940051693471516
+direction,logistic_l2_hmm,EURUSD,2016,"{""C"": 0.001}",1.0,0.6952544720910628
+direction,logistic_l2_hmm,EURUSD,2017,"{""C"": 0.001}",1.0,0.6946506973699458
+direction,logistic_l2_hmm,EURUSD,2018,"{""C"": 0.001}",1.0,0.6926008590003147
+direction,logistic_l2_hmm,EURUSD,2019,"{""C"": 0.001}",1.0,0.6930891169395791
+direction,logistic_l2_hmm,EURUSD,2020,"{""C"": 0.001}",1.0,0.6945149589081716
+direction,logistic_l2_hmm,EURUSD,2021,"{""C"": 0.001}",1.0,0.6986454289272533
+direction,logistic_l2_hmm,EURUSD,2022,"{""C"": 0.001}",1.0,0.6976495141797415
+direction,logistic_l2_hmm,EURUSD,2023,"{""C"": 0.001}",1.0,0.6981575573229629
+direction,logistic_l2_hmm,EURUSD,2024,"{""C"": 0.001}",1.0,0.6916874038030508
+direction,logistic_l2_hmm,EURUSD,2025,"{""C"": 0.001}",1.0,0.6914867688582247
+direction,logistic_l2_hmm,EURUSD,2026,"{""C"": 0.001}",1.0,0.6904939751036502
+direction,logistic_l2_hmm,GBPUSD,2012,"{""C"": 0.001}",1.0,0.6943570047832025
+direction,logistic_l2_hmm,GBPUSD,2013,"{""C"": 0.001}",1.0,0.6939819715619947
+direction,logistic_l2_hmm,GBPUSD,2014,"{""C"": 0.001}",1.0,0.6933294570259049
+direction,logistic_l2_hmm,GBPUSD,2015,"{""C"": 0.001}",1.0,0.6933943121542452
+direction,logistic_l2_hmm,GBPUSD,2016,"{""C"": 0.001}",1.0,0.6916552925747705
+direction,logistic_l2_hmm,GBPUSD,2017,"{""C"": 0.001}",1.0,0.6950846584693993
+direction,logistic_l2_hmm,GBPUSD,2018,"{""C"": 0.001}",1.0,0.6972038693681449
+direction,logistic_l2_hmm,GBPUSD,2019,"{""C"": 0.001}",1.0,0.6978443768936701
+direction,logistic_l2_hmm,GBPUSD,2020,"{""C"": 0.001}",1.0,0.6957843709420755
+direction,logistic_l2_hmm,GBPUSD,2021,"{""C"": 0.001}",1.0,0.6967431632277554
+direction,logistic_l2_hmm,GBPUSD,2022,"{""C"": 0.001}",1.0,0.6948381121263865
+direction,logistic_l2_hmm,GBPUSD,2023,"{""C"": 0.001}",1.0,0.6942307117653508
+direction,logistic_l2_hmm,GBPUSD,2024,"{""C"": 0.001}",1.0,0.6938272926541912
+direction,logistic_l2_hmm,GBPUSD,2025,"{""C"": 0.001}",1.0,0.6952617962814349
+direction,logistic_l2_hmm,GBPUSD,2026,"{""C"": 0.001}",1.0,0.6954930266722928
+direction,logistic_l2_hmm,NZDUSD,2012,"{""C"": 0.001}",1.0,0.6921116808814813
+direction,logistic_l2_hmm,NZDUSD,2013,"{""C"": 0.001}",1.0,0.7066004133455298
+direction,logistic_l2_hmm,NZDUSD,2014,"{""C"": 0.001}",1.0,0.6973733220004543
+direction,logistic_l2_hmm,NZDUSD,2015,"{""C"": 0.001}",1.0,0.695603121916538
+direction,logistic_l2_hmm,NZDUSD,2016,"{""C"": 0.001}",1.0,0.6991198285684244
+direction,logistic_l2_hmm,NZDUSD,2017,"{""C"": 0.001}",1.0,0.6963406616739288
+direction,logistic_l2_hmm,NZDUSD,2018,"{""C"": 0.001}",1.0,0.6930026411820647
+direction,logistic_l2_hmm,NZDUSD,2019,"{""C"": 0.001}",1.0,0.693987497037989
+direction,logistic_l2_hmm,NZDUSD,2020,"{""C"": 0.001}",1.0,0.694324089040127
+direction,logistic_l2_hmm,NZDUSD,2021,"{""C"": 0.001}",1.0,0.692348605516903
+direction,logistic_l2_hmm,NZDUSD,2022,"{""C"": 0.001}",1.0,0.690477668720937
+direction,logistic_l2_hmm,NZDUSD,2023,"{""C"": 0.001}",1.0,0.6933251185719421
+direction,logistic_l2_hmm,NZDUSD,2024,"{""C"": 0.001}",1.0,0.6925877517844992
+direction,logistic_l2_hmm,NZDUSD,2025,"{""C"": 0.001}",1.0,0.6938683249729838
+direction,logistic_l2_hmm,NZDUSD,2026,"{""C"": 0.001}",1.0,0.6955158518392986
+direction,logistic_l2_hmm,USDCAD,2012,"{""C"": 0.001}",1.0,0.6898322661170081
+direction,logistic_l2_hmm,USDCAD,2013,"{""C"": 0.001}",1.0,0.6896276079628796
+direction,logistic_l2_hmm,USDCAD,2014,"{""C"": 0.001}",1.0,0.6948706628735454
+direction,logistic_l2_hmm,USDCAD,2015,"{""C"": 0.001}",1.0,0.6950800699256329
+direction,logistic_l2_hmm,USDCAD,2016,"{""C"": 0.001}",1.0,0.694178054672861
+direction,logistic_l2_hmm,USDCAD,2017,"{""C"": 0.001}",1.0,0.6985678169598388
+direction,logistic_l2_hmm,USDCAD,2018,"{""C"": 0.001}",1.0,0.6952290353158577
+direction,logistic_l2_hmm,USDCAD,2019,"{""C"": 0.001}",1.0,0.692239828267427
+direction,logistic_l2_hmm,USDCAD,2020,"{""C"": 0.001}",1.0,0.691143743445035
+direction,logistic_l2_hmm,USDCAD,2021,"{""C"": 0.001}",1.0,0.6902991728807936
+direction,logistic_l2_hmm,USDCAD,2022,"{""C"": 0.001}",1.0,0.6921039990726741
+direction,logistic_l2_hmm,USDCAD,2023,"{""C"": 0.001}",1.0,0.6961681329748959
+direction,logistic_l2_hmm,USDCAD,2024,"{""C"": 0.001}",1.0,0.6962718208835181
+direction,logistic_l2_hmm,USDCAD,2025,"{""C"": 0.001}",1.0,0.6951802503755462
+direction,logistic_l2_hmm,USDCAD,2026,"{""C"": 0.001}",1.0,0.6960179346964049
+direction,logistic_l2_hmm,USDCHF,2012,"{""C"": 0.001}",1.0,0.6943007499329438
+direction,logistic_l2_hmm,USDCHF,2013,"{""C"": 0.001}",1.0,0.6928441874323504
+direction,logistic_l2_hmm,USDCHF,2014,"{""C"": 0.001}",1.0,0.6936086105864527
+direction,logistic_l2_hmm,USDCHF,2015,"{""C"": 0.001}",1.0,0.6952300164342966
+direction,logistic_l2_hmm,USDCHF,2016,"{""C"": 0.001}",1.0,0.6944783742829466
+direction,logistic_l2_hmm,USDCHF,2017,"{""C"": 0.001}",1.0,0.6961536975626226
+direction,logistic_l2_hmm,USDCHF,2018,"{""C"": 0.001}",1.0,0.6958436797401196
+direction,logistic_l2_hmm,USDCHF,2019,"{""C"": 0.001}",1.0,0.694923833122918
+direction,logistic_l2_hmm,USDCHF,2020,"{""C"": 0.001}",1.0,0.6944268819296344
+direction,logistic_l2_hmm,USDCHF,2021,"{""C"": 0.001}",1.0,0.6944853876637966
+direction,logistic_l2_hmm,USDCHF,2022,"{""C"": 0.001}",1.0,0.6940014555392631
+direction,logistic_l2_hmm,USDCHF,2023,"{""C"": 0.001}",1.0,0.6946565378381315
+direction,logistic_l2_hmm,USDCHF,2024,"{""C"": 0.001}",1.0,0.6913419744922609
+direction,logistic_l2_hmm,USDCHF,2025,"{""C"": 0.001}",1.0,0.6905803464172392
+direction,logistic_l2_hmm,USDCHF,2026,"{""C"": 0.001}",1.0,0.6895173310320504
+direction,logistic_l2_hmm,USDJPY,2012,"{""C"": 0.001}",1.0,0.6929704232906275
+direction,logistic_l2_hmm,USDJPY,2013,"{""C"": 0.001}",1.0,0.6991027201582781
+direction,logistic_l2_hmm,USDJPY,2014,"{""C"": 0.001}",1.0,0.696787312697246
+direction,logistic_l2_hmm,USDJPY,2015,"{""C"": 0.001}",1.0,0.6958952230435588
+direction,logistic_l2_hmm,USDJPY,2016,"{""C"": 0.001}",1.0,0.6935177907425044
+direction,logistic_l2_hmm,USDJPY,2017,"{""C"": 0.001}",1.0,0.6918101802418023
+direction,logistic_l2_hmm,USDJPY,2018,"{""C"": 0.001}",1.0,0.690069503180086
+direction,logistic_l2_hmm,USDJPY,2019,"{""C"": 0.001}",1.0,0.6936483213228326
+direction,logistic_l2_hmm,USDJPY,2020,"{""C"": 0.001}",1.0,0.6954034669096663
+direction,logistic_l2_hmm,USDJPY,2021,"{""C"": 0.001}",1.0,0.6974537001417113
+direction,logistic_l2_hmm,USDJPY,2022,"{""C"": 0.001}",1.0,0.6969212896938999
+direction,logistic_l2_hmm,USDJPY,2023,"{""C"": 0.001}",1.0,0.7016272929164834
+direction,logistic_l2_hmm,USDJPY,2024,"{""C"": 0.001}",1.0,0.7016707436593868
+direction,logistic_l2_hmm,USDJPY,2025,"{""C"": 0.001}",1.0,0.701115972881739
+direction,logistic_l2_hmm,USDJPY,2026,"{""C"": 0.001}",1.0,0.6984974335565118
 direction,logistic_l2_regime,AUDUSD,2012,"{""C"": 0.001}",1.0,0.6921985210671862
 direction,logistic_l2_regime,AUDUSD,2013,"{""C"": 0.001}",1.0,0.6972965752573129
 direction,logistic_l2_regime,AUDUSD,2014,"{""C"": 0.001}",1.0,0.6942431284622504
@@ -1574,6 +1784,111 @@ returns,lightgbm_experts,USDJPY,2023,"{""n_estimators"": 150, ""num_leaves"": 7}
 returns,lightgbm_experts,USDJPY,2024,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,3.3022258389577526e-05
 returns,lightgbm_experts,USDJPY,2025,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,4.000745792364207e-05
 returns,lightgbm_experts,USDJPY,2026,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,4.4914221736257526e-05
+returns,lightgbm_hmm,AUDUSD,2012,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,7.969430586942133e-05
+returns,lightgbm_hmm,AUDUSD,2013,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,5.809157569975746e-05
+returns,lightgbm_hmm,AUDUSD,2014,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,3.915855214087786e-05
+returns,lightgbm_hmm,AUDUSD,2015,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,3.904727721955403e-05
+returns,lightgbm_hmm,AUDUSD,2016,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,4.093203521337488e-05
+returns,lightgbm_hmm,AUDUSD,2017,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,5.212705887492191e-05
+returns,lightgbm_hmm,AUDUSD,2018,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,4.0641278486052e-05
+returns,lightgbm_hmm,AUDUSD,2019,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,3.0500288398593834e-05
+returns,lightgbm_hmm,AUDUSD,2020,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,2.369659362891226e-05
+returns,lightgbm_hmm,AUDUSD,2021,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,4.0813610658428524e-05
+returns,lightgbm_hmm,AUDUSD,2022,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,4.086087563347187e-05
+returns,lightgbm_hmm,AUDUSD,2023,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,5.480443703051123e-05
+returns,lightgbm_hmm,AUDUSD,2024,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,4.87678673595929e-05
+returns,lightgbm_hmm,AUDUSD,2025,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,4.49254599608133e-05
+returns,lightgbm_hmm,AUDUSD,2026,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,4.581199593238874e-05
+returns,lightgbm_hmm,EURUSD,2012,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,5.572733238782714e-05
+returns,lightgbm_hmm,EURUSD,2013,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,3.618933993492869e-05
+returns,lightgbm_hmm,EURUSD,2014,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,2.3424388707248797e-05
+returns,lightgbm_hmm,EURUSD,2015,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,1.740183721135177e-05
+returns,lightgbm_hmm,EURUSD,2016,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,3.937972204130441e-05
+returns,lightgbm_hmm,EURUSD,2017,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,4.327686377818716e-05
+returns,lightgbm_hmm,EURUSD,2018,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,2.9420611969521617e-05
+returns,lightgbm_hmm,EURUSD,2019,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,2.2213026229183748e-05
+returns,lightgbm_hmm,EURUSD,2020,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,1.6738968728034338e-05
+returns,lightgbm_hmm,EURUSD,2021,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,1.8339480230882077e-05
+returns,lightgbm_hmm,EURUSD,2022,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,1.5755599579596954e-05
+returns,lightgbm_hmm,EURUSD,2023,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,2.3728249842343625e-05
+returns,lightgbm_hmm,EURUSD,2024,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,2.3490114229585233e-05
+returns,lightgbm_hmm,EURUSD,2025,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,2.2521585294510483e-05
+returns,lightgbm_hmm,EURUSD,2026,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,2.526071870115899e-05
+returns,lightgbm_hmm,GBPUSD,2012,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,2.9440613277724336e-05
+returns,lightgbm_hmm,GBPUSD,2013,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,2.0317948072455187e-05
+returns,lightgbm_hmm,GBPUSD,2014,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,1.9570758123068647e-05
+returns,lightgbm_hmm,GBPUSD,2015,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,1.7058508104925127e-05
+returns,lightgbm_hmm,GBPUSD,2016,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,2.088556200678491e-05
+returns,lightgbm_hmm,GBPUSD,2017,"{""n_estimators"": 150, ""num_leaves"": 15}",1.0,4.887340043007288e-05
+returns,lightgbm_hmm,GBPUSD,2018,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,4.865433844232738e-05
+returns,lightgbm_hmm,GBPUSD,2019,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,4.5269502398959704e-05
+returns,lightgbm_hmm,GBPUSD,2020,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,2.635733104068746e-05
+returns,lightgbm_hmm,GBPUSD,2021,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,3.5014319963151196e-05
+returns,lightgbm_hmm,GBPUSD,2022,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,3.2085745680892815e-05
+returns,lightgbm_hmm,GBPUSD,2023,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,4.300411365817581e-05
+returns,lightgbm_hmm,GBPUSD,2024,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,3.4523766247405175e-05
+returns,lightgbm_hmm,GBPUSD,2025,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,3.1016610869850244e-05
+returns,lightgbm_hmm,GBPUSD,2026,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,3.159954637051896e-05
+returns,lightgbm_hmm,NZDUSD,2012,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,8.97842758479618e-05
+returns,lightgbm_hmm,NZDUSD,2013,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,6.031682158162835e-05
+returns,lightgbm_hmm,NZDUSD,2014,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,4.211822062067627e-05
+returns,lightgbm_hmm,NZDUSD,2015,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,4.032070885725544e-05
+returns,lightgbm_hmm,NZDUSD,2016,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,5.267377266460755e-05
+returns,lightgbm_hmm,NZDUSD,2017,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,6.447795200588696e-05
+returns,lightgbm_hmm,NZDUSD,2018,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,4.932835442488686e-05
+returns,lightgbm_hmm,NZDUSD,2019,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,3.4616311625788456e-05
+returns,lightgbm_hmm,NZDUSD,2020,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,2.612353179870714e-05
+returns,lightgbm_hmm,NZDUSD,2021,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,3.529004389099631e-05
+returns,lightgbm_hmm,NZDUSD,2022,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,3.724998651076128e-05
+returns,lightgbm_hmm,NZDUSD,2023,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,4.774245859840339e-05
+returns,lightgbm_hmm,NZDUSD,2024,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,4.514518314909736e-05
+returns,lightgbm_hmm,NZDUSD,2025,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,4.306845326254541e-05
+returns,lightgbm_hmm,NZDUSD,2026,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,4.366244398618584e-05
+returns,lightgbm_hmm,USDCAD,2012,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,4.137699581727075e-05
+returns,lightgbm_hmm,USDCAD,2013,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,2.9135401037669915e-05
+returns,lightgbm_hmm,USDCAD,2014,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,1.5223791296235047e-05
+returns,lightgbm_hmm,USDCAD,2015,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,1.5480789504894045e-05
+returns,lightgbm_hmm,USDCAD,2016,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,2.632956109011288e-05
+returns,lightgbm_hmm,USDCAD,2017,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,3.330945752756075e-05
+returns,lightgbm_hmm,USDCAD,2018,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,2.7061205632491395e-05
+returns,lightgbm_hmm,USDCAD,2019,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,2.0975931070127808e-05
+returns,lightgbm_hmm,USDCAD,2020,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,1.597145365624499e-05
+returns,lightgbm_hmm,USDCAD,2021,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,1.874740280584747e-05
+returns,lightgbm_hmm,USDCAD,2022,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,1.8829865567652525e-05
+returns,lightgbm_hmm,USDCAD,2023,"{""n_estimators"": 150, ""num_leaves"": 15}",1.0,2.3013348547965017e-05
+returns,lightgbm_hmm,USDCAD,2024,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,1.9655471467170965e-05
+returns,lightgbm_hmm,USDCAD,2025,"{""n_estimators"": 150, ""num_leaves"": 15}",1.0,1.7259026018743873e-05
+returns,lightgbm_hmm,USDCAD,2026,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,1.563860862699229e-05
+returns,lightgbm_hmm,USDCHF,2012,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.00010359629239652752
+returns,lightgbm_hmm,USDCHF,2013,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,6.769535478898303e-05
+returns,lightgbm_hmm,USDCHF,2014,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,2.6982995846358864e-05
+returns,lightgbm_hmm,USDCHF,2015,"{""n_estimators"": 150, ""num_leaves"": 15}",1.0,2.326528028173616e-05
+returns,lightgbm_hmm,USDCHF,2016,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.00011286331375448456
+returns,lightgbm_hmm,USDCHF,2017,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,0.00010827929447570795
+returns,lightgbm_hmm,USDCHF,2018,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,2.658326029755802e-05
+returns,lightgbm_hmm,USDCHF,2019,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,1.9363522274417294e-05
+returns,lightgbm_hmm,USDCHF,2020,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,1.609586769208551e-05
+returns,lightgbm_hmm,USDCHF,2021,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,1.698225388029582e-05
+returns,lightgbm_hmm,USDCHF,2022,"{""n_estimators"": 150, ""num_leaves"": 15}",1.0,1.690110797611039e-05
+returns,lightgbm_hmm,USDCHF,2023,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,2.3529879862189954e-05
+returns,lightgbm_hmm,USDCHF,2024,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,2.426929481319127e-05
+returns,lightgbm_hmm,USDCHF,2025,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,2.4719412623627024e-05
+returns,lightgbm_hmm,USDCHF,2026,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,2.8411967998462826e-05
+returns,lightgbm_hmm,USDJPY,2012,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,2.9807365156301888e-05
+returns,lightgbm_hmm,USDJPY,2013,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,2.416573790272113e-05
+returns,lightgbm_hmm,USDJPY,2014,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,4.70881478159362e-05
+returns,lightgbm_hmm,USDJPY,2015,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,4.158258131729312e-05
+returns,lightgbm_hmm,USDJPY,2016,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,2.5639633992437047e-05
+returns,lightgbm_hmm,USDJPY,2017,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,4.531292169116855e-05
+returns,lightgbm_hmm,USDJPY,2018,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,4.1888055934405615e-05
+returns,lightgbm_hmm,USDJPY,2019,"{""n_estimators"": 150, ""num_leaves"": 15}",1.0,3.2269063810575434e-05
+returns,lightgbm_hmm,USDJPY,2020,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,1.6147590209900897e-05
+returns,lightgbm_hmm,USDJPY,2021,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,2.0244636435572552e-05
+returns,lightgbm_hmm,USDJPY,2022,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,1.858666417732764e-05
+returns,lightgbm_hmm,USDJPY,2023,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,3.144676092658793e-05
+returns,lightgbm_hmm,USDJPY,2024,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,3.304674370348783e-05
+returns,lightgbm_hmm,USDJPY,2025,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,3.973392068672577e-05
+returns,lightgbm_hmm,USDJPY,2026,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,4.4572622957862934e-05
 returns,lightgbm_regime,AUDUSD,2012,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,7.823647508369436e-05
 returns,lightgbm_regime,AUDUSD,2013,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,5.8926722420297314e-05
 returns,lightgbm_regime,AUDUSD,2014,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0,3.989919035105833e-05
@@ -1889,6 +2204,111 @@ returns,ridge_experts,USDJPY,2023,"{""alpha"": 10000.0}",1.0,3.10667245525343e-0
 returns,ridge_experts,USDJPY,2024,"{""alpha"": 10000.0}",1.0,3.2138552349716674e-05
 returns,ridge_experts,USDJPY,2025,"{""alpha"": 100000.0}",1.0,3.86327744731996e-05
 returns,ridge_experts,USDJPY,2026,"{""alpha"": 100000.0}",1.0,4.377062259749199e-05
+returns,ridge_hmm,AUDUSD,2012,"{""alpha"": 100000.0}",1.0,7.772697635605599e-05
+returns,ridge_hmm,AUDUSD,2013,"{""alpha"": 100000.0}",1.0,5.5435190456780596e-05
+returns,ridge_hmm,AUDUSD,2014,"{""alpha"": 10000.0}",1.0,3.568923550141532e-05
+returns,ridge_hmm,AUDUSD,2015,"{""alpha"": 10000.0}",1.0,3.5217164021898255e-05
+returns,ridge_hmm,AUDUSD,2016,"{""alpha"": 1000.0}",1.0,4.0125449457178675e-05
+returns,ridge_hmm,AUDUSD,2017,"{""alpha"": 10000.0}",1.0,5.0669911224716775e-05
+returns,ridge_hmm,AUDUSD,2018,"{""alpha"": 1000.0}",1.0,3.922813227990281e-05
+returns,ridge_hmm,AUDUSD,2019,"{""alpha"": 100000.0}",1.0,2.998640418344946e-05
+returns,ridge_hmm,AUDUSD,2020,"{""alpha"": 100000.0}",1.0,2.3109543546835804e-05
+returns,ridge_hmm,AUDUSD,2021,"{""alpha"": 100000.0}",1.0,3.575766936580218e-05
+returns,ridge_hmm,AUDUSD,2022,"{""alpha"": 100000.0}",1.0,3.6100515986697844e-05
+returns,ridge_hmm,AUDUSD,2023,"{""alpha"": 100000.0}",1.0,4.933459866665318e-05
+returns,ridge_hmm,AUDUSD,2024,"{""alpha"": 10000.0}",1.0,4.740082449719241e-05
+returns,ridge_hmm,AUDUSD,2025,"{""alpha"": 10000.0}",1.0,4.402854746814792e-05
+returns,ridge_hmm,AUDUSD,2026,"{""alpha"": 10000.0}",1.0,4.491820556242798e-05
+returns,ridge_hmm,EURUSD,2012,"{""alpha"": 100000.0}",1.0,5.439770160048781e-05
+returns,ridge_hmm,EURUSD,2013,"{""alpha"": 10000.0}",1.0,3.548025696748273e-05
+returns,ridge_hmm,EURUSD,2014,"{""alpha"": 10000.0}",1.0,2.239065713130692e-05
+returns,ridge_hmm,EURUSD,2015,"{""alpha"": 100000.0}",1.0,1.7016370518894365e-05
+returns,ridge_hmm,EURUSD,2016,"{""alpha"": 100000.0}",1.0,3.671463652424388e-05
+returns,ridge_hmm,EURUSD,2017,"{""alpha"": 10000.0}",1.0,4.075108856133895e-05
+returns,ridge_hmm,EURUSD,2018,"{""alpha"": 1000.0}",1.0,2.843821970511031e-05
+returns,ridge_hmm,EURUSD,2019,"{""alpha"": 100000.0}",1.0,2.214839153724311e-05
+returns,ridge_hmm,EURUSD,2020,"{""alpha"": 100000.0}",1.0,1.6591998908648557e-05
+returns,ridge_hmm,EURUSD,2021,"{""alpha"": 100000.0}",1.0,1.7366550126273087e-05
+returns,ridge_hmm,EURUSD,2022,"{""alpha"": 100000.0}",1.0,1.4987677541415184e-05
+returns,ridge_hmm,EURUSD,2023,"{""alpha"": 100000.0}",1.0,2.2562396851592212e-05
+returns,ridge_hmm,EURUSD,2024,"{""alpha"": 100000.0}",1.0,2.30682063191333e-05
+returns,ridge_hmm,EURUSD,2025,"{""alpha"": 100000.0}",1.0,2.2298221047211096e-05
+returns,ridge_hmm,EURUSD,2026,"{""alpha"": 10000.0}",1.0,2.490364056567229e-05
+returns,ridge_hmm,GBPUSD,2012,"{""alpha"": 100000.0}",1.0,2.9104281327111957e-05
+returns,ridge_hmm,GBPUSD,2013,"{""alpha"": 100000.0}",1.0,2.002285980167587e-05
+returns,ridge_hmm,GBPUSD,2014,"{""alpha"": 10000.0}",1.0,1.917877032127339e-05
+returns,ridge_hmm,GBPUSD,2015,"{""alpha"": 100000.0}",1.0,1.6781607187761723e-05
+returns,ridge_hmm,GBPUSD,2016,"{""alpha"": 10000.0}",1.0,2.05110223323172e-05
+returns,ridge_hmm,GBPUSD,2017,"{""alpha"": 10000.0}",1.0,4.9245396391628845e-05
+returns,ridge_hmm,GBPUSD,2018,"{""alpha"": 10000.0}",1.0,4.869577574219472e-05
+returns,ridge_hmm,GBPUSD,2019,"{""alpha"": 10000.0}",1.0,4.581722857227886e-05
+returns,ridge_hmm,GBPUSD,2020,"{""alpha"": 10000.0}",1.0,2.6222013518022335e-05
+returns,ridge_hmm,GBPUSD,2021,"{""alpha"": 100000.0}",1.0,3.357707892347603e-05
+returns,ridge_hmm,GBPUSD,2022,"{""alpha"": 100000.0}",1.0,3.0971999873794796e-05
+returns,ridge_hmm,GBPUSD,2023,"{""alpha"": 10000.0}",1.0,4.0303907596647695e-05
+returns,ridge_hmm,GBPUSD,2024,"{""alpha"": 100000.0}",1.0,3.413154203361959e-05
+returns,ridge_hmm,GBPUSD,2025,"{""alpha"": 100000.0}",1.0,3.0472806237278012e-05
+returns,ridge_hmm,GBPUSD,2026,"{""alpha"": 100000.0}",1.0,3.0753151686470095e-05
+returns,ridge_hmm,NZDUSD,2012,"{""alpha"": 10000.0}",1.0,8.688624918311774e-05
+returns,ridge_hmm,NZDUSD,2013,"{""alpha"": 100000.0}",1.0,5.7433940592553535e-05
+returns,ridge_hmm,NZDUSD,2014,"{""alpha"": 10000.0}",1.0,4.048720001223883e-05
+returns,ridge_hmm,NZDUSD,2015,"{""alpha"": 10000.0}",1.0,3.976712480230578e-05
+returns,ridge_hmm,NZDUSD,2016,"{""alpha"": 100000.0}",1.0,5.1220439677780885e-05
+returns,ridge_hmm,NZDUSD,2017,"{""alpha"": 100000.0}",1.0,6.253834431987314e-05
+returns,ridge_hmm,NZDUSD,2018,"{""alpha"": 100000.0}",1.0,4.862177435450571e-05
+returns,ridge_hmm,NZDUSD,2019,"{""alpha"": 100000.0}",1.0,3.4265043817207246e-05
+returns,ridge_hmm,NZDUSD,2020,"{""alpha"": 100000.0}",1.0,2.5841564867215647e-05
+returns,ridge_hmm,NZDUSD,2021,"{""alpha"": 100000.0}",1.0,3.38360836839963e-05
+returns,ridge_hmm,NZDUSD,2022,"{""alpha"": 100000.0}",1.0,3.6042160160948704e-05
+returns,ridge_hmm,NZDUSD,2023,"{""alpha"": 100000.0}",1.0,4.633444357289852e-05
+returns,ridge_hmm,NZDUSD,2024,"{""alpha"": 100000.0}",1.0,4.500353238756293e-05
+returns,ridge_hmm,NZDUSD,2025,"{""alpha"": 100000.0}",1.0,4.2961883351660744e-05
+returns,ridge_hmm,NZDUSD,2026,"{""alpha"": 100000.0}",1.0,4.334982072793467e-05
+returns,ridge_hmm,USDCAD,2012,"{""alpha"": 1000.0}",1.0,3.94474454011397e-05
+returns,ridge_hmm,USDCAD,2013,"{""alpha"": 10000.0}",1.0,2.8046714173009134e-05
+returns,ridge_hmm,USDCAD,2014,"{""alpha"": 10000.0}",1.0,1.46294075390469e-05
+returns,ridge_hmm,USDCAD,2015,"{""alpha"": 100000.0}",1.0,1.511180811021769e-05
+returns,ridge_hmm,USDCAD,2016,"{""alpha"": 100000.0}",1.0,2.4057407760350184e-05
+returns,ridge_hmm,USDCAD,2017,"{""alpha"": 100000.0}",1.0,3.247206546914513e-05
+returns,ridge_hmm,USDCAD,2018,"{""alpha"": 10000.0}",1.0,2.6720832467153752e-05
+returns,ridge_hmm,USDCAD,2019,"{""alpha"": 10000.0}",1.0,2.082799851162744e-05
+returns,ridge_hmm,USDCAD,2020,"{""alpha"": 1000.0}",1.0,1.582189231328015e-05
+returns,ridge_hmm,USDCAD,2021,"{""alpha"": 10000.0}",1.0,1.8571929913742975e-05
+returns,ridge_hmm,USDCAD,2022,"{""alpha"": 100000.0}",1.0,1.8467484898362485e-05
+returns,ridge_hmm,USDCAD,2023,"{""alpha"": 100000.0}",1.0,2.257106768841953e-05
+returns,ridge_hmm,USDCAD,2024,"{""alpha"": 10000.0}",1.0,1.9496609278264814e-05
+returns,ridge_hmm,USDCAD,2025,"{""alpha"": 10000.0}",1.0,1.7266173768852738e-05
+returns,ridge_hmm,USDCAD,2026,"{""alpha"": 10000.0}",1.0,1.5382831786285678e-05
+returns,ridge_hmm,USDCHF,2012,"{""alpha"": 1000.0}",1.0,0.00010283447674554868
+returns,ridge_hmm,USDCHF,2013,"{""alpha"": 100000.0}",1.0,7.064341207899793e-05
+returns,ridge_hmm,USDCHF,2014,"{""alpha"": 100000.0}",1.0,2.647287975293245e-05
+returns,ridge_hmm,USDCHF,2015,"{""alpha"": 100000.0}",1.0,2.349562415480884e-05
+returns,ridge_hmm,USDCHF,2016,"{""alpha"": 10000.0}",1.0,0.00011099083292788741
+returns,ridge_hmm,USDCHF,2017,"{""alpha"": 10000.0}",1.0,0.00010620905207340132
+returns,ridge_hmm,USDCHF,2018,"{""alpha"": 10000.0}",1.0,2.5597841920725254e-05
+returns,ridge_hmm,USDCHF,2019,"{""alpha"": 100000.0}",1.0,1.893340855333492e-05
+returns,ridge_hmm,USDCHF,2020,"{""alpha"": 100000.0}",1.0,1.5782405678211133e-05
+returns,ridge_hmm,USDCHF,2021,"{""alpha"": 100000.0}",1.0,1.636846692597777e-05
+returns,ridge_hmm,USDCHF,2022,"{""alpha"": 100000.0}",1.0,1.623507227789264e-05
+returns,ridge_hmm,USDCHF,2023,"{""alpha"": 100000.0}",1.0,2.2299669655956678e-05
+returns,ridge_hmm,USDCHF,2024,"{""alpha"": 100000.0}",1.0,2.341127946817977e-05
+returns,ridge_hmm,USDCHF,2025,"{""alpha"": 100000.0}",1.0,2.406381739424197e-05
+returns,ridge_hmm,USDCHF,2026,"{""alpha"": 100000.0}",1.0,2.77405183165473e-05
+returns,ridge_hmm,USDJPY,2012,"{""alpha"": 100000.0}",1.0,2.8708365517556527e-05
+returns,ridge_hmm,USDJPY,2013,"{""alpha"": 100000.0}",1.0,2.1904595233180947e-05
+returns,ridge_hmm,USDJPY,2014,"{""alpha"": 100000.0}",1.0,4.3876857804046305e-05
+returns,ridge_hmm,USDJPY,2015,"{""alpha"": 100000.0}",1.0,3.954510851041256e-05
+returns,ridge_hmm,USDJPY,2016,"{""alpha"": 1000.0}",1.0,2.5320980879646794e-05
+returns,ridge_hmm,USDJPY,2017,"{""alpha"": 1000.0}",1.0,4.529698859339487e-05
+returns,ridge_hmm,USDJPY,2018,"{""alpha"": 1000.0}",1.0,4.1750094457503205e-05
+returns,ridge_hmm,USDJPY,2019,"{""alpha"": 100000.0}",1.0,3.2095655268832186e-05
+returns,ridge_hmm,USDJPY,2020,"{""alpha"": 100000.0}",1.0,1.6225200446426267e-05
+returns,ridge_hmm,USDJPY,2021,"{""alpha"": 100000.0}",1.0,2.0452352463367164e-05
+returns,ridge_hmm,USDJPY,2022,"{""alpha"": 100000.0}",1.0,1.877494201944e-05
+returns,ridge_hmm,USDJPY,2023,"{""alpha"": 100000.0}",1.0,3.116851619922209e-05
+returns,ridge_hmm,USDJPY,2024,"{""alpha"": 100000.0}",1.0,3.2178548875982766e-05
+returns,ridge_hmm,USDJPY,2025,"{""alpha"": 100000.0}",1.0,3.866897552265883e-05
+returns,ridge_hmm,USDJPY,2026,"{""alpha"": 100000.0}",1.0,4.3793359987739385e-05
 returns,ridge_regime,AUDUSD,2012,"{""alpha"": 100000.0}",1.0,7.772885296799941e-05
 returns,ridge_regime,AUDUSD,2013,"{""alpha"": 100000.0}",1.0,5.5439389798058444e-05
 returns,ridge_regime,AUDUSD,2014,"{""alpha"": 10000.0}",1.0,3.5714742331796636e-05
@@ -2414,6 +2834,111 @@ volatility,lightgbm_experts,USDJPY,2023,"{""n_estimators"": 150, ""num_leaves"":
 volatility,lightgbm_experts,USDJPY,2024,"{""n_estimators"": 400, ""num_leaves"": 15}",1.0722327802484828,0.17599377355728982
 volatility,lightgbm_experts,USDJPY,2025,"{""n_estimators"": 400, ""num_leaves"": 7}",1.1913147039150158,0.22624995018155114
 volatility,lightgbm_experts,USDJPY,2026,"{""n_estimators"": 400, ""num_leaves"": 15}",1.2132045609717554,0.2243413776894613
+volatility,lightgbm_hmm,AUDUSD,2012,"{""n_estimators"": 400, ""num_leaves"": 15}",1.0446135680230555,0.06831571663576769
+volatility,lightgbm_hmm,AUDUSD,2013,"{""n_estimators"": 150, ""num_leaves"": 7}",0.8847706125906891,0.06626757209618865
+volatility,lightgbm_hmm,AUDUSD,2014,"{""n_estimators"": 150, ""num_leaves"": 15}",0.9967385578605298,0.08359178707196817
+volatility,lightgbm_hmm,AUDUSD,2015,"{""n_estimators"": 400, ""num_leaves"": 15}",1.067735595423766,0.10634617897661013
+volatility,lightgbm_hmm,AUDUSD,2016,"{""n_estimators"": 400, ""num_leaves"": 7}",1.0981400383947701,0.11400817543115646
+volatility,lightgbm_hmm,AUDUSD,2017,"{""n_estimators"": 150, ""num_leaves"": 15}",1.1850289304779302,0.1322438089434704
+volatility,lightgbm_hmm,AUDUSD,2018,"{""n_estimators"": 150, ""num_leaves"": 15}",1.1171263370556992,0.11497079878235408
+volatility,lightgbm_hmm,AUDUSD,2019,"{""n_estimators"": 400, ""num_leaves"": 15}",1.067480906226958,0.09865287132901598
+volatility,lightgbm_hmm,AUDUSD,2020,"{""n_estimators"": 400, ""num_leaves"": 15}",1.0514126986526318,0.13362905062785344
+volatility,lightgbm_hmm,AUDUSD,2021,"{""n_estimators"": 400, ""num_leaves"": 15}",1.0462663396907113,0.14350338599402562
+volatility,lightgbm_hmm,AUDUSD,2022,"{""n_estimators"": 150, ""num_leaves"": 15}",1.049548381561272,0.1406458535801748
+volatility,lightgbm_hmm,AUDUSD,2023,"{""n_estimators"": 150, ""num_leaves"": 15}",1.0585043327936647,0.09344978922592674
+volatility,lightgbm_hmm,AUDUSD,2024,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0851184350235268,0.0838438442775546
+volatility,lightgbm_hmm,AUDUSD,2025,"{""n_estimators"": 150, ""num_leaves"": 7}",1.1074646446510117,0.09981318610213927
+volatility,lightgbm_hmm,AUDUSD,2026,"{""n_estimators"": 400, ""num_leaves"": 7}",1.1819029330677908,0.10945953032630647
+volatility,lightgbm_hmm,EURUSD,2012,"{""n_estimators"": 150, ""num_leaves"": 15}",1.1146793951671332,0.061327171225614444
+volatility,lightgbm_hmm,EURUSD,2013,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0068228004669548,0.06068861834477491
+volatility,lightgbm_hmm,EURUSD,2014,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0648063399434133,0.10226289408979142
+volatility,lightgbm_hmm,EURUSD,2015,"{""n_estimators"": 400, ""num_leaves"": 15}",1.0107633653353125,0.15500589638635104
+volatility,lightgbm_hmm,EURUSD,2016,"{""n_estimators"": 400, ""num_leaves"": 15}",1.0772856340824353,0.17179871621554668
+volatility,lightgbm_hmm,EURUSD,2017,"{""n_estimators"": 400, ""num_leaves"": 7}",1.2447020947228304,0.19867671069597806
+volatility,lightgbm_hmm,EURUSD,2018,"{""n_estimators"": 400, ""num_leaves"": 7}",1.1217723583395707,0.1826240471146019
+volatility,lightgbm_hmm,EURUSD,2019,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0948092430013807,0.14066882791185467
+volatility,lightgbm_hmm,EURUSD,2020,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0194447791405565,0.09473561549521713
+volatility,lightgbm_hmm,EURUSD,2021,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0537504319642206,0.1045552371839625
+volatility,lightgbm_hmm,EURUSD,2022,"{""n_estimators"": 150, ""num_leaves"": 7}",1.004795813110406,0.1063142584658503
+volatility,lightgbm_hmm,EURUSD,2023,"{""n_estimators"": 150, ""num_leaves"": 15}",1.047364498086408,0.11008393613251809
+volatility,lightgbm_hmm,EURUSD,2024,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0454595626887395,0.09690256932637283
+volatility,lightgbm_hmm,EURUSD,2025,"{""n_estimators"": 400, ""num_leaves"": 15}",1.0785937727185364,0.11490958573447102
+volatility,lightgbm_hmm,EURUSD,2026,"{""n_estimators"": 400, ""num_leaves"": 7}",1.1239237545089484,0.12871685671554486
+volatility,lightgbm_hmm,GBPUSD,2012,"{""n_estimators"": 150, ""num_leaves"": 15}",1.019974297402291,0.04519685254603709
+volatility,lightgbm_hmm,GBPUSD,2013,"{""n_estimators"": 150, ""num_leaves"": 7}",0.9489765457772618,0.05196525535017826
+volatility,lightgbm_hmm,GBPUSD,2014,"{""n_estimators"": 400, ""num_leaves"": 7}",1.0200059694817534,0.08709280875927454
+volatility,lightgbm_hmm,GBPUSD,2015,"{""n_estimators"": 400, ""num_leaves"": 7}",0.9802781451618829,0.11070114985517797
+volatility,lightgbm_hmm,GBPUSD,2016,"{""n_estimators"": 400, ""num_leaves"": 7}",0.9980148942404383,0.10573814257607947
+volatility,lightgbm_hmm,GBPUSD,2017,"{""n_estimators"": 150, ""num_leaves"": 7}",1.2277339875623678,0.22393881872027663
+volatility,lightgbm_hmm,GBPUSD,2018,"{""n_estimators"": 150, ""num_leaves"": 7}",1.2426628698818967,0.2400775635327232
+volatility,lightgbm_hmm,GBPUSD,2019,"{""n_estimators"": 150, ""num_leaves"": 7}",1.2561445275408112,0.23989962543822246
+volatility,lightgbm_hmm,GBPUSD,2020,"{""n_estimators"": 150, ""num_leaves"": 7}",1.160629377595339,0.15359649506477588
+volatility,lightgbm_hmm,GBPUSD,2021,"{""n_estimators"": 150, ""num_leaves"": 7}",1.1225290647889181,0.11785306301923272
+volatility,lightgbm_hmm,GBPUSD,2022,"{""n_estimators"": 150, ""num_leaves"": 15}",1.0910050568313903,0.10606046446025881
+volatility,lightgbm_hmm,GBPUSD,2023,"{""n_estimators"": 150, ""num_leaves"": 15}",1.1058011792249682,0.10539416794689216
+volatility,lightgbm_hmm,GBPUSD,2024,"{""n_estimators"": 150, ""num_leaves"": 7}",1.073038605061434,0.08287477978699513
+volatility,lightgbm_hmm,GBPUSD,2025,"{""n_estimators"": 400, ""num_leaves"": 7}",1.0502427978052757,0.09528349063585678
+volatility,lightgbm_hmm,GBPUSD,2026,"{""n_estimators"": 400, ""num_leaves"": 7}",1.0789740174486362,0.10660935733668023
+volatility,lightgbm_hmm,NZDUSD,2012,"{""n_estimators"": 150, ""num_leaves"": 7}",0.9726076436944734,0.07845307116071594
+volatility,lightgbm_hmm,NZDUSD,2013,"{""n_estimators"": 150, ""num_leaves"": 7}",0.8268284938092006,0.06728980863424164
+volatility,lightgbm_hmm,NZDUSD,2014,"{""n_estimators"": 150, ""num_leaves"": 7}",0.9758511317995535,0.07627927091595108
+volatility,lightgbm_hmm,NZDUSD,2015,"{""n_estimators"": 150, ""num_leaves"": 15}",1.0736003507677256,0.09988105707412734
+volatility,lightgbm_hmm,NZDUSD,2016,"{""n_estimators"": 400, ""num_leaves"": 7}",1.0651496704104766,0.1357948816438365
+volatility,lightgbm_hmm,NZDUSD,2017,"{""n_estimators"": 400, ""num_leaves"": 15}",1.1116351487197123,0.1491728547207772
+volatility,lightgbm_hmm,NZDUSD,2018,"{""n_estimators"": 400, ""num_leaves"": 15}",1.0940133259183162,0.13296693474088703
+volatility,lightgbm_hmm,NZDUSD,2019,"{""n_estimators"": 150, ""num_leaves"": 15}",1.0314292555057643,0.10942258624388816
+volatility,lightgbm_hmm,NZDUSD,2020,"{""n_estimators"": 150, ""num_leaves"": 15}",0.9997959684314326,0.1308288269976858
+volatility,lightgbm_hmm,NZDUSD,2021,"{""n_estimators"": 400, ""num_leaves"": 7}",0.978826958733485,0.12771360229063006
+volatility,lightgbm_hmm,NZDUSD,2022,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0008113113265822,0.1250376484331404
+volatility,lightgbm_hmm,NZDUSD,2023,"{""n_estimators"": 400, ""num_leaves"": 7}",1.074071585075836,0.09187217850853774
+volatility,lightgbm_hmm,NZDUSD,2024,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0745821823337929,0.08332164707386876
+volatility,lightgbm_hmm,NZDUSD,2025,"{""n_estimators"": 400, ""num_leaves"": 7}",1.1020444966314948,0.09948604242753299
+volatility,lightgbm_hmm,NZDUSD,2026,"{""n_estimators"": 400, ""num_leaves"": 15}",1.1474764755509022,0.10511796057893545
+volatility,lightgbm_hmm,USDCAD,2012,"{""n_estimators"": 400, ""num_leaves"": 7}",0.9559207622572932,0.06878713594370243
+volatility,lightgbm_hmm,USDCAD,2013,"{""n_estimators"": 150, ""num_leaves"": 15}",0.8656384366750791,0.06736907452086911
+volatility,lightgbm_hmm,USDCAD,2014,"{""n_estimators"": 400, ""num_leaves"": 7}",0.8251324450304905,0.1031984121339058
+volatility,lightgbm_hmm,USDCAD,2015,"{""n_estimators"": 400, ""num_leaves"": 7}",1.060275191202738,0.1218159820375883
+volatility,lightgbm_hmm,USDCAD,2016,"{""n_estimators"": 400, ""num_leaves"": 15}",1.064695497294371,0.11392120656088103
+volatility,lightgbm_hmm,USDCAD,2017,"{""n_estimators"": 150, ""num_leaves"": 15}",1.1113719876460593,0.10771666995059341
+volatility,lightgbm_hmm,USDCAD,2018,"{""n_estimators"": 400, ""num_leaves"": 7}",1.123021854823361,0.11412338618843809
+volatility,lightgbm_hmm,USDCAD,2019,"{""n_estimators"": 400, ""num_leaves"": 7}",1.1150354307220607,0.1251756155347222
+volatility,lightgbm_hmm,USDCAD,2020,"{""n_estimators"": 400, ""num_leaves"": 7}",1.038150050199801,0.11936510812940715
+volatility,lightgbm_hmm,USDCAD,2021,"{""n_estimators"": 150, ""num_leaves"": 15}",0.9771161774583187,0.11115131187375571
+volatility,lightgbm_hmm,USDCAD,2022,"{""n_estimators"": 150, ""num_leaves"": 7}",0.9701484687244696,0.10411477486536844
+volatility,lightgbm_hmm,USDCAD,2023,"{""n_estimators"": 150, ""num_leaves"": 7}",0.995399716629396,0.09796413820201781
+volatility,lightgbm_hmm,USDCAD,2024,"{""n_estimators"": 150, ""num_leaves"": 15}",1.0053469376298059,0.07146443088077108
+volatility,lightgbm_hmm,USDCAD,2025,"{""n_estimators"": 150, ""num_leaves"": 15}",1.0268276909559464,0.08716958809700842
+volatility,lightgbm_hmm,USDCAD,2026,"{""n_estimators"": 150, ""num_leaves"": 15}",1.0360454427796801,0.10874533683041271
+volatility,lightgbm_hmm,USDCHF,2012,"{""n_estimators"": 150, ""num_leaves"": 7}",1.2349189488337642,0.16211370163457195
+volatility,lightgbm_hmm,USDCHF,2013,"{""n_estimators"": 400, ""num_leaves"": 7}",1.0267911755402224,0.13745213062033915
+volatility,lightgbm_hmm,USDCHF,2014,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0732005831931992,0.0986695746569873
+volatility,lightgbm_hmm,USDCHF,2015,"{""n_estimators"": 400, ""num_leaves"": 7}",0.984703601899996,0.15426610010090122
+volatility,lightgbm_hmm,USDCHF,2016,"{""n_estimators"": 400, ""num_leaves"": 15}",1.6645111702283346,0.6331742377130982
+volatility,lightgbm_hmm,USDCHF,2017,"{""n_estimators"": 400, ""num_leaves"": 15}",1.7824229469473405,0.5619233548712222
+volatility,lightgbm_hmm,USDCHF,2018,"{""n_estimators"": 150, ""num_leaves"": 15}",1.1148545986590468,0.13454559129869526
+volatility,lightgbm_hmm,USDCHF,2019,"{""n_estimators"": 150, ""num_leaves"": 15}",1.1156719250049882,0.1096949512682868
+volatility,lightgbm_hmm,USDCHF,2020,"{""n_estimators"": 150, ""num_leaves"": 15}",1.0603704869279869,0.09178694563799121
+volatility,lightgbm_hmm,USDCHF,2021,"{""n_estimators"": 150, ""num_leaves"": 7}",1.074773897164388,0.10098903094868211
+volatility,lightgbm_hmm,USDCHF,2022,"{""n_estimators"": 400, ""num_leaves"": 7}",1.0300792715480696,0.09754378483304169
+volatility,lightgbm_hmm,USDCHF,2023,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0479337501128376,0.09035572380948857
+volatility,lightgbm_hmm,USDCHF,2024,"{""n_estimators"": 150, ""num_leaves"": 7}",1.086633615349777,0.08613280267306579
+volatility,lightgbm_hmm,USDCHF,2025,"{""n_estimators"": 400, ""num_leaves"": 7}",1.1312555734287328,0.11427194033438702
+volatility,lightgbm_hmm,USDCHF,2026,"{""n_estimators"": 400, ""num_leaves"": 7}",1.151749275366409,0.12506896364790826
+volatility,lightgbm_hmm,USDJPY,2012,"{""n_estimators"": 400, ""num_leaves"": 15}",1.1370992709467829,0.3527125939456553
+volatility,lightgbm_hmm,USDJPY,2013,"{""n_estimators"": 150, ""num_leaves"": 7}",1.0027356862207915,0.3290680293629837
+volatility,lightgbm_hmm,USDJPY,2014,"{""n_estimators"": 150, ""num_leaves"": 7}",1.089110631175864,0.14293769063707396
+volatility,lightgbm_hmm,USDJPY,2015,"{""n_estimators"": 400, ""num_leaves"": 7}",1.057957625315516,0.16563840686530265
+volatility,lightgbm_hmm,USDJPY,2016,"{""n_estimators"": 400, ""num_leaves"": 7}",1.0400330461794638,0.20835924574549528
+volatility,lightgbm_hmm,USDJPY,2017,"{""n_estimators"": 400, ""num_leaves"": 15}",1.2585974782151759,0.2952264792330571
+volatility,lightgbm_hmm,USDJPY,2018,"{""n_estimators"": 400, ""num_leaves"": 7}",1.3034247587184362,0.24833619282395383
+volatility,lightgbm_hmm,USDJPY,2019,"{""n_estimators"": 150, ""num_leaves"": 15}",1.1912486412543595,0.1772627356488537
+volatility,lightgbm_hmm,USDJPY,2020,"{""n_estimators"": 400, ""num_leaves"": 7}",1.1023825469317836,0.15296106508484827
+volatility,lightgbm_hmm,USDJPY,2021,"{""n_estimators"": 400, ""num_leaves"": 15}",1.0573989055905522,0.17369236168782023
+volatility,lightgbm_hmm,USDJPY,2022,"{""n_estimators"": 400, ""num_leaves"": 15}",1.0360692099002657,0.17015899408824872
+volatility,lightgbm_hmm,USDJPY,2023,"{""n_estimators"": 400, ""num_leaves"": 7}",1.0829838443644415,0.17744416304917818
+volatility,lightgbm_hmm,USDJPY,2024,"{""n_estimators"": 400, ""num_leaves"": 7}",1.1260598257186616,0.17885257410370312
+volatility,lightgbm_hmm,USDJPY,2025,"{""n_estimators"": 400, ""num_leaves"": 15}",1.1756925115693706,0.2295139689299964
+volatility,lightgbm_hmm,USDJPY,2026,"{""n_estimators"": 400, ""num_leaves"": 15}",1.2029442843302525,0.22244326511499068
 volatility,lightgbm_regime,AUDUSD,2012,"{""n_estimators"": 400, ""num_leaves"": 7}",1.0442627308484809,0.06843881111496905
 volatility,lightgbm_regime,AUDUSD,2013,"{""n_estimators"": 150, ""num_leaves"": 7}",0.8875621335999663,0.06609457038929904
 volatility,lightgbm_regime,AUDUSD,2014,"{""n_estimators"": 150, ""num_leaves"": 15}",0.9921640921141783,0.08481620920802897
@@ -2834,6 +3359,111 @@ volatility,ridge_experts,USDJPY,2023,"{""alpha"": 100}",1.050798816117803,0.2009
 volatility,ridge_experts,USDJPY,2024,"{""alpha"": 100}",1.0898142817978331,0.19355252558470065
 volatility,ridge_experts,USDJPY,2025,"{""alpha"": 1}",1.1850682344389099,0.2521477853069701
 volatility,ridge_experts,USDJPY,2026,"{""alpha"": 1}",1.1867801525749948,0.2429957764840304
+volatility,ridge_hmm,AUDUSD,2012,"{""alpha"": 100}",1.0396558134789682,0.07089411344068683
+volatility,ridge_hmm,AUDUSD,2013,"{""alpha"": 100}",0.9159032290066237,0.06239582722665017
+volatility,ridge_hmm,AUDUSD,2014,"{""alpha"": 100}",1.0128705260124022,0.07824858950848615
+volatility,ridge_hmm,AUDUSD,2015,"{""alpha"": 1000}",1.023651085829661,0.10177662358681676
+volatility,ridge_hmm,AUDUSD,2016,"{""alpha"": 1}",1.2063632658650616,0.1150102810170825
+volatility,ridge_hmm,AUDUSD,2017,"{""alpha"": 1000}",1.2659559547216297,0.13310656032858148
+volatility,ridge_hmm,AUDUSD,2018,"{""alpha"": 1}",1.1547829045564448,0.1197956172864947
+volatility,ridge_hmm,AUDUSD,2019,"{""alpha"": 1}",1.1051836877782368,0.107201429061456
+volatility,ridge_hmm,AUDUSD,2020,"{""alpha"": 1}",1.0553822814175684,0.13225682901205832
+volatility,ridge_hmm,AUDUSD,2021,"{""alpha"": 1}",1.0633231648628405,0.14874634058527286
+volatility,ridge_hmm,AUDUSD,2022,"{""alpha"": 1}",1.0775507408069658,0.14522691765174503
+volatility,ridge_hmm,AUDUSD,2023,"{""alpha"": 1000}",1.0873504108455718,0.10449152862555422
+volatility,ridge_hmm,AUDUSD,2024,"{""alpha"": 1}",1.1237933914383722,0.0872046172032322
+volatility,ridge_hmm,AUDUSD,2025,"{""alpha"": 1}",1.1448777400290508,0.10265630256654157
+volatility,ridge_hmm,AUDUSD,2026,"{""alpha"": 1}",1.1766517873462636,0.11215563504739076
+volatility,ridge_hmm,EURUSD,2012,"{""alpha"": 1000}",1.144902074137395,0.06155896027499387
+volatility,ridge_hmm,EURUSD,2013,"{""alpha"": 100}",1.026997655687671,0.059806704027019965
+volatility,ridge_hmm,EURUSD,2014,"{""alpha"": 1000}",1.018824590612449,0.10716732595390352
+volatility,ridge_hmm,EURUSD,2015,"{""alpha"": 1000}",0.9846332271621726,0.15226132877091278
+volatility,ridge_hmm,EURUSD,2016,"{""alpha"": 1}",1.1688940039757518,0.16723443069738542
+volatility,ridge_hmm,EURUSD,2017,"{""alpha"": 1000}",1.2929918423622297,0.21617862105663357
+volatility,ridge_hmm,EURUSD,2018,"{""alpha"": 1000}",1.1907903191601086,0.1992670530894283
+volatility,ridge_hmm,EURUSD,2019,"{""alpha"": 1000}",1.1587349831859879,0.15530902247109285
+volatility,ridge_hmm,EURUSD,2020,"{""alpha"": 1000}",1.0421974733471986,0.10117191020013626
+volatility,ridge_hmm,EURUSD,2021,"{""alpha"": 1000}",1.0610490704484874,0.10382745437843088
+volatility,ridge_hmm,EURUSD,2022,"{""alpha"": 1000}",1.0116609232992935,0.10661236951298253
+volatility,ridge_hmm,EURUSD,2023,"{""alpha"": 1000}",1.0649488949996038,0.11282503712375896
+volatility,ridge_hmm,EURUSD,2024,"{""alpha"": 1}",1.0740863332903559,0.09793542442102197
+volatility,ridge_hmm,EURUSD,2025,"{""alpha"": 1}",1.0919023863651098,0.12066317412081817
+volatility,ridge_hmm,EURUSD,2026,"{""alpha"": 1}",1.1283194976427704,0.1343710999975113
+volatility,ridge_hmm,GBPUSD,2012,"{""alpha"": 100}",1.083168977531626,0.04265888870307617
+volatility,ridge_hmm,GBPUSD,2013,"{""alpha"": 100}",0.9626664842036124,0.05177126009098628
+volatility,ridge_hmm,GBPUSD,2014,"{""alpha"": 100}",1.0245474482779096,0.08458681435432626
+volatility,ridge_hmm,GBPUSD,2015,"{""alpha"": 100}",1.0099463287407215,0.09979355766071592
+volatility,ridge_hmm,GBPUSD,2016,"{""alpha"": 100}",1.05051230635313,0.10196511746290632
+volatility,ridge_hmm,GBPUSD,2017,"{""alpha"": 1000}",1.2530441830400167,0.2728911323940273
+volatility,ridge_hmm,GBPUSD,2018,"{""alpha"": 1}",1.2521748794113012,0.2848884766769575
+volatility,ridge_hmm,GBPUSD,2019,"{""alpha"": 1000}",1.3294552202944978,0.2799168128040328
+volatility,ridge_hmm,GBPUSD,2020,"{""alpha"": 1}",1.210085042786692,0.15977693252387176
+volatility,ridge_hmm,GBPUSD,2021,"{""alpha"": 1000}",1.152490868309818,0.12174548458263952
+volatility,ridge_hmm,GBPUSD,2022,"{""alpha"": 1000}",1.0979125903255778,0.11007604052164184
+volatility,ridge_hmm,GBPUSD,2023,"{""alpha"": 1000}",1.1070580772230754,0.11579049587337965
+volatility,ridge_hmm,GBPUSD,2024,"{""alpha"": 1000}",1.0843372021742412,0.09165768639403123
+volatility,ridge_hmm,GBPUSD,2025,"{""alpha"": 1}",1.0719536211826466,0.10755780846452374
+volatility,ridge_hmm,GBPUSD,2026,"{""alpha"": 1}",1.0905445337761324,0.1167697398822079
+volatility,ridge_hmm,NZDUSD,2012,"{""alpha"": 1}",1.016831372238171,0.07066731546247827
+volatility,ridge_hmm,NZDUSD,2013,"{""alpha"": 10}",0.92084106031178,0.06179717712151505
+volatility,ridge_hmm,NZDUSD,2014,"{""alpha"": 100}",1.0482008160520189,0.07308226710595711
+volatility,ridge_hmm,NZDUSD,2015,"{""alpha"": 1}",1.1197534555723476,0.09523089272398853
+volatility,ridge_hmm,NZDUSD,2016,"{""alpha"": 1}",1.1361433042199014,0.12793852966713665
+volatility,ridge_hmm,NZDUSD,2017,"{""alpha"": 1000}",1.1819061858884672,0.14898626361144335
+volatility,ridge_hmm,NZDUSD,2018,"{""alpha"": 1000}",1.1355916864247941,0.1418818569902153
+volatility,ridge_hmm,NZDUSD,2019,"{""alpha"": 1}",1.1195756528244598,0.12254796598806256
+volatility,ridge_hmm,NZDUSD,2020,"{""alpha"": 1}",1.1072587564342822,0.1365583042330335
+volatility,ridge_hmm,NZDUSD,2021,"{""alpha"": 100}",1.0663506785269208,0.13996657726759387
+volatility,ridge_hmm,NZDUSD,2022,"{""alpha"": 1000}",1.0546639194933,0.13331768247854225
+volatility,ridge_hmm,NZDUSD,2023,"{""alpha"": 1000}",1.1012625183342037,0.09806186001889557
+volatility,ridge_hmm,NZDUSD,2024,"{""alpha"": 1}",1.1169258541298457,0.08390447509838189
+volatility,ridge_hmm,NZDUSD,2025,"{""alpha"": 1}",1.141652940539035,0.10329688929811563
+volatility,ridge_hmm,NZDUSD,2026,"{""alpha"": 1}",1.16774983341585,0.1096532426316015
+volatility,ridge_hmm,USDCAD,2012,"{""alpha"": 1}",0.9599419815590527,0.06769918469769173
+volatility,ridge_hmm,USDCAD,2013,"{""alpha"": 1}",0.8725716940444549,0.057005363845643635
+volatility,ridge_hmm,USDCAD,2014,"{""alpha"": 1}",0.9502567464342737,0.09521750039302838
+volatility,ridge_hmm,USDCAD,2015,"{""alpha"": 1}",1.122339865657394,0.12816474941866074
+volatility,ridge_hmm,USDCAD,2016,"{""alpha"": 1}",1.2012271896516709,0.12792667601465627
+volatility,ridge_hmm,USDCAD,2017,"{""alpha"": 1}",1.2076894814769912,0.11629197172246541
+volatility,ridge_hmm,USDCAD,2018,"{""alpha"": 1}",1.1593775900628116,0.12322890014503719
+volatility,ridge_hmm,USDCAD,2019,"{""alpha"": 1}",1.1490680797062014,0.13721390263650574
+volatility,ridge_hmm,USDCAD,2020,"{""alpha"": 1}",1.0880686776931296,0.13169855621771084
+volatility,ridge_hmm,USDCAD,2021,"{""alpha"": 1}",1.0155968243019253,0.11356847862053654
+volatility,ridge_hmm,USDCAD,2022,"{""alpha"": 1}",1.0232424302364003,0.10492129453237632
+volatility,ridge_hmm,USDCAD,2023,"{""alpha"": 100}",1.0230200482775487,0.0959550948814897
+volatility,ridge_hmm,USDCAD,2024,"{""alpha"": 1000}",0.9919561942150297,0.0740434506515867
+volatility,ridge_hmm,USDCAD,2025,"{""alpha"": 100}",1.0371736148358912,0.09080249983951828
+volatility,ridge_hmm,USDCAD,2026,"{""alpha"": 100}",1.057234910194415,0.1112313431443586
+volatility,ridge_hmm,USDCHF,2012,"{""alpha"": 100}",1.1348941007403888,0.15435965262271917
+volatility,ridge_hmm,USDCHF,2013,"{""alpha"": 1000}",0.9655357051221848,0.12511676253865026
+volatility,ridge_hmm,USDCHF,2014,"{""alpha"": 100}",1.0659398639632474,0.10719409658854777
+volatility,ridge_hmm,USDCHF,2015,"{""alpha"": 1}",1.0537342086641261,0.1454431019462108
+volatility,ridge_hmm,USDCHF,2016,"{""alpha"": 1}",1.7932894768050112,0.6504716657671888
+volatility,ridge_hmm,USDCHF,2017,"{""alpha"": 100}",1.9408617204092249,0.6397191597181683
+volatility,ridge_hmm,USDCHF,2018,"{""alpha"": 1000}",1.1780900610815634,0.14624843023336478
+volatility,ridge_hmm,USDCHF,2019,"{""alpha"": 1000}",1.1040831104156064,0.1267925211948344
+volatility,ridge_hmm,USDCHF,2020,"{""alpha"": 1000}",0.9945382507618212,0.09251999661338743
+volatility,ridge_hmm,USDCHF,2021,"{""alpha"": 1000}",0.9616890082406864,0.09702674086025331
+volatility,ridge_hmm,USDCHF,2022,"{""alpha"": 1000}",0.9501093367211917,0.09611671135639971
+volatility,ridge_hmm,USDCHF,2023,"{""alpha"": 1000}",1.012031968459365,0.09550631700480404
+volatility,ridge_hmm,USDCHF,2024,"{""alpha"": 10}",1.0572525677215183,0.08889714789105566
+volatility,ridge_hmm,USDCHF,2025,"{""alpha"": 10}",1.114457716281549,0.11934570560379582
+volatility,ridge_hmm,USDCHF,2026,"{""alpha"": 1000}",1.1641909338746734,0.12793948818772566
+volatility,ridge_hmm,USDJPY,2012,"{""alpha"": 1}",1.178032549236419,0.32858722070287794
+volatility,ridge_hmm,USDJPY,2013,"{""alpha"": 1}",1.0977835452931572,0.3162163356294098
+volatility,ridge_hmm,USDJPY,2014,"{""alpha"": 100}",1.1959950101525145,0.1541027719506092
+volatility,ridge_hmm,USDJPY,2015,"{""alpha"": 1000}",1.1389377293436713,0.15790988640351158
+volatility,ridge_hmm,USDJPY,2016,"{""alpha"": 1}",1.0912716567260405,0.176895309106952
+volatility,ridge_hmm,USDJPY,2017,"{""alpha"": 1}",1.2897727139494175,0.3006635250958361
+volatility,ridge_hmm,USDJPY,2018,"{""alpha"": 1}",1.242915570381593,0.25754738308795505
+volatility,ridge_hmm,USDJPY,2019,"{""alpha"": 1}",1.1571946582793464,0.19211264839724795
+volatility,ridge_hmm,USDJPY,2020,"{""alpha"": 1}",1.0788003956821033,0.17369990202368296
+volatility,ridge_hmm,USDJPY,2021,"{""alpha"": 1}",1.0455742585870198,0.1950485832226755
+volatility,ridge_hmm,USDJPY,2022,"{""alpha"": 1}",1.0265281013902512,0.19552256506708515
+volatility,ridge_hmm,USDJPY,2023,"{""alpha"": 1}",1.0769151531480852,0.19607050563692038
+volatility,ridge_hmm,USDJPY,2024,"{""alpha"": 1}",1.0903298250884383,0.1879752576119174
+volatility,ridge_hmm,USDJPY,2025,"{""alpha"": 1}",1.169099518252663,0.24662060239569952
+volatility,ridge_hmm,USDJPY,2026,"{""alpha"": 1}",1.1619449108128113,0.2378819303500831
 volatility,ridge_regime,AUDUSD,2012,"{""alpha"": 100}",1.0429884581459608,0.07074535669102351
 volatility,ridge_regime,AUDUSD,2013,"{""alpha"": 100}",0.9166501599082102,0.06272578051108338
 volatility,ridge_regime,AUDUSD,2014,"{""alpha"": 100}",1.0182756425794324,0.07852402830415108

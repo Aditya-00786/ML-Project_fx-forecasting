@@ -1,5 +1,5 @@
-"""Neural networks for the three tasks: a multilayer perceptron (MLP) on each day's features and
-an LSTM over a window of recent days.
+"""Neural networks for the three tasks: a multilayer perceptron (MLP) on each day's features, and
+an LSTM and a small Transformer over a window of recent days.
 
 At each refit (every quarter by default):
 
@@ -54,6 +54,7 @@ TASKS = ("volatility", "direction", "returns")
 NEURAL_SPECS: list[NeuralSpec] = [
     *(NeuralSpec("mlp", task) for task in TASKS),
     *(NeuralSpec("lstm", task, window=20, hidden=32) for task in TASKS),
+    *(NeuralSpec("transformer", task, window=20, hidden=32) for task in TASKS),
 ]
 
 
@@ -85,7 +86,29 @@ class LSTMNet(nn.Module):
         return self.head(out[:, -1, :]).squeeze(-1)
 
 
+class TransformerNet(nn.Module):
+    """Self-attention over the window: every day's inputs are projected to ``hidden`` units, a
+    learned position embedding marks how many days ago each was, and two encoder layers let each
+    day attend to the others. The latest day's output gives the forecast."""
+
+    def __init__(self, n_features: int, hidden: int, dropout: float, window: int,
+                 heads: int = 4, layers: int = 2):
+        super().__init__()
+        self.project = nn.Linear(n_features, hidden)
+        self.position = nn.Parameter(torch.zeros(1, window, hidden))
+        layer = nn.TransformerEncoderLayer(hidden, heads, dim_feedforward=2 * hidden,
+                                           dropout=dropout, batch_first=True)
+        self.encoder = nn.TransformerEncoder(layer, layers, enable_nested_tensor=False)
+        self.head = nn.Sequential(nn.Dropout(dropout), nn.Linear(hidden, 1))
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        out = self.encoder(self.project(x) + self.position[:, -x.shape[1]:])
+        return self.head(out[:, -1, :]).squeeze(-1)
+
+
 def build(spec: NeuralSpec, n_features: int) -> nn.Module:
+    if spec.name == "transformer":
+        return TransformerNet(n_features, spec.hidden, spec.dropout, spec.window)
     network = MLP if spec.name == "mlp" else LSTMNet
     return network(n_features, spec.hidden, spec.dropout)
 

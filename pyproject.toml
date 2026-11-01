@@ -18,6 +18,7 @@ dependencies = [
     "requests>=2.32",
     "tqdm>=4.66",
     "torch>=2.5",
+    "hmmlearn>=0.3",
 ]
 
 [dependency-groups]
@@ -49,6 +50,8 @@ packages = ["src/fxml"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
+# pytest resets warning filters per test, so repeat hmmlearn's NumPy 2.5 deprecation filter here
+filterwarnings = ["ignore::DeprecationWarning:hmmlearn"]
 
 [tool.ruff]
 line-length = 100

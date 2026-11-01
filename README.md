@@ -58,6 +58,12 @@ uv run python scripts/run_backtest.py  # strategies, costs, breakdowns and Value
 uv run python scripts/run_shap.py      # SHAP values of the LightGBM models; reports/tables/shap_lightgbm.csv
 ```
 
+Extensions beyond the core plan (hidden Markov regimes come from `run_regimes.py`):
+
+```bash
+uv run python scripts/run_horizons.py  # 5 and 22 day volatility and direction; reports/tables/horizons_*.csv
+```
+
 On a Mac, LightGBM (used from Phase 4) also needs the OpenMP runtime: `brew install libomp`.
 
 The stored data takes about 0.25 GB. The 1-minute bars are kept as 5-minute bars, and raw ZIP files are never written to disk. The notebooks `01_data_quality` and `02_stylized_facts` document what the data looks like.

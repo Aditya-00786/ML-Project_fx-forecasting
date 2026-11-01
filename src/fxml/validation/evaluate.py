@@ -36,10 +36,16 @@ def aligned(group: pd.DataFrame) -> tuple[pd.DataFrame, pd.Series]:
     return wide, actual
 
 
-def score(predictions: pd.DataFrame, reference: dict[str, str]) -> pd.DataFrame:
+def score(
+    predictions: pd.DataFrame, reference: dict[str, str], horizon: int = 1
+) -> pd.DataFrame:
     """One row per (task, pair, model): accuracy metrics plus a Diebold-Mariano test against
     the task's reference model (negative statistic = better than the reference) and, for
-    direction, a Pesaran-Timmermann test of the up/down calls.
+    one-day direction forecasts, a Pesaran-Timmermann test of the up/down calls.
+
+    For forecasts over ``horizon`` days, consecutive forecasts overlap, so the Diebold-Mariano
+    test allows for ``horizon - 1`` lags of autocorrelation; Pesaran-Timmermann, which assumes
+    independent calls, is skipped.
 
     ``predictions`` has columns task, pair, model, date, actual and forecast. Days a model or
     the reference did not forecast are left out of that model's scores.
@@ -54,9 +60,10 @@ def score(predictions: pd.DataFrame, reference: dict[str, str]) -> pd.DataFrame:
             truth, forecast, base = actual[ok], wide.loc[ok, model], wide.loc[ok, ref]
             row = {"task": task, "pair": pair, "model": model, "days": int(ok.sum())}
             row |= METRICS[task](truth.to_numpy(), forecast.to_numpy())
-            dm, p = diebold_mariano(loss(task, truth, forecast), loss(task, truth, base))
+            dm, p = diebold_mariano(loss(task, truth, forecast), loss(task, truth, base),
+                                    horizon)
             row |= {f"dm_vs_{ref}": dm, f"dm_p_vs_{ref}": p}
-            if task == "direction":
+            if task == "direction" and horizon == 1:
                 row["pt_stat"], row["pt_p"] = pesaran_timmermann(truth > 0.5, forecast > 0.5)
             rows.append(row)
     return pd.DataFrame(rows)
@@ -68,8 +75,8 @@ def summary_tables(
     """Per task: one row per (pair, model), plus an "average" row per model.
 
     Averaging p-values across pairs is meaningless, so the average row instead counts the pairs
-    where the model is significantly better than the reference (p < 0.05), or for direction the
-    pairs where its calls beat chance.
+    where the model is significantly better than the reference (p < 0.05), or for one-day
+    direction forecasts the pairs where its calls beat chance (Pesaran-Timmermann).
     """
     out = {}
     for task, group in scores.groupby("task"):
@@ -78,7 +85,7 @@ def summary_tables(
         tests = [dm, p, "pt_stat", "pt_p"]
         metrics = [c for c in group.select_dtypes("number").columns if c not in tests]
         average = group.groupby("model")[metrics].mean()
-        if task == "direction":
+        if task == "direction" and "pt_p" in group:
             better = group["pt_p"] < 0.05
         else:
             better = (group[dm] < 0) & (group[p] < 0.05)

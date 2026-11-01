@@ -7,6 +7,10 @@ volatility,mlp,average,qlike,0.1510945688267413
 volatility,mlp,0,qlike,0.15454163427592368
 volatility,mlp,1,qlike,0.15189705564918832
 volatility,mlp,2,qlike,0.1534280844224511
+volatility,transformer,average,qlike,0.16066355411485114
+volatility,transformer,0,qlike,0.16775993532536113
+volatility,transformer,1,qlike,0.16381087004425235
+volatility,transformer,2,qlike,0.16450275171680748
 direction,lstm,average,roc_auc,0.497925599574914
 direction,lstm,0,roc_auc,0.5014534309015488
 direction,lstm,1,roc_auc,0.4988596754460555
@@ -15,6 +19,10 @@ direction,mlp,average,roc_auc,0.5034321804301015
 direction,mlp,0,roc_auc,0.5039595743726484
 direction,mlp,1,roc_auc,0.5043037330496672
 direction,mlp,2,roc_auc,0.4995905239596977
+direction,transformer,average,roc_auc,0.5012211944736917
+direction,transformer,0,roc_auc,0.498746626413317
+direction,transformer,1,roc_auc,0.5025112631814761
+direction,transformer,2,roc_auc,0.5018104673955165
 returns,lstm,average,r2_oos,-0.0063185670344961965
 returns,lstm,0,r2_oos,-0.011645517639349639
 returns,lstm,1,r2_oos,-0.010498594381807193
@@ -23,3 +31,7 @@ returns,mlp,average,r2_oos,-0.004022070827522579
 returns,mlp,0,r2_oos,-0.009784871151875128
 returns,mlp,1,r2_oos,-0.007680761196777043
 returns,mlp,2,r2_oos,-0.007054383218963757
+returns,transformer,average,r2_oos,-0.016619212558903338
+returns,transformer,0,r2_oos,-0.022476473699848683
+returns,transformer,1,r2_oos,-0.02354231535195964
+returns,transformer,2,r2_oos,-0.031958410611973846

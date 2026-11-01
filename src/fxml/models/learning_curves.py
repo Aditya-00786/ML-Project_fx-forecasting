@@ -25,6 +25,7 @@ from sklearn.naive_bayes import GaussianNB
 
 from fxml.models.inputs import BASE_FEATURES
 from fxml.models.ml import imputed, scaled
+from fxml.validation.metrics import expected_calibration_error
 from fxml.validation.walkforward import Fold
 
 SIZES = (21, 63, 126, 252, 504, 1008)  # one month to four years of trading days
@@ -87,6 +88,6 @@ def summarise_curves(forecasts: pd.DataFrame) -> pd.DataFrame:
             "train_days": group["train_days"].mean(),
             "days": len(group), "accuracy": np.mean((p > 0.5) == y),
             "log_loss": log_loss(y, p, labels=[0, 1]), "brier": brier_score_loss(y, p),
-            "roc_auc": roc_auc_score(y, p),
+            "roc_auc": roc_auc_score(y, p), "ece": expected_calibration_error(y, p),
         })
     return pd.DataFrame(out)

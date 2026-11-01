@@ -117,7 +117,7 @@ def regime_vs_global(predictions: pd.DataFrame) -> pd.DataFrame:
     for (task, pair), group in predictions.groupby(["task", "pair"]):
         wide, actual = aligned(group)
         for model in wide.columns:
-            for suffix in ("_regime", "_experts"):
+            for suffix in ("_regime", "_experts", "_hmm"):
                 base = model.removesuffix(suffix)
                 if base == model or base not in wide:
                     continue

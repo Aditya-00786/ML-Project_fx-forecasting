@@ -86,3 +86,29 @@ def test_score_skips_days_a_model_did_not_forecast():
     assert scores.loc["gappy", "days"] == 299
     assert scores.loc["naive", "days"] == 300
     assert np.isfinite(scores.loc["gappy", ["qlike", "mz_r2", "dm_vs_naive"]].astype(float)).all()
+
+
+def test_calibration_measures():
+    from fxml.validation.metrics import (
+        calibration_bins,
+        calibration_slope,
+        expected_calibration_error,
+    )
+
+    rng = np.random.default_rng(4)
+    prob = rng.uniform(0.2, 0.8, 50_000)
+    outcome = (rng.random(50_000) < prob).astype(float)  # calibrated by construction
+    assert expected_calibration_error(outcome, prob) < 0.01
+    assert calibration_slope(outcome, prob) == pytest.approx(1.0, abs=0.05)
+    stretched = 1 / (1 + np.exp(-3 * np.log(prob / (1 - prob))))  # three times too confident
+    assert expected_calibration_error(outcome, stretched) > 0.05
+    assert calibration_slope(outcome, stretched) == pytest.approx(1 / 3, abs=0.03)
+    table = calibration_bins(outcome, prob, bins=5)
+    assert len(table) == 5 and table["days"].sum() == 50_000
+    assert np.isnan(calibration_slope(outcome, np.full(50_000, 0.5)))  # constant: not identified
+    assert len(calibration_bins(outcome, np.full(50_000, 0.5))) == 1
+    # a forecast that is always 0 or 1 on coin flips is badly calibrated, whatever the binning
+    coin = (rng.random(50_000) < 0.5).astype(float)
+    certain = (rng.random(50_000) < 0.5).astype(float)
+    assert len(calibration_bins(coin, certain)) == 2
+    assert expected_calibration_error(coin, certain) == pytest.approx(0.5, abs=0.02)
