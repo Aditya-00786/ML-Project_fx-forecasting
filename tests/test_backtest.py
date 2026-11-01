@@ -231,3 +231,18 @@ def test_shap_values_add_up_to_the_forecast(frame, folds):
     assert yearly_shap(spec, frame, folds[:2], {2013: "{}"}).empty  # no tuned year: skipped
     assert (table["mean_abs_shap"] >= 0).all()
     assert table.loc[table["feature"] == "garch_logvar", "group"].item() == "volatility"
+
+
+def test_var_rows_cover_every_forecast_method_and_side():
+    rng = np.random.default_rng(5)
+    dates = pd.bdate_range("2015-01-01", periods=700)
+    data = pd.DataFrame({"ret": rng.normal(0, 0.006, len(dates)),
+                         "var_baseline_ewma": 0.006**2, "var_lightgbm": 0.0055**2}, index=dates)
+    rows = pd.DataFrame(risk.var_rows(data, "EURUSD"))
+    assert len(rows) == 2 * 4  # two forecasts, two methods, two sides
+    assert set(rows["model"]) == {"baseline_ewma", "lightgbm"} and (rows["pair"] == "EURUSD").all()
+    assert rows.groupby(["model", "method"])["days"].nunique().eq(1).all()  # same days per side
+    hits = risk.exceedances(risk.value_at_risk(data["var_lightgbm"], data["ret"]), data["ret"])
+    common = hits.notna().all(axis=1)
+    one = rows.query("model == 'lightgbm' and method == 'normal' and side == 'long'").iloc[0]
+    assert one["exceedances"] == risk.backtest_var(hits.loc[common, "normal_long"])["exceedances"]

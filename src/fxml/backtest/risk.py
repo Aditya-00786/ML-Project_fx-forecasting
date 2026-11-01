@@ -56,6 +56,20 @@ def exceedances(var: pd.DataFrame, returns: pd.Series) -> pd.DataFrame:
     return pd.DataFrame(out)
 
 
+def var_rows(data: pd.DataFrame, pair: str) -> list[dict]:
+    """Value at Risk tests for every variance forecast (``var_*`` columns) in one pair's
+    backtest data, both methods and sides, compared on the days both methods cover."""
+    rows = []
+    for column in [c for c in data.columns if c.startswith("var_")]:
+        hits = exceedances(value_at_risk(data[column], data["ret"]), data["ret"])
+        common = hits.notna().all(axis=1)
+        for name in hits.columns:
+            method, side = name.rsplit("_", 1)
+            rows.append({"model": column.removeprefix("var_"), "pair": pair, "method": method,
+                         "side": side} | backtest_var(hits.loc[common, name]))
+    return rows
+
+
 def backtest_var(hits: pd.Series, level: float = LEVEL) -> dict[str, float]:
     """Exceedance rate with the Kupiec (right frequency) and Christoffersen (no clustering)
     tests."""

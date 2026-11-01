@@ -166,6 +166,16 @@ Each phase ends with a pull request. The next phase starts only when its "done w
   - the Transformer is no better than HAR-RV;
   - at 5 and 22 days HAR-RV beats every learning model.
 
+### Stretch goals (after the extensions)
+- **Extra pairs:** EUR/GBP (HistData 1-minute bars) and USD/INR (Federal Reserve noon rates, the only free source) in `src/fxml/extra_pairs.py`, `scripts/build_extra_pairs.py` and `scripts/run_extra_pairs.py`.
+  - They are kept apart from the core: the market state, regimes and factors still come from the seven core pairs, and no core table, cache or average changes.
+  - USD/INR has no intraday data, so it has no volatility task and no intraday features. Its noon fixing comes before the 17:00 close that dates every other input, so it takes those inputs from the previous trading day.
+- **Results dashboard:** `scripts/build_dashboard.py` writes `reports/dashboard.html`, one offline page with Verdicts, Explorer and Present views, and `dashboard/app.py` serves the same views in Streamlit. Both read `reports/dashboard/data.json`, collected from the saved tables.
+- **Results** (`notebooks/09_stretch_goals.ipynb`):
+  - on EUR/GBP the learning models only match HAR-RV, so the one-day volatility edge does not carry over to the cross;
+  - USD/INR is the one pair where up/down calls beat chance (LightGBM and random forest), but no strategy's profit after costs is significant;
+  - its single noon quote, taken after the onshore market closes, may explain part of that predictability.
+
 ### Phase 7 — Report and presentation
 - Final report in the same LaTeX style as the proposal, built from the saved tables and figures.
 - Slides for the presentation.

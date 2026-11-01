@@ -81,9 +81,12 @@ def signals(data: pd.DataFrame) -> pd.DataFrame:
 
 
 def sizes(data: pd.DataFrame) -> pd.DataFrame:
-    """Position size for each sizing rule and day."""
+    """Position size for each sizing rule and day. A rule whose variance forecast the pair
+    lacks (a pair without intraday data has no realized variance models) is left out."""
     out = {"unit": pd.Series(1.0, index=data.index)}
     for name, model in SIZING_MODELS.items():
+        if f"var_{model}" not in data:
+            continue
         forecast_vol = np.sqrt(data[f"var_{model}"] * 252)
         out[f"vt_{name}"] = (TARGET_VOL / forecast_vol).clip(upper=MAX_LEVERAGE).ffill()
     return pd.DataFrame(out)
