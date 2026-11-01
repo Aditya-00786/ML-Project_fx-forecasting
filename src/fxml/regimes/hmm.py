@@ -17,6 +17,7 @@ numbered by their average short horizon volatility, so regime 0 is the calmest.
 from __future__ import annotations
 
 import warnings
+from contextlib import contextmanager
 
 import numpy as np
 import pandas as pd
@@ -28,8 +29,14 @@ from sklearn.preprocessing import StandardScaler
 from fxml.regimes.models import ORDER_BY
 from fxml.validation.walkforward import refit_periods
 
-# hmmlearn 0.3.3 reshapes arrays in a way NumPy 2.5 deprecates; the results are unaffected.
-warnings.filterwarnings("ignore", category=DeprecationWarning, module="hmmlearn")
+
+@contextmanager
+def _quiet():
+    """hmmlearn 0.3.3 reshapes arrays in a way NumPy 2.5 deprecates; the results are unaffected,
+    so its deprecation warnings are hidden, inside these calls only."""
+    with warnings.catch_warnings():
+        warnings.filterwarnings("ignore", category=DeprecationWarning, module="hmmlearn")
+        yield
 
 
 class HMMRegimes:
@@ -46,12 +53,16 @@ class HMMRegimes:
         z = self.scaler_.transform(state)
         best, best_score = None, -np.inf
         for restart in range(self.restarts):
-            model = GaussianHMM(n_components=self.n_regimes, covariance_type="full",
-                                n_iter=self.iterations, tol=1e-4,
-                                random_state=self.seed + restart).fit(z)
-            score = model.score(z)
-            if score > best_score:
+            with _quiet():
+                model = GaussianHMM(n_components=self.n_regimes, covariance_type="full",
+                                    n_iter=self.iterations, tol=1e-4,
+                                    random_state=self.seed + restart).fit(z)
+                score = model.score(z)
+            if np.isfinite(score) and score > best_score:
                 best, best_score = model, score
+        if best is None:
+            raise RuntimeError(f"no Baum-Welch start reached a finite likelihood with "
+                               f"{self.n_regimes} regimes")
         self.model_, self.log_likelihood_ = best, best_score
         self.order_ = np.argsort(best.means_[:, self.columns_.index(ORDER_BY)])
         return self
@@ -60,7 +71,8 @@ class HMMRegimes:
         """Bayesian information criterion on ``state`` (lower is better)."""
         k, d = self.n_regimes, len(self.columns_)
         parameters = (k - 1) + k * (k - 1) + k * d + k * d * (d + 1) / 2
-        log_likelihood = self.model_.score(self.scaler_.transform(state[self.columns_]))
+        with _quiet():
+            log_likelihood = self.model_.score(self.scaler_.transform(state[self.columns_]))
         return float(-2 * log_likelihood + parameters * np.log(len(state)))
 
     def transition_matrix(self) -> pd.DataFrame:

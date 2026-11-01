@@ -99,13 +99,17 @@ def test_calibration_measures():
     prob = rng.uniform(0.2, 0.8, 50_000)
     outcome = (rng.random(50_000) < prob).astype(float)  # calibrated by construction
     assert expected_calibration_error(outcome, prob) < 0.01
-    assert calibration_slope(outcome, prob) == pytest.approx(1.0, abs=0.05)
+    slope, se = calibration_slope(outcome, prob)
+    assert slope == pytest.approx(1.0, abs=0.05) and 0 < se < 0.05
     stretched = 1 / (1 + np.exp(-3 * np.log(prob / (1 - prob))))  # three times too confident
     assert expected_calibration_error(outcome, stretched) > 0.05
-    assert calibration_slope(outcome, stretched) == pytest.approx(1 / 3, abs=0.03)
+    assert calibration_slope(outcome, stretched)[0] == pytest.approx(1 / 3, abs=0.03)
+    # forecasts that barely move: the slope is poorly identified, and its error says so
+    flat = 0.5 + 0.005 * (prob - 0.5)
+    assert calibration_slope(outcome, flat)[1] > 10 * se
     table = calibration_bins(outcome, prob, bins=5)
     assert len(table) == 5 and table["days"].sum() == 50_000
-    assert np.isnan(calibration_slope(outcome, np.full(50_000, 0.5)))  # constant: not identified
+    assert np.isnan(calibration_slope(outcome, np.full(50_000, 0.5))).all()  # constant
     assert len(calibration_bins(outcome, np.full(50_000, 0.5))) == 1
     # a forecast that is always 0 or 1 on coin flips is badly calibrated, whatever the binning
     coin = (rng.random(50_000) < 0.5).astype(float)

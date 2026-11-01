@@ -7,6 +7,18 @@ import pytest
 PAIRS = ("EURUSD", "USDJPY")
 
 
+def _lightgbm_loads() -> bool:
+    try:
+        import lightgbm  # noqa: F401
+    except (ImportError, OSError):  # installed but unloadable (no OpenMP runtime on some Macs)
+        return False
+    return True
+
+
+HAS_LIGHTGBM = _lightgbm_loads()
+needs_lightgbm = pytest.mark.skipif(not HAS_LIGHTGBM, reason="LightGBM cannot load here")
+
+
 def synthetic_daily(dates: pd.DatetimeIndex, start_price: float, rng: np.random.Generator):
     """Daily bars with volatility clustering (a simple GARCH-like process)."""
     n = len(dates)

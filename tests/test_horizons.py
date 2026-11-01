@@ -6,7 +6,7 @@ import pytest
 
 from fxml.models import baselines, horizons
 
-from .conftest import CUT
+from .conftest import CUT, needs_lightgbm
 
 WF = SimpleNamespace(test_start=pd.Timestamp("2012-01-01"), refit_frequency="MS",
                      validation_fraction=0.2, embargo_days=5)
@@ -41,17 +41,6 @@ def test_garch_horizon_averages_the_step_forecasts(frame, folds):
     week = baselines.vol_garch(frame, folds[:1], horizon=5)
     assert (week > 0).all()
     assert not np.allclose(week, one)  # later steps revert towards the long-run variance
-
-
-def lightgbm_loads() -> bool:
-    try:
-        import lightgbm  # noqa: F401
-    except (ImportError, OSError):  # unloadable without the OpenMP runtime on some Macs
-        return False
-    return True
-
-
-needs_lightgbm = pytest.mark.skipif(not lightgbm_loads(), reason="LightGBM cannot load here")
 
 
 @needs_lightgbm

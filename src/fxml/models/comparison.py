@@ -28,6 +28,15 @@ from fxml.validation.stats_tests import diebold_mariano
 REFERENCE = {"volatility": "har", "returns": "zero", "direction": "frequency"}
 ACTUAL = {"volatility": "y_rv", "returns": "y_ret", "direction": "y_dir"}
 HEADLINE = {"volatility": "qlike", "direction": "roc_auc", "returns": "r2_oos"}
+REGIME_SUFFIXES = ("_regime", "_experts", "_hmm")  # the regime-aware variants of a model
+
+
+def global_model(name: str) -> str:
+    """The global model a regime-aware variant is built on (the name itself otherwise)."""
+    for suffix in REGIME_SUFFIXES:
+        if name.endswith(suffix):
+            return name.removesuffix(suffix)
+    return name
 
 
 def inputs_path(cfg) -> Path:
@@ -117,15 +126,14 @@ def regime_vs_global(predictions: pd.DataFrame) -> pd.DataFrame:
     for (task, pair), group in predictions.groupby(["task", "pair"]):
         wide, actual = aligned(group)
         for model in wide.columns:
-            for suffix in ("_regime", "_experts", "_hmm"):
-                base = model.removesuffix(suffix)
-                if base == model or base not in wide:
-                    continue
-                ok = actual.notna() & wide[model].notna() & wide[base].notna()
-                stat, p = diebold_mariano(loss(task, actual[ok], wide.loc[ok, model]),
-                                          loss(task, actual[ok], wide.loc[ok, base]))
-                rows.append({"task": task, "pair": pair, "model": model, "global_model": base,
-                             "dm_vs_global": stat, "dm_p_vs_global": p})
+            base = global_model(model)
+            if base == model or base not in wide:
+                continue
+            ok = actual.notna() & wide[model].notna() & wide[base].notna()
+            stat, p = diebold_mariano(loss(task, actual[ok], wide.loc[ok, model]),
+                                      loss(task, actual[ok], wide.loc[ok, base]))
+            rows.append({"task": task, "pair": pair, "model": model, "global_model": base,
+                         "dm_vs_global": stat, "dm_p_vs_global": p})
     table = pd.DataFrame(rows)
     better = (table["dm_vs_global"] < 0) & (table["dm_p_vs_global"] < 0.05)
     worse = (table["dm_vs_global"] > 0) & (table["dm_p_vs_global"] < 0.05)

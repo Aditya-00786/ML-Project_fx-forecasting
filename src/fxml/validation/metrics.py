@@ -77,17 +77,21 @@ def expected_calibration_error(actual: np.ndarray, prob: np.ndarray, bins: int =
     return float((gap * table["days"]).sum() / table["days"].sum())
 
 
-def calibration_slope(actual: np.ndarray, prob: np.ndarray, steps: int = 50) -> float:
-    """Slope of a logistic regression of the outcome on the forecast's log-odds.
+def calibration_slope(
+    actual: np.ndarray, prob: np.ndarray, steps: int = 50
+) -> tuple[float, float]:
+    """Slope of a logistic regression of the outcome on the forecast's log-odds, and its
+    standard error.
 
     1 means the forecasts are as confident as they should be, below 1 overconfident (the
-    outcomes vary less than the forecasts claim) and above 1 underconfident. Missing when the
-    forecasts barely vary, since the slope is then not identified."""
+    outcomes vary less than the forecasts claim) and above 1 underconfident. Forecasts that
+    barely move leave the slope poorly identified, which shows as a large standard error. Both
+    are missing when the forecasts are constant or the fit does not converge."""
     y = np.asarray(actual, dtype=float)
     p = np.clip(np.asarray(prob, dtype=float), 1e-6, 1 - 1e-6)
     x = np.log(p / (1 - p))
     if np.std(x) < 1e-6:
-        return np.nan
+        return np.nan, np.nan
     design = np.column_stack([np.ones_like(x), x])
     beta = np.zeros(2)
     for _ in range(steps):  # Newton-Raphson for the two coefficients
@@ -95,12 +99,12 @@ def calibration_slope(actual: np.ndarray, prob: np.ndarray, steps: int = 50) -> 
         weight = fitted * (1 - fitted)
         hessian = design.T @ (design * weight[:, None])
         if np.linalg.cond(hessian) > 1e12:
-            return np.nan
+            return np.nan, np.nan
         step = np.linalg.solve(hessian, design.T @ (y - fitted))
         beta += step
         if np.abs(step).max() < 1e-10:
-            break
-    return float(beta[1])
+            return float(beta[1]), float(np.sqrt(np.linalg.inv(hessian)[1, 1]))
+    return np.nan, np.nan  # did not converge
 
 
 def direction_metrics(up: np.ndarray, prob_up: np.ndarray) -> dict[str, float]:
@@ -109,6 +113,7 @@ def direction_metrics(up: np.ndarray, prob_up: np.ndarray) -> dict[str, float]:
     up, prob_up = np.asarray(up).astype(int), np.asarray(prob_up, dtype=float)
     called = (prob_up > 0.5).astype(int)
     both_classes = len(np.unique(up)) == 2
+    slope, slope_se = calibration_slope(up, prob_up)
     return {
         "accuracy": float(np.mean(called == up)),
         "balanced_accuracy": float(balanced_accuracy_score(up, called)),
@@ -116,5 +121,6 @@ def direction_metrics(up: np.ndarray, prob_up: np.ndarray) -> dict[str, float]:
         "brier": float(brier_score_loss(up, np.clip(prob_up, 0, 1))),
         "share_called_up": float(called.mean()),
         "ece": expected_calibration_error(up, prob_up),
-        "calibration_slope": calibration_slope(up, prob_up),
+        "calibration_slope": slope,
+        "calibration_slope_se": slope_se,
     }

@@ -156,7 +156,7 @@ Each phase ends with a pull request. The next phase starts only when its "done w
   - Commands: `scripts/run_backtest.py` and `scripts/run_shap.py`. Results are in `notebooks/07_backtest_risk.ipynb`.
 
 ### Extensions (after Phase 6)
-- **Calibration and Sortino:** every classifier's probabilities get an expected calibration error and a calibration slope, and the backtest reports Sortino ratios, as the proposal promised.
+- **Calibration and Sortino:** every classifier's probabilities get an expected calibration error and a calibration slope with its standard error, and the backtest reports Sortino ratios, as the proposal promised.
 - **Hidden Markov model regimes:** Baum–Welch EM in `src/fxml/regimes/hmm.py`, with filtered (forward-only) probabilities, written by `scripts/run_regimes.py` and used as model features (`*_hmm`).
 - **Transformer:** a small attention model over the last 20 days in `src/fxml/models/neural.py`.
 - **Longer horizons:** 5 and 22 day volatility and direction in `src/fxml/models/horizons.py` and `scripts/run_horizons.py`, with purging and an embargo of at least the horizon, and Diebold–Mariano tests that allow for overlapping forecasts.
