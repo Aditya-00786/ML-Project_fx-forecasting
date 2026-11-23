@@ -10,8 +10,8 @@ Regime-aware learning of returns and volatility in G10 currency markets. This is
 You need [uv](https://docs.astral.sh/uv/). On macOS, install it with `brew install uv`; for other systems, see the uv docs.
 
 ```bash
-git clone https://github.com/Aditya-00786/fx-regime-forecasting.git
-cd fx-regime-forecasting
+git clone https://github.com/Aditya-00786/ML-Project_fx-forecasting.git
+cd ML-Project_fx-forecasting
 uv sync            # installs Python 3.12 and the exact locked packages into .venv
 uv run pytest      # should pass
 ```

@@ -8,7 +8,7 @@ This plan turns the approved proposal (`docs/proposal/ML_proposal.pdf`) into wor
 | Topic | Decision |
 |---|---|
 | Who writes the code | Claude implements every phase. The team reviews each phase, runs the notebooks, interprets results and writes the report. |
-| Repository | Private GitHub repo `fx-regime-forecasting` under `Aditya-00786`. Teammates are added as collaborators. |
+| Repository | Private GitHub repo `ML-Project_fx-forecasting` under `Aditya-00786`. Teammates are added as collaborators. |
 | Workflow | One branch and one pull request per phase. A teammate reviews and merges it. |
 | Environment | `uv` with Python 3.12 and a committed lockfile, so `uv sync` gives everyone identical packages. |
 | Data in git | Never. All data lives in `data/` (git ignored) and is rebuilt with one script. |
@@ -16,7 +16,7 @@ This plan turns the approved proposal (`docs/proposal/ML_proposal.pdf`) into wor
 ## Repository layout
 
 ```
-fx-regime-forecasting/
+ML-Project_fx-forecasting/
 ├── PLAN.md                  this file
 ├── README.md                setup and how to run everything
 ├── pyproject.toml, uv.lock  pinned environment
