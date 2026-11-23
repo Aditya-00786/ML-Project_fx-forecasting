@@ -3,6 +3,23 @@
 Regime-aware learning of returns and volatility in G10 currency markets (BITS F464 project).
 This plan turns the approved proposal (`docs/proposal/ML_proposal.pdf`) into working code.
 
+## Progress
+
+| Phase | Status |
+|---|---|
+| 0 Setup | ✅ Done |
+| 1 Data pipeline | ✅ Done |
+| 2 Features, evaluation framework and baselines | ✅ Done |
+| 3 Regimes and currency factors | ✅ Done |
+| 4 Classical machine learning | ✅ Done |
+| 5 Neural networks | ✅ Done |
+| 6 Backtest, risk and interpretation | ✅ Done |
+| Extensions | ✅ Done |
+| Stretch goals | ✅ Done |
+| 7 Report and presentation | ⬜ Not started |
+
+Within each phase, ticked boxes are finished and empty ones are still to do.
+
 ## Decisions
 
 | Topic | Decision |
@@ -18,21 +35,26 @@ This plan turns the approved proposal (`docs/proposal/ML_proposal.pdf`) into wor
 ```
 ML-Project_fx-forecasting/
 ├── PLAN.md                  this file
-├── README.md                setup and how to run everything
+├── README.md                overview, results and how to run everything
 ├── pyproject.toml, uv.lock  pinned environment
 ├── configs/default.yaml     pairs, dates, paths, walk-forward settings, cost assumptions
 ├── data/                    (git ignored) raw/ → interim/ (5-min bars) → processed/ (daily panel)
 ├── src/fxml/
 │   ├── data/                downloaders (HistData, FRED, BIS), cleaning, bar building, quality checks
-│   ├── features/            returns, technical indicators, volatility, PCA factors, macro, feature builder
-│   ├── regimes/             k-means, Ward, Gaussian mixtures, DBSCAN, regime validation
-│   ├── models/              baselines, GARCH family, HAR-RV, ARIMA, scikit-learn models, neural nets
+│   ├── features/            returns, technical indicators, volatility, walk-forward GARCH, feature builder
+│   ├── regimes/             market state, k-means, Ward, Gaussian mixtures, DBSCAN, hidden Markov model
+│   ├── models/              baselines, scikit-learn models, neural nets, horizons, comparison tables
 │   ├── validation/          walk-forward splitter, metrics, statistical tests
-│   └── backtest/            strategies, transaction costs, volatility targeting, VaR
-├── scripts/                 download_data.py, build_dataset.py, run_experiment.py
-├── notebooks/               data quality, stylized facts, regimes, results
+│   ├── backtest/            strategies, transaction costs, volatility targeting, VaR
+│   ├── dashboard/           results dashboard (data, scorecards, page)
+│   ├── factors.py           currency factors (PCA)
+│   ├── extra_pairs.py       EUR/GBP and USD/INR
+│   └── interpret.py         SHAP explanations
+├── scripts/                 one command per pipeline step, from download_data.py to build_dashboard.py
+├── notebooks/               01 data quality to 09 stretch goals
+├── dashboard/app.py         the dashboard as a Streamlit app
 ├── tests/                   look-ahead tests, walk-forward tests, metric tests
-├── reports/                 figures/ and tables/ produced by the scripts
+├── reports/                 figures/, tables/ and the dashboard page produced by the scripts
 └── docs/                    proposal and final report sources
 ```
 
@@ -48,59 +70,59 @@ ML-Project_fx-forecasting/
 
 Each phase ends with a pull request. The next phase starts only when its "done when" checks pass.
 
-### Phase 0 — Setup
-- Install `uv` and Python 3.12. Create the package, config, tests and `.gitignore`.
-- Create the private GitHub repo, push the skeleton and add a GitHub Actions workflow that runs the tests on every pull request.
-- **Done when:** `uv sync && uv run pytest` passes locally and on GitHub.
+### Phase 0 — Setup ✅
+- [x] Install `uv` and Python 3.12. Create the package, config, tests and `.gitignore`.
+- [x] Create the private GitHub repo, push the skeleton and add a GitHub Actions workflow that runs the tests on every pull request.
+- [x] **Done when:** `uv sync && uv run pytest` passes locally and on GitHub.
 
-### Phase 1 — Data pipeline
-- **Downloads** (Claude asks before downloading, with the exact file list and size):
-  - HistData 1-minute bars for EUR/USD, GBP/USD, USD/JPY, USD/CHF, AUD/USD, USD/CAD and NZD/USD, 2006–2026.
-  - The same for gold and the S&P 500 as context.
-  - FRED: VIX, the broad dollar index, Brent crude and the seven H.10 daily rates. Crude oil comes from FRED because HistData's WTI files for 2024–2026 are empty.
-  - BIS: daily policy rates for the eight central banks.
-- **Processing:**
-  - Convert HistData timestamps (fixed EST) to New York time.
-  - Define each trading day as 17:00 to 17:00 New York, and drop weekend quotes.
-  - Remove duplicates and bad ticks.
-  - Build 5-minute bars.
-  - Compute daily OHLC, close-to-close log returns, realized variance from the 5-minute returns, and the Parkinson and Garman–Klass estimators.
-  - Flag thin holiday sessions.
-- **Quality checks:**
-  - Bar counts per day.
-  - Gap report.
-  - Correlation of our daily returns with the FRED H.10 rates.
-- **Notebooks:** `01_data_quality.ipynb` and `02_stylized_facts.ipynb` (fat tails, volatility clustering, autocorrelation of returns compared with squared returns).
-- **Done when:**
-  - a daily panel exists for all 7 pairs from Jan 2006 to Oct 2026;
-  - coverage is above 99% of trading days;
-  - our 12:00 New York returns correlate above 0.95 with the Federal Reserve H.10 noon rates (checked by `scripts/check_data.py`).
+### Phase 1 — Data pipeline ✅
+- [x] **Downloads** (Claude asks before downloading, with the exact file list and size):
+  - [x] HistData 1-minute bars for EUR/USD, GBP/USD, USD/JPY, USD/CHF, AUD/USD, USD/CAD and NZD/USD, 2006–2026.
+  - [x] The same for gold and the S&P 500 as context.
+  - [x] FRED: VIX, the broad dollar index, Brent crude and the seven H.10 daily rates. Crude oil comes from FRED because HistData's WTI files for 2024–2026 are empty.
+  - [x] BIS: daily policy rates for the eight central banks.
+- [x] **Processing:**
+  - [x] Convert HistData timestamps to UTC. They turned out not to be fixed EST as HistData says: they follow New York time until 2018 and EET minus 7 hours from 2019, which the H.10 checks confirm.
+  - [x] Define each trading day as 17:00 to 17:00 New York, and drop weekend quotes.
+  - [x] Remove duplicates and bad ticks.
+  - [x] Build 5-minute bars.
+  - [x] Compute daily OHLC, close-to-close log returns, realized variance from the 5-minute returns, and the Parkinson and Garman–Klass estimators.
+  - [x] Flag thin holiday sessions.
+- [x] **Quality checks:**
+  - [x] Bar counts per day.
+  - [x] Gap report.
+  - [x] Correlation of our daily returns with the FRED H.10 rates.
+- [x] **Notebooks:** `01_data_quality.ipynb` and `02_stylized_facts.ipynb` (fat tails, volatility clustering, autocorrelation of returns compared with squared returns).
+- [x] **Done when:**
+  - [x] a daily panel exists for all 7 pairs from Jan 2006 to Oct 2026;
+  - [x] coverage is above 99% of trading days;
+  - [x] our 12:00 New York returns correlate above 0.95 with the Federal Reserve H.10 noon rates (checked by `scripts/check_data.py`).
 
-### Phase 2 — Features, evaluation framework and baselines
-- **Feature modules:** returns and momentum, technical indicators, volatility, macro and calendar.
-- **Targets:** next day log realized volatility, direction and return.
-- **Walk-forward splitter:**
+### Phase 2 — Features, evaluation framework and baselines ✅
+- [x] **Feature modules:** returns and momentum, technical indicators, volatility, macro and calendar.
+- [x] **Targets:** next day log realized volatility, direction and return.
+- [x] **Walk-forward splitter:**
   - expanding window;
   - first training window 2006–2011;
   - monthly test blocks from Jan 2012;
   - validation is the last 20% of each training window, followed by a 5-day embargo.
-- **Metrics:** RMSE, MAE, QLIKE, Mincer–Zarnowitz R², accuracy, balanced accuracy, ROC-AUC, Brier score and out-of-sample R².
-- **Statistical tests:** Diebold–Mariano (with small sample correction), Pesaran–Timmermann and Kupiec.
-- **Baselines:** random walk, historical mean, EWMA, GARCH(1,1), GJR-GARCH (Student-t), HAR-RV and ARIMA.
-- **Done when:** the look-ahead tests pass and a baseline results table exists for every pair and task.
+- [x] **Metrics:** RMSE, MAE, QLIKE, Mincer–Zarnowitz R², accuracy, balanced accuracy, ROC-AUC, Brier score and out-of-sample R².
+- [x] **Statistical tests:** Diebold–Mariano (with small sample correction), Pesaran–Timmermann and Kupiec.
+- [x] **Baselines:** random walk, historical mean, EWMA, GARCH(1,1), GJR-GARCH (Student-t), HAR-RV and ARIMA.
+- [x] **Done when:** the look-ahead tests pass and a baseline results table exists for every pair and task.
 - **As built:**
   - 46 features in five groups, in `src/fxml/features/build.py`. GARCH-variance and PCA features are fitted inside each fold, so they arrive with the models in Phases 3–4.
   - Holiday sessions are removed from the modelling table.
   - Training rows whose next-day label falls inside the test month are purged.
   - Commands: `scripts/build_features.py`, then `scripts/run_baselines.py`. Results are in `notebooks/03_baselines.ipynb`.
 
-### Phase 3 — Regimes and currency factors
-- **Currency factors:** PCA on the seven-pair return panel, with every pair expressed as USD per foreign currency so the "dollar" factor has a consistent sign.
-- **Regime features:** short and long horizon volatility, trend strength, cross-pair correlation and VIX.
-- **Clustering:** k-means, Ward, Gaussian mixtures (EM) and DBSCAN.
-  - The number of regimes is chosen by silhouette, Davies–Bouldin and BIC.
-  - Labels are kept stable across refits by ordering regimes by average volatility.
-- **Done when:** a regime timeline figure for 2006–2026 is produced, shaded with the known crisis episodes, together with persistence statistics.
+### Phase 3 — Regimes and currency factors ✅
+- [x] **Currency factors:** PCA on the seven-pair return panel, with every pair expressed as USD per foreign currency so the "dollar" factor has a consistent sign.
+- [x] **Regime features:** short and long horizon volatility, trend strength, cross-pair correlation and VIX.
+- [x] **Clustering:** k-means, Ward, Gaussian mixtures (EM) and DBSCAN.
+  - [x] The number of regimes is chosen by silhouette, Davies–Bouldin and BIC.
+  - [x] Labels are kept stable across refits by ordering regimes by average volatility.
+- [x] **Done when:** a regime timeline figure for 2006–2026 is produced, shaded with the known crisis episodes, together with persistence statistics.
 - **As built:**
   - The market state, models and selection are in `src/fxml/regimes/`; the factors are in `src/fxml/factors.py`.
   - One number of regimes is shared by every method so they can be compared. Each method and criterion votes on the 2006–2011 window, and only solutions whose smallest regime holds at least 10% of days count. The vote chose 2 (calm and turbulent). The count is fragile because the state has no sharp clusters: before the ADX warm-up fix the same vote chose 4.
@@ -109,14 +131,14 @@ Each phase ends with a pull request. The next phase starts only when its "done w
   - For Phase 4, long momentum features are missing for most of 2006, and gold and S&P 500 features only start in March 2009 and November 2010.
   - Command: `scripts/run_regimes.py`. Results are in `notebooks/04_regimes_factors.ipynb`.
 
-### Phase 4 — Classical machine learning
-- **Volatility:** ridge, lasso, kNN, random forest and LightGBM.
-- **Direction:** logistic regression (L1/L2), Gaussian Naive Bayes, kNN, decision tree, linear and RBF SVM, random forest and LightGBM.
-- **Return size:** ridge and LightGBM.
-- **Global vs regime-aware:** global models, plus regime-aware versions that use regime probabilities as features, plus one expert model per regime.
-- **Naive Bayes vs logistic regression:** learning curves as the training window grows (RQ5).
-- **Hyperparameters:** tuned once a year on the validation slice and reused for the monthly refits, which keeps compute modest.
-- **Done when:** the comparison tables against the baselines are complete, with Diebold–Mariano and Pesaran–Timmermann results.
+### Phase 4 — Classical machine learning ✅
+- [x] **Volatility:** ridge, lasso, kNN, random forest and LightGBM.
+- [x] **Direction:** logistic regression (L1/L2), Gaussian Naive Bayes, kNN, decision tree, linear and RBF SVM, random forest and LightGBM.
+- [x] **Return size:** ridge and LightGBM.
+- [x] **Global vs regime-aware:** global models, plus regime-aware versions that use regime probabilities as features, plus one expert model per regime.
+- [x] **Naive Bayes vs logistic regression:** learning curves as the training window grows (RQ5).
+- [x] **Hyperparameters:** tuned once a year on the validation slice and reused for the monthly refits, which keeps compute modest.
+- [x] **Done when:** the comparison tables against the baselines are complete, with Diebold–Mariano and Pesaran–Timmermann results.
 - **As built:**
   - Models are in `src/fxml/models/ml.py` and the per-pair inputs in `src/fxml/models/inputs.py`. Features are the 46 Phase 2 features plus a walk-forward GARCH(1,1) variance forecast and the three walk-forward currency factor returns.
   - Volatility models predict log realized variance; a scale factor fitted on the validation slice each year turns that into a variance.
@@ -125,10 +147,10 @@ Each phase ends with a pull request. The next phase starts only when its "done w
   - RQ5 uses two targets: direction (no signal) and a high volatility day (strong signal). On the second, Naive Bayes ranks better up to about a year of data and logistic regression wins beyond two years.
   - Commands: `scripts/run_ml.py` (about 3 hours of CPU time, run as parallel jobs), then `scripts/run_learning_curves.py`. Results are in `notebooks/05_classical_ml.ipynb`.
 
-### Phase 5 — Neural networks
-- An MLP, plus an LSTM over a window of recent days (PyTorch).
-- Refitted quarterly, with early stopping on the validation slice and several seeds.
-- **Done when:** the neural models appear in the same comparison tables as the rest.
+### Phase 5 — Neural networks ✅
+- [x] An MLP, plus an LSTM over a window of recent days (PyTorch).
+- [x] Refitted quarterly, with early stopping on the validation slice and several seeds.
+- [x] **Done when:** the neural models appear in the same comparison tables as the rest.
 - **As built:**
   - `src/fxml/models/neural.py`: an MLP (64 and 32 units) on each day's 50 inputs and an LSTM (32 units) over the last 20 trading days, for all three tasks. PyTorch runs on CPU; on Linux it installs from PyTorch's CPU-only index.
   - At each quarterly refit the network is trained with early stopping on the validation slice, then retrained on the whole training window for the chosen number of epochs. Three seeds per network; their forecasts are averaged.
@@ -136,17 +158,17 @@ Each phase ends with a pull request. The next phase starts only when its "done w
   - Results: the MLP beats HAR-RV by 3.5% (significant on 3 of 7 pairs) but not LightGBM; the LSTM is no better than HAR-RV. Direction and returns stay at chance.
   - Command: `scripts/run_neural.py` (about 4 hours of CPU time, run as parallel jobs). Results are in `notebooks/06_neural_networks.ipynb`.
 
-### Phase 6 — Backtest, risk and interpretation
-- **Strategies:**
-  - baselines: always long, carry, time series momentum and flat;
-  - the models' direction signals;
-  - those signals with volatility targeting;
-  - an equal-risk portfolio across all seven pairs.
-- **Costs:** pair-specific spreads, with a sensitivity run at twice the cost.
-- **Risk:** daily 99% VaR from the volatility forecasts, checked with the Kupiec test.
-- **Breakdowns:** by regime, stress period, pair and subperiod.
-- **Interpretation:** SHAP for the tree models.
-- **Done when:** the backtest tables and figures exist and answer RQ4.
+### Phase 6 — Backtest, risk and interpretation ✅
+- [x] **Strategies:**
+  - [x] baselines: always long, carry, time series momentum and flat;
+  - [x] the models' direction signals;
+  - [x] those signals with volatility targeting;
+  - [x] an equal-risk portfolio across all seven pairs.
+- [x] **Costs:** pair-specific spreads, with a sensitivity run at twice the cost.
+- [x] **Risk:** daily 99% VaR from the volatility forecasts, checked with the Kupiec test.
+- [x] **Breakdowns:** by regime, stress period, pair and subperiod.
+- [x] **Interpretation:** SHAP for LightGBM, the tree model that beats HAR-RV.
+- [x] **Done when:** the backtest tables and figures exist and answer RQ4.
 - **As built:**
   - `src/fxml/backtest/`: strategies (`strategies.py`), performance and breakdowns (`performance.py`) and Value at Risk (`risk.py`); SHAP in `src/fxml/interpret.py`.
   - A position set at day t's close earns the next day's return plus the interest differential for the days held; each trade pays half the spread. Costs are also run at twice the spread.
@@ -155,31 +177,31 @@ Each phase ends with a pull request. The next phase starts only when its "done w
   - Results: no direction signal makes money after costs; carry earns a Sharpe of 0.24 (not significant). Better volatility forecasts do not improve risk targeting but do give more accurate normal Value at Risk.
   - Commands: `scripts/run_backtest.py` and `scripts/run_shap.py`. Results are in `notebooks/07_backtest_risk.ipynb`.
 
-### Extensions (after Phase 6)
-- **Calibration and Sortino:** every classifier's probabilities get an expected calibration error and a calibration slope with its standard error, and the backtest reports Sortino ratios, as the proposal promised.
-- **Hidden Markov model regimes:** Baum–Welch EM in `src/fxml/regimes/hmm.py`, with filtered (forward-only) probabilities, written by `scripts/run_regimes.py` and used as model features (`*_hmm`).
-- **Transformer:** a small attention model over the last 20 days in `src/fxml/models/neural.py`.
-- **Longer horizons:** 5 and 22 day volatility and direction in `src/fxml/models/horizons.py` and `scripts/run_horizons.py`, with purging and an embargo of at least the horizon, and Diebold–Mariano tests that allow for overlapping forecasts.
+### Extensions (after Phase 6) ✅
+- [x] **Calibration and Sortino:** every classifier's probabilities get an expected calibration error and a calibration slope with its standard error, and the backtest reports Sortino ratios, as the proposal promised.
+- [x] **Hidden Markov model regimes:** Baum–Welch EM in `src/fxml/regimes/hmm.py`, with filtered (forward-only) probabilities, written by `scripts/run_regimes.py` and used as model features (`*_hmm`).
+- [x] **Transformer:** a small attention model over the last 20 days in `src/fxml/models/neural.py`.
+- [x] **Longer horizons:** 5 and 22 day volatility and direction in `src/fxml/models/horizons.py` and `scripts/run_horizons.py`, with purging and an embargo of at least the horizon, and Diebold–Mariano tests that allow for overlapping forecasts.
 - **Results** (`notebooks/08_extensions.ipynb`):
   - none overturns a conclusion: the direction probabilities have calibration slopes near 0;
   - HMM regimes are more persistent but add nothing to the volatility forecasts;
   - the Transformer is no better than HAR-RV;
   - at 5 and 22 days HAR-RV beats every learning model.
 
-### Stretch goals (after the extensions)
-- **Extra pairs:** EUR/GBP (HistData 1-minute bars) and USD/INR (Federal Reserve noon rates, the only free source) in `src/fxml/extra_pairs.py`, `scripts/build_extra_pairs.py` and `scripts/run_extra_pairs.py`.
+### Stretch goals (after the extensions) ✅
+- [x] **Extra pairs:** EUR/GBP (HistData 1-minute bars) and USD/INR (Federal Reserve noon rates, the only free source) in `src/fxml/extra_pairs.py`, `scripts/build_extra_pairs.py` and `scripts/run_extra_pairs.py`.
   - They are kept apart from the core: the market state, regimes and factors still come from the seven core pairs, and no core table, cache or average changes.
   - USD/INR has no intraday data, so it has no volatility task and no intraday features. Its noon fixing comes before the 17:00 close that dates every other input, so it takes those inputs from the previous trading day.
-- **Results dashboard:** `scripts/build_dashboard.py` writes `reports/dashboard.html`, one offline page with Verdicts, Explorer and Present views, and `dashboard/app.py` serves the same views in Streamlit. Both read `reports/dashboard/data.json`, collected from the saved tables.
+- [x] **Results dashboard:** `scripts/build_dashboard.py` writes `reports/dashboard.html`, one offline page with Verdicts, Explorer and Present views, and `dashboard/app.py` serves the same views in Streamlit. Both read `reports/dashboard/data.json`, collected from the saved tables.
 - **Results** (`notebooks/09_stretch_goals.ipynb`):
   - on EUR/GBP the learning models only match HAR-RV, so the one-day volatility edge does not carry over to the cross;
   - USD/INR is the one pair where up/down calls beat chance (LightGBM and random forest), but no strategy's profit after costs is significant;
   - its single noon quote, taken after the onshore market closes, may explain part of that predictability.
 
-### Phase 7 — Report and presentation
-- Final report in the same LaTeX style as the proposal, built from the saved tables and figures.
-- Slides for the presentation.
-- **Done when:** every research question (RQ1–RQ5) has an answer supported by a table or figure.
+### Phase 7 — Report and presentation ⬜
+- [ ] Final report in the same LaTeX style as the proposal, built from the saved tables and figures.
+- [ ] Slides for the presentation.
+- [ ] **Done when:** every research question (RQ1–RQ5) has an answer supported by a table or figure.
 
 ## Compute budget
 
